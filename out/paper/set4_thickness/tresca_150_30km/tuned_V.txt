@@ -1,0 +1,6 @@
+h_km=30
+sigma_Y_MPa=150
+V_TN=2.0446
+w_target_m=3232.9
+w_achieved_m=3232.7
+yielded_pct=2.63

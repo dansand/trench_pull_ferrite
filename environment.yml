@@ -1,0 +1,12 @@
+# Python environment for the analysis + figure scripts (gpe_analysis.py, render_*.py).
+# Create with:  conda env create -f environment.yml   then:  conda activate ferrite-figs
+# Run all scripts from finite_strain/.  (The Julia solver env is pinned separately in Project.toml/Manifest.toml.)
+name: ferrite-figs
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pyvista=0.46.3
+  - numpy=1.26.4
+  - matplotlib=3.9.1
+  - scipy=1.13.1
