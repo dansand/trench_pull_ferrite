@@ -14,7 +14,7 @@ ONE figure, one panel per Suite-1 strength model (elastic | Tresca | DD-VM asym 
   ΔGPE*(x) direct (grey band) · ρ̂-dipole reconstruction, plate-top arm (black, traces the band) ·
   mid-plate approximation Δρg·(h/2)·(w_T−w) (black dashed; its error is in each panel title).
 
-    /opt/anaconda3/envs/pyvista-env/bin/python render_gpe_compare.py
+    python scripts/render_gpe_compare.py
 """
 import sys; sys.path.insert(0, "analysis")
 import numpy as np
@@ -32,7 +32,7 @@ SUITE1 = [(f"{S1}/elastic_deep_60km_V4",    "elastic"),
           (f"{S1}/tresca_deep_150_60km_V4", "Tresca (uniform)"),
           (f"{S1}/dd_vm_asym_60km_V4",   "DD-VM (asymmetric)"),
           (f"{S1}/dd_vm_sym_60km_V4",   "DD-VM (symmetric)")]
-OUT_SUITE1 = "data/reference_figures/gpe_compare_suite1.png"     # Figure 5: Suite-1 robustness (2×2) — the ONLY output
+OUT_SUITE1 = "figures/gpe_compare_suite1.png"     # Figure 5: Suite-1 robustness (2×2) — the ONLY output
 WINDOW_KM = 200
 DRHOG = (3300.0 - 1000.0) * 9.81
 # B&W-robust styling (2026-09-11, user): distinguish by weight/style, not hue, so the figure reads

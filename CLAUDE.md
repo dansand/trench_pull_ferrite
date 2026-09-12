@@ -10,9 +10,11 @@ data, and to re-run the finite-element models. It was curated out of the private
 there for history, never develop there. **This repo is the single source of truth.**
 
 ## Layout (role-based; run everything from the repo root)
-`model/` Julia solver + `paper_models.jl` production driver · `analysis/gpe_analysis.py` · `figures/render_*.py`
-(one per manuscript figure) · `schematic/` TikZ · `data/` all model output + `reference_figures/` ·
-`START_HERE.ipynb` · `REPRODUCE.md` (figure → script → data → command) · `animation/` (loading movies — illustrative,
+`model/` Julia solver + `paper_models.jl` production driver · `analysis/gpe_analysis.py` (+ `make_manifest.py`) ·
+`scripts/render_*.py` (one per manuscript figure) · `figures/` the shipped reference renders (what the scripts write) ·
+`schematic/` TikZ · `data/` all model output + `DATA_MANIFEST.md/.json` (provenance: command, parameters, SHA-256, origin) ·
+`START_HERE.ipynb` · `REPRODUCE.md` (figure → script → data → command) · `reproduce.sh` (regenerate + check everything) ·
+`tests/test_quick.py` (+ `test_quick.jl`; seconds) · `animation/` (loading movies — illustrative,
 no manuscript figure depends on them; `gen_frames.jl` is a **model run** (24 solves) → ask before running; `frames/` is gitignored).
 
 ## Hard rules
@@ -37,10 +39,14 @@ no manuscript figure depends on them; `gen_frames.jl` is a **model run** (24 sol
 - Trench pull is always trench-referenced, between the trench column and the **first isostatic column** x_I
   (`gpe_analysis.trench_pull`); the identity ΔN_D = ΔGPE\* holds to ~0.02 %.
 - Data folders are named after the manuscript's suites (`suite1_strength`, `suite2_load`, `suite3_background`,
-  `suite4_thickness`, `appendixB_esweep`); the driver commands stay descriptive (`v_sweep` → suite2, `nd_sweep` → suite3).
+  `suite4_thickness`); the driver commands stay descriptive (`v_sweep` → suite2, `nd_sweep` → suite3).
 - **VTU stress fields are NOT all Cauchy.** `sigma_xx/zz/xz` in `gpe_model.vtu` are the 2nd Piola–Kirchhoff stress S on the
   reference mesh; only `sigma_xz_cauchy` (+ the gradients `dsxz_dx`, `dszz_dz`) are Cauchy. Always go through
   `Model.cauchy_fields()` (σ = J⁻¹F S Fᵀ) for stresses — rotation mixes components at O(slope), tens of percent on the shear.
+  **One exception, by design:** the two idealized-beam benchmarks (`render_benchmark.py`, `render_mp_benchmark.py`)
+  read the exported S directly — their analytic comparisons (Hetényi, shear parabola, M–κ) are material-section
+  quantities on the reference thickness. Switching them to Cauchy broke them once (2026-09-11 → Codex audit); both
+  scripts now assert the SI numbers, so a wrong frame fails loudly.
 
 ## Manuscript handshake
 The manuscript is `~/projects/mypapers/trench_pull_force/2026_codex/full_manuscript/` (being finalised with Codex; its LaTeX
@@ -49,5 +55,8 @@ static relic — never read it as current. When figures are regenerated for the 
 there and quote the commit hash they were produced at, so the paper's `PROVENANCE.md` can pin it.
 
 ## Acceptance test
-Every figure script runs from the root against `data/`, the notebook executes top to bottom in the `ferrite-figs`
-env, and the numbers match the paper (ΔGPE\* = 2.542 TN/m, identity 0.019 %, arm 34.9 km for the reference model).
+`./reproduce.sh` passes: `pytest tests/`, every figure script from the root against `data/`, the notebook top to bottom in
+the `ferrite-figs` env, `make_manifest.py --check`, and the headline numbers ASSERTED (not printed) by
+`tests/check_reproduce.py` — ΔGPE\* = 2.542 TN/m ± 0.5 %, identity < 0.05 % (0.019 %), arm 34.9 km, the S1/S2 benchmark
+misfits, the Suite-1 reconstruction table. Run it after any change to scripts, analysis or paths; a passing run is the
+definition of done. (Lesson of the 2026-09-12 audit: a printed number nobody re-reads is not a check.)

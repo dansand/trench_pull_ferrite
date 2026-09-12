@@ -10,7 +10,7 @@ equivalent density rho_hat = tau_zx,x / g through the loading cycle:
 
 Reuses ../gpe_analysis.py READ-ONLY.  Delete animation/ to remove everything.
 
-  /opt/anaconda3/envs/pyvista-env/bin/python animation/render_anim_rho.py
+  python animation/render_anim_rho.py
 """
 import sys, os, glob
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "analysis"))

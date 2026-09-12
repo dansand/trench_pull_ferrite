@@ -1,0 +1,685 @@
+{
+ "generated": "2026-09-13",
+ "generator": "analysis/make_manifest.py",
+ "models": {
+  "idealized_beam": {
+   "command": "julia --project=. model/idealized_beam.jl",
+   "stress_frame": "massless",
+   "parameters": {
+    "nondimensional": true,
+    "L": 10.0,
+    "h": 1.0,
+    "nx": 200,
+    "nz": 40,
+    "E": 60.0,
+    "nu": 0.25,
+    "sigma_Y": 1.0,
+    "delta_max": 2.2,
+    "nsteps": 44,
+    "element_order": 2,
+    "foundation": "none",
+    "gravity": "none"
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "d5bf0acd0827f4dbeecf3980a0dd4780a960739244be8608fc78bfe8ebf1a5bf",
+     "bytes": 636136
+    }
+   },
+   "origin": "committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/idealized_beam (commit 10d0d39, 2026-08-20)"
+  },
+  "idealized_beam_elastic": {
+   "command": "julia --project=. model/idealized_beam.jl",
+   "stress_frame": "massless",
+   "parameters": {
+    "nondimensional": true,
+    "L": 10.0,
+    "h": 1.0,
+    "nx": 200,
+    "nz": 40,
+    "E": 60.0,
+    "nu": 0.25,
+    "sigma_Y": 1000000.0,
+    "delta_max": 2.2,
+    "nsteps": 44,
+    "element_order": 2,
+    "foundation": "none",
+    "gravity": "none"
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "df750d655d6c5ff38be6f3d010f5fb8bf5a9a532cc57c4fe7d490ce3b69f4673",
+     "bytes": 522642
+    }
+   },
+   "origin": "committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/idealized_beam_elastic (commit 758e4dc, 2026-08-20)"
+  },
+  "suite1_strength/dd_vm_asym_60km_V4": {
+   "command": "julia --project=. model/paper_models.jl suite1",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 22,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "V_TN": 4.0,
+    "strength": "DD-VM asymmetric (depth-dependent von Mises)",
+    "mu": 0.15,
+    "cohesion_MPa": 31.534,
+    "hardening_H_Pa": 700000000.0
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "7420805d6da43078b842accb89949352cc2b9be29f9f832b7022bb9065ef4e27",
+     "bytes": 3748810
+    },
+    "gpe_topo.csv": {
+     "sha256": "ade789c60e0b7543e35b3e6610afed6cd1fe8f5a41a02dd8c2bdd41e34cda621",
+     "bytes": 21227
+    }
+   },
+   "origin": "committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set1_rheology/dd_vm_asym_60km_V4 (commit 0c6fe38, 2026-07-08)"
+  },
+  "suite1_strength/dd_vm_sym_60km_V4": {
+   "command": "julia --project=. model/paper_models.jl suite1",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 22,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "V_TN": 4.0,
+    "strength": "DD-VM symmetric (depth-dependent von Mises)",
+    "mu": 0.35,
+    "cohesion_MPa": 36.695,
+    "hardening_H_Pa": 700000000.0
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "3402bedda8e2dbdad860f46b1b5bb04b377edba4c1c33a61cf38b3d64c472c16",
+     "bytes": 3774627
+    },
+    "gpe_topo.csv": {
+     "sha256": "d04ffaa60f997f5e6fbf7fb689a22b92b91f89794bc098bebf161330d48bcc9a",
+     "bytes": 21229
+    }
+   },
+   "origin": "committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set1_rheology/dd_vm_sym_60km_V4 (commit 0c6fe38, 2026-07-08)"
+  },
+  "suite1_strength/elastic_deep_60km_V4": {
+   "command": "julia --project=. model/paper_models.jl suite1",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "V_TN": 4.0,
+    "strength": "elastic (sigma_Y -> inf: 1e12 Pa)"
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "4019714c780f917ab4bd80477cc0b4258ac362bfbeae196b505ae91c20f79bdf",
+     "bytes": 3469414
+    },
+    "gpe_topo.csv": {
+     "sha256": "825ff471dd7ddd2df9a899e3ff3a35e1f8d60aadd7ecf506466d5667fa31efbd",
+     "bytes": 21235
+    }
+   },
+   "origin": "committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set1_rheology/elastic_deep_60km_V4 (commit 0c6fe38, 2026-07-08)"
+  },
+  "suite1_strength/tresca_deep_150_60km_V4": {
+   "command": "julia --project=. model/paper_models.jl suite1",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "V_TN": 4.0,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "7ac0001648233e54a5e69446a9116efe6d732455bf1704b9a2a41e0c16b5c9d2",
+     "bytes": 3791732
+    },
+    "gpe_topo.csv": {
+     "sha256": "c04f1a5d6766a915f360e34f8867645784ab71a8776570c9cebe06719b93ea57",
+     "bytes": 21234
+    }
+   },
+   "origin": "committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set1_rheology/tresca_deep_150_60km_V4 (commit 0c6fe38, 2026-07-08)"
+  },
+  "suite2_load/tresca_deep_150_60km_V1": {
+   "command": "julia --project=. model/paper_models.jl v_sweep",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "V_TN": 1.0
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "2f412b21ec9348f35c027e58d3f59d9e35da273eada7ea0a43417dc4bb52b8fb",
+     "bytes": 3467621
+    },
+    "gpe_topo.csv": {
+     "sha256": "bd2b3fd9165e1ad84c927b2cda69389ebe8a4bb24e7e2cfbfff308b53d97dc9f",
+     "bytes": 21235
+    }
+   },
+   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V1; never committed there"
+  },
+  "suite2_load/tresca_deep_150_60km_V1p5": {
+   "command": "julia --project=. model/paper_models.jl v_sweep",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "V_TN": 1.5
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "089ee380d1bc23b9ee72d99cbd4a4197da49d526f90b7247e40fec5226c71b26",
+     "bytes": 3468362
+    },
+    "gpe_topo.csv": {
+     "sha256": "fb7c97cbb09c2586a24918cf097541761a5ccaa04dc66da151e724e5456a442c",
+     "bytes": 21235
+    }
+   },
+   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V1p5; never committed there"
+  },
+  "suite2_load/tresca_deep_150_60km_V2": {
+   "command": "julia --project=. model/paper_models.jl v_sweep",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "V_TN": 2.0
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "96163d790f655d264eae9369c3a950d16b2537d211db7fbea96eddebea5502c4",
+     "bytes": 3468300
+    },
+    "gpe_topo.csv": {
+     "sha256": "be2b49e0de285d968894187ad3a722b343891acdc5af4ea97618b64a83a8a121",
+     "bytes": 21235
+    }
+   },
+   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V2; never committed there"
+  },
+  "suite2_load/tresca_deep_150_60km_V2p5": {
+   "command": "julia --project=. model/paper_models.jl v_sweep",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "V_TN": 2.5
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "6d2c3468fc04763e56c26e8da54e9418145f402f09e9edb3872504370d9bf926",
+     "bytes": 3712105
+    },
+    "gpe_topo.csv": {
+     "sha256": "93a07a4cae32d83f9340f1811b6d441ccbe887c51ba3209e23bdd2e8f89bebbb",
+     "bytes": 21235
+    }
+   },
+   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V2p5; never committed there"
+  },
+  "suite2_load/tresca_deep_150_60km_V3": {
+   "command": "julia --project=. model/paper_models.jl v_sweep",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "V_TN": 3.0
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "a5398ac5470b7fccbf55a3424a9539c7851fa50438a2831ee98569c3d86bf85b",
+     "bytes": 3754606
+    },
+    "gpe_topo.csv": {
+     "sha256": "f8c8bbb2fd86eb5a8b8e6e730a92fbd010fd193918c67d719223506a32642b1f",
+     "bytes": 21234
+    }
+   },
+   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V3; never committed there"
+  },
+  "suite2_load/tresca_deep_150_60km_V3p5": {
+   "command": "julia --project=. model/paper_models.jl v_sweep",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "V_TN": 3.5
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "5a774bdc52b0995f46bec0c887eadade9d7e3c9afdc278c1ae010063c3daca09",
+     "bytes": 3778567
+    },
+    "gpe_topo.csv": {
+     "sha256": "7f1cff9782afc8ca7186c0da4428c7a4117d8094e562e0749dbffcb1b96af6f1",
+     "bytes": 21234
+    }
+   },
+   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V3p5; never committed there"
+  },
+  "suite2_load/tresca_deep_150_60km_V4p5": {
+   "command": "julia --project=. model/paper_models.jl v_sweep",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "V_TN": 4.5
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "88a011b3402da7f7e34cb7a8c4634c119508de73b8e615e84851b3701b8c4c61",
+     "bytes": 3795093
+    },
+    "gpe_topo.csv": {
+     "sha256": "2a35f2527cdb28717bb961b31f00b29238b6138dfb1e8ecd0e7149d998114671",
+     "bytes": 21233
+    }
+   },
+   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V4p5; never committed there"
+  },
+  "suite3_background/tresca_deep_150_60km_V4_mem-1": {
+   "command": "julia --project=. model/paper_models.jl nd_sweep",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "V_TN": 4.0,
+    "N_mem_TN": -1.0
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "fdbb77376ec3b0447bf09033e48357ff84899e926bdb2589eede23135f0c00cc",
+     "bytes": 3714623
+    },
+    "gpe_topo.csv": {
+     "sha256": "3ce64920d81f5e3374feb3ca80de462d9ddc061baebe2f7ace2ceb87a9efeb44",
+     "bytes": 21313
+    }
+   },
+   "origin": "on-disk output of `paper_models.jl nd_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set2_nd_sweep/tresca_deep_150_60km_V4_mem-1; never committed there"
+  },
+  "suite3_background/tresca_deep_150_60km_V4_mem-2": {
+   "command": "julia --project=. model/paper_models.jl nd_sweep",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "V_TN": 4.0,
+    "N_mem_TN": -2.0
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "f4c4f38c7901111ece7d58e479bf28ca9d047e81af790d04c22d0172779dbc7d",
+     "bytes": 3692085
+    },
+    "gpe_topo.csv": {
+     "sha256": "525b34110852c07536261cce86a57c217105005ca5e9985bc841f86dc0997b9c",
+     "bytes": 21272
+    }
+   },
+   "origin": "on-disk output of `paper_models.jl nd_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set2_nd_sweep/tresca_deep_150_60km_V4_mem-2; never committed there"
+  },
+  "suite3_background/tresca_deep_150_60km_V4_mem-3": {
+   "command": "julia --project=. model/paper_models.jl nd_sweep",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "V_TN": 4.0,
+    "N_mem_TN": -3.0
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "bd454842e76ff7c76869ac07effc5c8eeb7c637d1314be8551b0bc604b801bcf",
+     "bytes": 3680722
+    },
+    "gpe_topo.csv": {
+     "sha256": "e15c40ad5eb88532bda2409bcc4fc803fbceb7da5c3e402b35710424a5f59a92",
+     "bytes": 21256
+    }
+   },
+   "origin": "on-disk output of `paper_models.jl nd_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set2_nd_sweep/tresca_deep_150_60km_V4_mem-3; never committed there"
+  },
+  "suite3_background/tresca_deep_150_60km_V4_mem1": {
+   "command": "julia --project=. model/paper_models.jl nd_sweep",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "V_TN": 4.0,
+    "N_mem_TN": 1.0
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "dbe995296b718690f7e358ae81ebd945a43512469075f82a16dac12b2f0d1625",
+     "bytes": 3714364
+    },
+    "gpe_topo.csv": {
+     "sha256": "921f234c6bb75bc1b26928ff180e02728021250a0e27145aa87a36cf01ef522f",
+     "bytes": 21198
+    }
+   },
+   "origin": "on-disk output of `paper_models.jl nd_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set2_nd_sweep/tresca_deep_150_60km_V4_mem1; never committed there"
+  },
+  "suite3_background/tresca_deep_150_60km_V4_mem2": {
+   "command": "julia --project=. model/paper_models.jl nd_sweep",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "V_TN": 4.0,
+    "N_mem_TN": 2.0
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "91dd1b45819867344c7e6351bb372d62d70a1fc6b25a52c795b0e1c248580316",
+     "bytes": 3703141
+    },
+    "gpe_topo.csv": {
+     "sha256": "bccd499338dd276b3bf8996fcda745abd2fb16f68b1cd94e992f1b1ebcb0545f",
+     "bytes": 21199
+    }
+   },
+   "origin": "on-disk output of `paper_models.jl nd_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set2_nd_sweep/tresca_deep_150_60km_V4_mem2; never committed there"
+  },
+  "suite3_background/tresca_deep_150_60km_V4_mem3": {
+   "command": "julia --project=. model/paper_models.jl nd_sweep",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "V_TN": 4.0,
+    "N_mem_TN": 3.0
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "2792c39784fd55133b2c5489f23116cefc19dfa80e2a0e446e82869b42001418",
+     "bytes": 3687056
+    },
+    "gpe_topo.csv": {
+     "sha256": "f8645deb576ed0a5cffd7ca93ed7d204aaf625fdec6c4df32561fdd607efeed2",
+     "bytes": 21200
+    }
+   },
+   "origin": "on-disk output of `paper_models.jl nd_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set2_nd_sweep/tresca_deep_150_60km_V4_mem3; never committed there"
+  },
+  "suite4_thickness/tresca_150_30km": {
+   "command": "julia --project=. model/paper_models.jl thickness",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 30,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "w_target_m": 3232.9,
+    "V0_TN": 2.05,
+    "V_TN_tuned": 2.0446
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "dee0b236fedace1065e1f2d851d35fc32241773829d5324961ad026024ff8324",
+     "bytes": 3847841
+    },
+    "gpe_topo.csv": {
+     "sha256": "528d9c6dd15b6e850962321d170bf0099531546fb2b63437e930e2a7e7e4ec62",
+     "bytes": 21219
+    },
+    "tuned_V.txt": {
+     "sha256": "533e6d844391eb8632cc75372fd619da950808ea510328b207d151ab36d11cd3",
+     "bytes": 91
+    }
+   },
+   "origin": "committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set4_thickness/tresca_150_30km (commit 26e6c9b, 2026-08-11)"
+  },
+  "suite4_thickness/tresca_150_40km": {
+   "command": "julia --project=. model/paper_models.jl thickness",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 40,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "w_target_m": 3232.9,
+    "V0_TN": 2.7,
+    "V_TN_tuned": 2.7016
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "aea4ceada5d5e0d35f792a1194d587d5ba81f3e88f34c22b19fbae2c656735f9",
+     "bytes": 3824240
+    },
+    "gpe_topo.csv": {
+     "sha256": "5ef60b79185155973011ca44f5d218df69e40200407ae07563514872835603f3",
+     "bytes": 21272
+    },
+    "tuned_V.txt": {
+     "sha256": "cb5d380c2faac7dea5290260b5ee0ae516f9fccdf125d2da9452185696691368",
+     "bytes": 91
+    }
+   },
+   "origin": "committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set4_thickness/tresca_150_40km (commit 26e6c9b, 2026-08-11)"
+  },
+  "suite4_thickness/tresca_150_50km": {
+   "command": "julia --project=. model/paper_models.jl thickness",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 50,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "w_target_m": 3232.9,
+    "V0_TN": 3.35,
+    "V_TN_tuned": 3.3541
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "130ccd753a0ae1028ad60c6a1a52d1fe2dbdef40cca8580a7d16427ec8e2f71f",
+     "bytes": 3804351
+    },
+    "gpe_topo.csv": {
+     "sha256": "9b70dee8841177a20c75538a8373498856921781deabf625d39d610c3ebe920b",
+     "bytes": 21178
+    },
+    "tuned_V.txt": {
+     "sha256": "5447118381b29a151ca8810294045aaf3aaf19fbf4043a7d18acdce8ea687595",
+     "bytes": 91
+    }
+   },
+   "origin": "committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set4_thickness/tresca_150_50km (commit 26e6c9b, 2026-08-11)"
+  }
+ }
+}

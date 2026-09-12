@@ -8,10 +8,9 @@
 #     suite1     Suite 1: strength models — Tresca baseline, elastic, DD-VM asym, DD-VM sym  → data/suite1_strength
 #     nd_sweep   Suite 3: background N_D sweep at V=4                                    → data/suite3_background
 #     v_sweep    Suite 2: load V sweep (σ_Y=150)                                       → data/suite2_load
-#     esweep     Appendix B: elastic E sweep at V=4                                    → data/appendixB_esweep
 #     thickness  Suite 4: thickness sweep at matched deflection                        → data/suite4_thickness
 #     convergence  SI Table S2 convergence of the baseline (own command, not in `all`)   → data/convergence
-#     all        suite1 + nd_sweep + v_sweep + esweep + thickness
+#     all        suite1 + nd_sweep + v_sweep + thickness
 #
 #   julia --project=. paper_models.jl suite1  # (re)generate one production suite
 #   julia --project=. paper_models.jl all     # the full publication set
@@ -367,7 +366,7 @@ function run_dd_vm_direct(; μ, cohesion, h, V, nx, nz, name, nsteps = 22, H = 7
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    PROD = ("suite1", "nd_sweep", "v_sweep", "esweep", "thickness", "convergence", "all")
+    PROD = ("suite1", "nd_sweep", "v_sweep", "thickness", "convergence", "all")
     if !isempty(ARGS) && ARGS[1] in PROD
     # ========================= PRODUCTION (publication suites → data/, provenance-stamped) =========================
         valid = join(PROD, " | ")
@@ -395,13 +394,6 @@ if abspath(PROGRAM_FILE) == @__FILE__
                 catch e; nfail[] += 1; @printf("  V=%.1f FAILED: %s\n", Vt, sprint(showerror, e)); end
             end
         end
-        if cmd in ("esweep", "all")     # Appendix B: elastic Young's-modulus sweep at V=4 (E×1 = elastic_deep_60km_V4 in suite1)
-            for mul in (0.125, 0.25, 0.5, 2.0, 4.0, 8.0)
-                mn = replace(replace(string(mul), ".0" => ""), "." => "p")
-                try run_tresca_deep(; σY = ELASTIC, h = 60e3, V = 4e12, nx = 800, nz = 48, E = Emod*mul, outroot = "appendixB_esweep", name = "elastic_deep_60km_V4_E$(mn)")
-                catch e; nfail[] += 1; @printf("  E×%.3f FAILED: %s\n", mul, sprint(showerror, e)); end
-            end
-        end
         if cmd in ("thickness", "all")  # Suite 4: thickness sweep at matched trench deflection (h=60 baseline w=3233 m)
             for (hk, V0k) in ((30.0, 2.05), (40.0, 2.70), (50.0, 3.35))
                 nm = "tresca_150_$(Int(round(hk)))km"
@@ -426,7 +418,7 @@ if abspath(PROGRAM_FILE) == @__FILE__
         end
     else
         c = isempty(ARGS) ? "" : ARGS[1]
-        error("unknown command '$c'. Production commands: suite1 | nd_sweep | v_sweep | esweep | thickness | convergence | all.\n" *
+        error("unknown command '$c'. Production commands: suite1 | nd_sweep | v_sweep | thickness | convergence | all.\n" *
               "Diagnostic / exploratory commands live in diagnostics/sandbox.jl.")
     end
 end

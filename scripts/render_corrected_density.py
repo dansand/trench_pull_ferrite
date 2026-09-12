@@ -12,7 +12,7 @@ line's top is the deflected depth (~+3 km) and (b) the trench-zone shear support
 (plate-relative centroid ~33 km, steady over x=5-40 km).  This ~34 km arm is what reproduces the measured pull
 (g·Δρ·w·arm ≈ 2.5 TN/m) and matches the manuscript scaling ½(w_T+z_np); h/2 would under-predict by ~15%.
 
-    /opt/anaconda3/envs/pyvista-env/bin/python render_corrected_density.py
+    python scripts/render_corrected_density.py
 """
 import sys; sys.path.insert(0, "analysis")
 import numpy as np
@@ -126,7 +126,7 @@ def main():
     dg, _, _ = trench_pull(m)
     fig.suptitle(r"Corrected density: same integrated mass in every column $\Rightarrow$ trench pull is a density dipole"
                  f"  (measured pull {dg/1e12:.2f} TN/m)", fontsize=11.5)
-    outp = sys.argv[1] if len(sys.argv) > 1 else "data/reference_figures/corrected_density.png"
+    outp = sys.argv[1] if len(sys.argv) > 1 else "figures/corrected_density.png"
     fig.savefig(outp, dpi=140); print("wrote", outp)
 
 

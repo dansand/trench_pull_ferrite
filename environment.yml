@@ -1,6 +1,7 @@
-# Python environment for the analysis + figure scripts (gpe_analysis.py, render_*.py).
+# Python environment for the analysis, the figure scripts and the notebook
+# (analysis/gpe_analysis.py, scripts/render_*.py, START_HERE.ipynb, tests/, reproduce.sh).
 # Create with:  conda env create -f environment.yml   then:  conda activate ferrite-figs
-# Run all scripts from finite_strain/.  (The Julia solver env is pinned separately in Project.toml/Manifest.toml.)
+# Run every command from the repository root.  (The Julia solver env is pinned separately in Project.toml/Manifest.toml.)
 name: ferrite-figs
 channels:
   - conda-forge
@@ -10,3 +11,6 @@ dependencies:
   - numpy=1.26.4
   - matplotlib=3.9.1
   - scipy=1.13.1
+  - ipykernel=6.29.5     # START_HERE.ipynb kernel (then: python -m ipykernel install --user --name ferrite-figs)
+  - jupyterlab=4.2.4     # notebook front end; brings nbconvert/nbclient, which reproduce.sh uses to execute the notebook
+  - pytest=8.3.2         # tests/test_quick.py

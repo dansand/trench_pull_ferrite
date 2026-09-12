@@ -8,7 +8,7 @@ with ζ measured from the neutral plane.  The z²-coefficient is (−3V'/4c³ + 
 the parabola:  ∪ (edge-peaked) when  −V' + 3Vc'/c > 0,  else ∩ (centre-peaked).
 V, V', c, c' are all measured from the numerical model (V=∫σxz dz smooth; c from moment inversion).
 
-    /opt/anaconda3/envs/pyvista-env/bin/python render_core_profiles.py [MODEL_DIR]
+    python scripts/render_core_profiles.py [MODEL_DIR]
 """
 import sys; sys.path.insert(0, "analysis")
 import numpy as np
@@ -24,7 +24,7 @@ MODEL = "data/suite1_strength/tresca_deep_150_60km_V4"   # symmetric-Tresca base
 STATIONS = [60, 90, 120, 150, 175]       # km from trench, spanning the yielded band (V=4: M_max 90, V_max 182)
 SMOOTH_KM = 10.0
 DELTA_KM = 4.0                            # half-stencil for the deformed-frame ∂σxz/∂x (branch-A fallback only)
-OUT = "data/reference_figures/core_profiles_deep60.png"
+OUT = "figures/core_profiles_deep60.png"
 
 
 def fe_tau_deformed(m, xk, d_km):

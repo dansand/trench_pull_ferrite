@@ -1,5 +1,14 @@
 # The loaded-edge boundary artifact — investigation record
 
+> **Historical record, kept verbatim.** This was written in the private development archive (`ferrite_plate_flexure`,
+> 2026-07) and is shipped because the SI quotes its numbers (the 29 % force- vs displacement-controlled split, the
+> 12–14 % trench over-read, convergence within 40–60 km of the loaded edge). Names in it belong to the archive, not to
+> this release: `render_np_diag.py`, `render_mid_decomp.py`, `render_paper_figures.py`, `render_gradient_compare.py`,
+> the `dispload`/`bctest`/`set4` driver branches and the `out/`/`set1_rheology` paths do not exist here. In this release
+> the corresponding figures are `scripts/render_hero.py` (Fig. 3, Branch B gradient) and `scripts/render_core_profiles.py`
+> (Fig. S4), the models live in `data/suite1_strength/`, and "pseudo-density" is the equivalent density ρ̂ = τzx,x/g
+> (`README.md`, `REPRODUCE.md`). The physics and numbers below are unchanged.
+
 Record of a long forensic session on the loaded-trench-edge boundary layer and its effect on the pseudo-density
 centroid / dipole arm / trench pull. Written before a context compaction. Baseline model throughout:
 `set1_rheology/elastic_deep_60km_V4` (elastic) and `tresca_deep_150_60km_V4` (Tresca), massless, h=60 km.

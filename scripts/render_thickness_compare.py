@@ -11,10 +11,14 @@ flexural wavelength).  Message: with the finite thickness set, the strength-prof
   (a) pull ΔGPE* vs applied load V (bottom) with thickness h on a twin TOP axis (V∝h) — one line carries
       pull ∝ load ∝ thickness; through-origin fit ΔGPE* ≈ 0.65 V.  (Merges the former thickness_paths panel.)
   (b) deflection profiles, all matched at the trench (referenced to 0 at each model's isostatic column).
-  (c) equivalent density ρ̂ = τzx,x/g at the trench (plate-surface frame; ● centroid = dipole arm; h/2 ref).
-  (d) equivalent density at the max-moment (hinge) column.
+  (c) equivalent density ρ̂ = τzx,x/g at the trench (plate-surface frame; ● = signed centre of mass of the
+      shear-stress-gradient/equivalent-density distribution, ∫z·τzx,x dz / ∫τzx,x dz; thin line = h/2).
+  (d) the same at the max-moment (hinge) column.  No marker for h=30 km there: its net equivalent-density
+      resultant ∫τzx,x dz vanishes, so the signed centre of mass is undefined — it is left absent, not interpolated.
+  The centre of mass in (c,d) is NOT the force-based arm ΔGPE*/(Δρ g w) reported in the paper (~h/2 scaling in
+  the text of (a)); it is drawn only to show where the equivalent density sits.
 
-  /opt/anaconda3/envs/pyvista-env/bin/python render_thickness_compare.py
+  python scripts/render_thickness_compare.py
 """
 import sys; sys.path.insert(0, "analysis")
 import numpy as np
@@ -23,7 +27,7 @@ if __name__ == "__main__":
     matplotlib.use("Agg")   # headless only when run as a script; importable in Jupyter without hijacking the backend
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter1d
-from gpe_analysis import Model, trench_ref_km, reference_lines, trench_pull, deformed_shear_gradient
+from gpe_analysis import Model, trench_ref_km, reference_lines, trench_pull, deformed_shear_gradient, signed_centroid
 
 #           model dir                                             h[km]  colour (thin→warm, thick→cool)
 MODELS = [("data/suite4_thickness/tresca_150_30km",             30,   "#c0392b"),
@@ -31,7 +35,7 @@ MODELS = [("data/suite4_thickness/tresca_150_30km",             30,   "#c0392b")
           ("data/suite4_thickness/tresca_150_50km",             50,   "#2779b5"),
           ("data/suite1_strength/tresca_deep_150_60km_V4",      60,   "#1f3b73")]
 VLOAD = {30: 2.045, 40: 2.702, 50: 3.354, 60: 4.000}   # tuned load per plate [TN/m] (tuned_V.txt; 60 = baseline)
-OUT = "data/reference_figures/thickness_compare.png"
+OUT = "figures/thickness_compare.png"
 WINDOW_KM = 220
 GRAV = 9.81
 
@@ -52,17 +56,19 @@ def _ylim(ax, data):
 
 
 def _rho(ax, data, xkey, title):
-    """Equivalent density ρ̂ = τzx,x/g at column `xkey`, plate-surface frame; centroid ● + h/2 per plate."""
+    """Equivalent density ρ̂ = τzx,x/g at column `xkey`, plate-surface frame; per plate: ● the signed centre of
+    mass of the shear-stress-gradient/equivalent-density distribution (where defined) and the h/2 line."""
     for (mdir, hk, col), d in zip(MODELS, data):
         m = d["m"]; L, tau = deformed_shear_gradient(m, d[xkey]); z = (L["z"] - L["z"][0]) / 1e3
         ax.plot(gaussian_filter1d(tau / GRAV, 1.5), z, color=col, lw=2.2, label=f"$h={hk}$ km")   # smooth yield-front spikes
-        # signed charge centroid z_c = ∫z·τ dz / ∫τ dz (the dipole depth) from RAW τ.  Divides by the net
-        # charge, so it is only meaningful when the profile is charge-DOMINATED; when |∫τ| is small vs ∫|τ|
-        # (a near-balanced dipole, e.g. the thin-plate hinge) the centroid is ill-conditioned — suppress it.
+        # signed centre of mass z_c = ∫z·τ dz / ∫τ dz of the shear-stress-gradient (equivalent-density)
+        # distribution, from RAW τ.  It divides by the net resultant ∫τ, so it is undefined where that vanishes
+        # and ill-conditioned when |∫τ| is small against ∫|τ| (a near-balanced distribution, e.g. the fully
+        # plastic h=30 hinge): the marker is then left absent.
         tot = np.trapz(tau, L["z"]); absq = np.trapz(np.abs(tau), L["z"])
         if abs(tot) > 0.45 * absq:
-            zc = (np.trapz(L["z"] * tau, L["z"]) / tot - L["z"][0]) / 1e3
-            ax.plot(0.0, zc, "o", color=col, ms=9, mec="k", mew=0.9, zorder=6)   # centroid DEPTH, marked on the zero line (not on the curve)
+            zc = (signed_centroid(L["z"], tau) - L["z"][0]) / 1e3
+            ax.plot(0.0, zc, "o", color=col, ms=9, mec="k", mew=0.9, zorder=6)   # centre-of-mass DEPTH, marked on the zero line (not on the curve)
         ax.axhline(d["H"] / 2 / 1e3, color=col, lw=1.0, alpha=.4)           # h/2 reference (thin solid)
     _ylim(ax, data)
     ax.set_xlabel(r"$\hat\rho = \tau_{zx,x}/g$  [kg m$^{-3}$]"); ax.set_ylabel("depth below plate surface  [km]")
@@ -106,23 +112,11 @@ def main():
     ax[1].set_title("(b)  deflection  (matched at the trench; ● first isostatic column)", fontsize=11)
     ax[1].legend(fontsize=8.5, loc="lower right", ncol=2); ax[1].grid(alpha=.25)
 
-    # (c,d) equivalent density — the dipole (thinner plate: higher amplitude, shallower)
+    # (c,d) equivalent density (thinner plate: higher amplitude, shallower)
     _rho(ax[2], data, "x_tr", "(c)  equivalent density at the trench")
     _rho(ax[3], data, "x_mm", "(d)  equivalent density at max moment")
-    # h=30 max-moment centroid: the hinge is fully plastic and the signed shear-gradient centroid is ill-defined
-    # (net dipole ≈ 0), so it is SUPPRESSED above.  Plot an OPEN circle at the depth INTERPOLATED from the three
-    # well-resolved thicker plates (a linear centroid-depth vs h fit) — NOT from the h=30 gradient.  Caption flags it.
-    mm_h, mm_z = [], []
-    for (mdir, hk, col), d in zip(MODELS, data):
-        if hk == 30:
-            continue
-        L, tau = deformed_shear_gradient(d["m"], d["x_mm"]); z = L["z"]
-        mm_h.append(hk); mm_z.append((np.trapz(z * tau, z) / np.trapz(tau, z) - z[0]) / 1e3)
-    z30 = np.polyval(np.polyfit(mm_h, mm_z, 1), 30)
-    ax[3].plot(0.0, z30, "o", mfc="none", mec=MODELS[0][2], mew=2.0, ms=11, zorder=7,
-               label=f"$h=30$ (interp., {z30:.0f} km)")
-    ax[3].legend(fontsize=8.5, ncol=2)
-    print(f"  h=30 max-moment centroid (interpolated from h=40/50/60): {z30:.1f} km")
+    # (d), h=30: the hinge is fully plastic and the net resultant ∫τzx,x dz vanishes, so the signed centre of mass
+    # is undefined — _rho leaves the marker absent (no interpolated stand-in).
 
     fig.suptitle(r"Plate thickness controls the trench pull  (uniform Tresca, matched deflection, $\sigma_Y=150$ MPa)", fontsize=13.5)
     outp = sys.argv[1] if len(sys.argv) > 1 else OUT

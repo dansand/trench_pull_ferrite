@@ -9,7 +9,7 @@ builds a 2-panel movie of the loading cycle:
 Dependencies: matplotlib + PIL (both standard) and ../gpe_analysis.py, imported READ-ONLY for the
 deformed-Cauchy field extraction.  It modifies nothing in the core; delete animation/ to remove it all.
 
-  /opt/anaconda3/envs/pyvista-env/bin/python animation/render_anim.py
+  python animation/render_anim.py
 """
 import sys, os, glob
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "analysis"))   # ../gpe_analysis.py (read-only)

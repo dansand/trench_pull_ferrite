@@ -7,9 +7,11 @@ integral over the mesh nodes — no `sample_over_line` interpolation needed.
     from gpe_analysis import Model, reference_lines
     mod = Model("data/suite1_strength/tresca_deep_150_60km_V4")
     Cxx, Czz, Cxz = mod.cauchy_fields()   # Cauchy; the VTU's sigma_* are 2nd-PK —        # (Nx, Nz) numpy array -> pcolormesh/imshow
-    V   = mod.V()                           # ∫σxz dz  (Nx,)  vertical-shear resultant
+    V   = mod.V()                           # reference-grid Cauchy ∫σxz dz (Nx,) — for LOCATING columns only
+    dG, dN, x_I = trench_pull(mod)          # the paper's numbers: deformed-Cauchy columns (deformed_resultants)
     lines = reference_lines(mod)            # dict of named x-locations [km]
 """
+import json, os
 import numpy as np
 import pyvista as pv
 try:
@@ -59,66 +61,36 @@ class Model:
     def integrate_z(self, field2d):
         return _INT(field2d, self.z)
 
-    def resultant(self, name, comp=None):
-        return self.integrate_z(self.array(name, comp))
+    # ---- MATERIAL-section resultant: the two idealized-beam benchmarks, nothing else in the paper ----------------
+    def resultant_material(self, name):
+        """∫ S dz of an exported (2nd Piola–Kirchhoff, material-frame) stress field along the REFERENCE section.
+        The right measure for the material-section beam benchmarks (scripts/render_benchmark.py,
+        render_mp_benchmark.py: Hetényi V, shear parabola, M–κ on the reference thickness) and used by nothing
+        else — every production number goes through the deformed-Cauchy extractor (deformed_line /
+        deformed_resultants) below."""
+        return self.integrate_z(self.array(name))
 
-    # Resultants of the CAUCHY stress (σ = J⁻¹F S Fᵀ) integrated on the reference grid — used to LOCATE columns
-    # (reference_lines: V = 0 → max moment).  The VTU's sigma_* are 2nd Piola–Kirchhoff: never integrate them raw.
-    def N(self):   return self.integrate_z(self.cauchy_fields()[0])                    # axial force
-    def V(self):   return self.integrate_z(self.cauchy_fields()[2])                    # vertical shear resultant
-    def GPE(self): return self.integrate_z(self.cauchy_fields()[1])                    # RAW ∫σzz dz (σzz<0)
+    # ---- Reference-grid resultants of the CAUCHY stress: for LOCATING columns only ------------------------------
+    # σ = J⁻¹F S Fᵀ is formed at the reference nodes and integrated along the REFERENCE vertical (z at fixed X):
+    # a hybrid (spatial stress, material line), exact to O(slope), and adequate for finding where V = 0 or w = 0
+    # (reference_lines) and for the w_τ = −(dV/dx)/Δρg panels, which is all the paper uses these for.  No quoted
+    # column value comes from them: the trench pull and every column value go through deformed_line /
+    # deformed_resultants.  The VTU's sigma_* are 2nd Piola–Kirchhoff: never integrate them raw here (the
+    # benchmark exception is resultant_material above).
+    def N(self):   return self.integrate_z(self.cauchy_fields()[0])                    # ∫σxx dz  (reference grid)
+    def V(self):   return self.integrate_z(self.cauchy_fields()[2])                    # ∫σxz dz  (reference grid)
+    def GPE(self): return self.integrate_z(self.cauchy_fields()[1])                    # RAW ∫σzz dz (σzz<0)  (reference grid)
     # SIGN CONVENTION (main.tex): the manuscript GPE ≡ −σ̄_zz = −∫σzz dz = −GPE().  The trench-pull identity
     # is ΔN_D = −Δσ̄_zz ≡ ΔGPE, i.e. ΔN_D = ΔGPE (same sign), both = −∫δσzz.  So for the manuscript ΔGPE use
     # −(GPE()−far); it is NEGATIVE at the trench (pressure deficit) and POSITIVE at the outer rise. fx() = N_D.
-    def fx(self):  Cxx, Czz, _ = self.cauchy_fields(); return self.integrate_z(Cxx - Czz)      # N_D = ∫(σxx−σzz)dz
-    def M(self):                                                                       # bending moment ∫σxx(z−h/2)dz
+    def fx(self):  Cxx, Czz, _ = self.cauchy_fields(); return self.integrate_z(Cxx - Czz)      # N_D = ∫(σxx−σzz)dz  (reference grid)
+    def M(self):                                                                       # bending moment ∫σxx(z−h/2)dz  (reference grid)
         return self.integrate_z(self.cauchy_fields()[0] * (self.z - self.H / 2)[None, :])  # z = depth, arm about mid-plane
 
     def topography(self):
         # NB: this is a 2-D (x,y) mesh — the VERTICAL displacement is component 1 (VTK 'y'),
         # already negated at load, so it is u_z (positive-DOWN).  Top surface is depth index 0.
         return self.array("u", 1)[:, 0]                                                # deflection positive-down [m]
-
-    def box_fields(self, rho_w=1000.0, rho_m=3300.0, g=9.81, datum=0.0, z_c=None, npts=500):
-        """σzz AND σxx on ONE shared equipotential box, per column, evaluated at DEFORMED positions.
-        The box runs from `datum` (SEA LEVEL, z=0) down to `z_c` (default = the deepest deformed plate
-        base; below that there is NO FE stress, only the isotropic assumption, so extending z_c deeper
-        changes nothing).  This is a THIN-PLATE model, so beyond the plate the stress is an ISOTROPIC
-        approximation (σxx = σzz):
-          • WATER  above the deformed surface w(x):  σzz = −ρ_w g z  (hydrostatic, 0 at sea level; σxx=σzz)
-          • PLATE  w → deformed base:  the FE σzz and FE σxx
-          • MANTLE below the deformed base:  σzz continues lithostatically (ρ_m); σxx = σzz
-        Because the caps are isotropic, once σzz is known everywhere so is σxx.  Returns (zg[npts],
-        SZZ[Nx,npts], SXX[Nx,npts])."""
-        sxx, szz, _ = self.cauchy_fields(); uz = self.array("u", 1)
-        zdef = self.z[None, :] + uz
-        if z_c is None:
-            z_c = float(np.nanmax(zdef[:, -1]))                                        # deepest deformed base
-        zg = np.linspace(datum, z_c, npts)
-        SZZ = np.empty((self.Nx, npts)); SXX = np.empty((self.Nx, npts))
-        for i in range(self.Nx):
-            zd = zdef[i]; w, base = zd[0], zd[-1]
-            sz = np.interp(zg, zd, szz[i])                                             # plate σzz (FE)
-            sz = np.where(zg < w, -rho_w * g * zg, sz)                                 # hydrostatic water cap (σzz=0 at sea level)
-            sz = np.where(zg > base, szz[i, -1] - rho_m * g * (zg - base), sz)         # lithostatic cap below the base
-            sx = np.interp(zg, zd, sxx[i])                                             # plate σxx (FE)
-            sx = np.where((zg >= w) & (zg <= base), sx, sz)                            # caps are ISOTROPIC: σxx = σzz
-            SZZ[i] = sz; SXX[i] = sx
-        return zg, SZZ, SXX
-
-    def box_integrals(self, **kw):
-        """∫σzz, ∫σxx and N_D = ∫(σxx−σzz) per column over the shared box (see box_fields).
-        Returns dict: zg, SZZ, SXX (fields) and Szz, Sxx, Nd (Nx,)."""
-        zg, SZZ, SXX = self.box_fields(**kw)
-        Szz = np.trapz(SZZ, zg, axis=1); Sxx = np.trapz(SXX, zg, axis=1)
-        return {"zg": zg, "SZZ": SZZ, "SXX": SXX, "Szz": Szz, "Sxx": Sxx, "Nd": Sxx - Szz}
-
-    def gpe_lab(self, z_c=None, rho_w=1000.0, rho_m=3300.0, g=9.81, datum=0.0, return_zc=False):
-        """∫σzz per column over the shared equipotential box (thin wrapper on box_fields).  Manuscript
-        GPE ≡ −this; trench pull ΔGPE*(x) = −(gpe_lab(x) − gpe_lab(trench))."""
-        zg, SZZ, _ = self.box_fields(rho_w=rho_w, rho_m=rho_m, g=g, datum=datum, z_c=z_c)
-        out = np.trapz(SZZ, zg, axis=1)
-        return (out, float(zg[-1])) if return_zc else out
 
     # ==== BLESSED deformed-frame integration (massless platform; see FINDINGS §16) ====
     # The one audited way to compute the resultants: deform the mesh, form the CAUCHY stress, interpolate it
@@ -129,8 +101,9 @@ class Model:
                        exact. All production suites are massless.
           'gravity'  — 2nd-Piola + lithostatic prestress (S+σ0); the naive push-forward is inconsistent by
                        the prestress-rotation term (~2–5%) — use the exporter's own *_cauchy fields instead.
-        Read from provenance.txt (stress_frame=...) when stamped; otherwise inferred from the σzz scale
-        (lithostatic ≫ the load-induced stress of a massless run)."""
+        Read from provenance.txt (stress_frame=...) when stamped, else from the central data/DATA_MANIFEST.json
+        (the shipped models); otherwise inferred from the σzz scale (lithostatic ≫ the load-induced stress of a
+        massless run), with a printed notice."""
         if getattr(self, "_frame", None) is None:
             frame = None
             try:
@@ -140,10 +113,33 @@ class Model:
                             frame = line.strip().split("=", 1)[1]
             except OSError:
                 pass
-            if frame is None:                                   # no stamp: infer from the σzz magnitude
+            if frame is None:                                   # no stamp: the central manifest (shipped models)
+                frame = self.manifest_entry().get("stress_frame")
+            if frame is None:                                   # neither: infer from the σzz magnitude, and say so
                 frame = "gravity" if np.nanmedian(np.abs(self.array("sigma_zz [Pa]"))) > 300e6 else "massless"
+                print(f"[gpe_analysis] {self.dir}: no provenance.txt and no DATA_MANIFEST.json entry — stress frame "
+                      f"'{frame}' inferred from the σzz magnitude (300 MPa heuristic)")
             self._frame = frame
         return self._frame
+
+    def manifest_entry(self):
+        """This model's entry in data/DATA_MANIFEST.json (the central provenance record of the shipped models:
+        command, parameters, stress frame, file hashes, origin), found by walking up from the model directory;
+        {} if there is none."""
+        if getattr(self, "_manifest", None) is None:
+            self._manifest = {}
+            d = os.path.abspath(self.dir)
+            for _ in range(4):
+                parent = os.path.dirname(d)
+                mf = os.path.join(parent, "DATA_MANIFEST.json")
+                if os.path.isfile(mf):
+                    with open(mf) as f:
+                        models = json.load(f).get("models", {})
+                    key = os.path.relpath(os.path.abspath(self.dir), parent).replace(os.sep, "/")
+                    self._manifest = models.get(key, {})
+                    break
+                d = parent
+        return self._manifest
 
     def cauchy_fields(self):
         """Cauchy stress σ = J⁻¹·F·S·Fᵀ on the structured grid, F = I + ∂u/∂X.  Valid for the MASSLESS
@@ -262,6 +258,56 @@ class Model:
         return field2d[np.argmin(np.abs(self.xkm - x_km)), :]
 
 
+    # ==== NOT USED BY THE PAPER — legacy diagnostics, kept for completeness =====================================
+    # Nothing in scripts/, START_HERE.ipynb, tests/ or reproduce.sh calls these; the paper's column values come from
+    # deformed_line / deformed_resultants / trench_pull above.
+    def resultant(self, name, comp=None):
+        """∫ field dz on the reference grid, raw — a generic helper.  For stresses use resultant_material (S) or the
+        Cauchy methods above; never integrate the VTU's sigma_* raw for a production number."""
+        return self.integrate_z(self.array(name, comp))
+
+    def box_fields(self, rho_w=1000.0, rho_m=3300.0, g=9.81, datum=0.0, z_c=None, npts=500):
+        """σzz AND σxx on ONE shared equipotential box, per column, evaluated at DEFORMED positions.
+        The box runs from `datum` (SEA LEVEL, z=0) down to `z_c` (default = the deepest deformed plate
+        base; below that there is NO FE stress, only the isotropic assumption, so extending z_c deeper
+        changes nothing).  This is a THIN-PLATE model, so beyond the plate the stress is an ISOTROPIC
+        approximation (σxx = σzz):
+          • WATER  above the deformed surface w(x):  σzz = −ρ_w g z  (hydrostatic, 0 at sea level; σxx=σzz)
+          • PLATE  w → deformed base:  the FE σzz and FE σxx
+          • MANTLE below the deformed base:  σzz continues lithostatically (ρ_m); σxx = σzz
+        Because the caps are isotropic, once σzz is known everywhere so is σxx.  Returns (zg[npts],
+        SZZ[Nx,npts], SXX[Nx,npts])."""
+        sxx, szz, _ = self.cauchy_fields(); uz = self.array("u", 1)
+        zdef = self.z[None, :] + uz
+        if z_c is None:
+            z_c = float(np.nanmax(zdef[:, -1]))                                        # deepest deformed base
+        zg = np.linspace(datum, z_c, npts)
+        SZZ = np.empty((self.Nx, npts)); SXX = np.empty((self.Nx, npts))
+        for i in range(self.Nx):
+            zd = zdef[i]; w, base = zd[0], zd[-1]
+            sz = np.interp(zg, zd, szz[i])                                             # plate σzz (FE)
+            sz = np.where(zg < w, -rho_w * g * zg, sz)                                 # hydrostatic water cap (σzz=0 at sea level)
+            sz = np.where(zg > base, szz[i, -1] - rho_m * g * (zg - base), sz)         # lithostatic cap below the base
+            sx = np.interp(zg, zd, sxx[i])                                             # plate σxx (FE)
+            sx = np.where((zg >= w) & (zg <= base), sx, sz)                            # caps are ISOTROPIC: σxx = σzz
+            SZZ[i] = sz; SXX[i] = sx
+        return zg, SZZ, SXX
+
+    def box_integrals(self, **kw):
+        """∫σzz, ∫σxx and N_D = ∫(σxx−σzz) per column over the shared box (see box_fields).
+        Returns dict: zg, SZZ, SXX (fields) and Szz, Sxx, Nd (Nx,)."""
+        zg, SZZ, SXX = self.box_fields(**kw)
+        Szz = np.trapz(SZZ, zg, axis=1); Sxx = np.trapz(SXX, zg, axis=1)
+        return {"zg": zg, "SZZ": SZZ, "SXX": SXX, "Szz": Szz, "Sxx": Sxx, "Nd": Sxx - Szz}
+
+    def gpe_lab(self, z_c=None, rho_w=1000.0, rho_m=3300.0, g=9.81, datum=0.0, return_zc=False):
+        """∫σzz per column over the shared equipotential box (thin wrapper on box_fields).  Manuscript
+        GPE ≡ −this; trench pull ΔGPE*(x) = −(gpe_lab(x) − gpe_lab(trench))."""
+        zg, SZZ, _ = self.box_fields(rho_w=rho_w, rho_m=rho_m, g=g, datum=datum, z_c=z_c)
+        out = np.trapz(SZZ, zg, axis=1)
+        return (out, float(zg[-1])) if return_zc else out
+
+
 def _first_sign_change_from_left(xkm, f, edge_skip_km):
     """x [km] of the first sign change of f(x) scanning RIGHT from the trench (x = 0),
     skipping the first `edge_skip_km` (the loaded-edge boundary layer). NaN if none."""
@@ -304,6 +350,14 @@ def reference_lines(mod, edge_skip_km=6.0):
         "L1 (trench→shear_max)": L1,
         "2·L1": 2 * L1,
     }
+
+
+def signed_centroid(z, tau):
+    """Signed centre of mass ∫z·τ dz / ∫τ dz of a depth profile — for a τzx,x (equivalent-density) distribution, the
+    depth at which it sits.  ALWAYS signed (CLAUDE.md): it divides by the net resultant ∫τ, so for a sign-changing profile it can
+    fall outside the profile's support and is ill-conditioned when |∫τ| ≪ ∫|τ| (a near-balanced dipole) — callers
+    guard that case; a magnitude-weighted ∫z|τ|/∫|τ| is a different quantity and is never used."""
+    return np.trapz(z * tau, z) / np.trapz(tau, z)
 
 
 def trench_ref_km(mod):
@@ -359,30 +413,7 @@ def trench_pull(mod):
     return -(SzzI - SzzT), NdI - NdT, xiso
 
 
-def stress_depth_profiles(mod, line_keys=("moment_max", "shear_max", "outer_rise", "2·L1"),
-                          x_window=None):
-    """Depth profiles of σxx−σzz, σxz, and ∂σxz/∂x at the named reference lines.
-    Returns (fig, lines_dict). Uses matplotlib only (no pyvista plotting)."""
-    import matplotlib.pyplot as plt
-    lines = reference_lines(mod)
-    sxx, szz, sxz = mod.cauchy_fields()
-    quantities = [(r"$\sigma_{xx}-\sigma_{zz}$ [MPa]", (sxx - szz) / 1e6),
-                  (r"$\sigma_{xz}$ [MPa]", sxz / 1e6),
-                  (r"$\partial\sigma_{xz}/\partial x$ [kPa/m]", mod.grad_x_field(sxz) / 1e3)]
-    fig, axes = plt.subplots(1, len(quantities), figsize=(4.2 * len(quantities), 4.6), sharey=True,
-                             constrained_layout=True)
-    for ax, (lab, Q) in zip(axes, quantities):
-        for key in line_keys:
-            xk = lines[key]
-            ax.plot(mod.column(Q, xk), mod.depth, lw=1.7, label=f"{key} ({xk:.0f} km)")
-        ax.axvline(0, c="0.6", lw=0.7); ax.set_xlabel(lab); ax.grid(alpha=0.25)
-    axes[0].set_ylabel("depth [km]"); axes[0].set_ylim(mod.H / 1e3, 0)
-    axes[0].legend(fontsize=7.5, loc="best")
-    fig.suptitle(f"{mod.dir}: stress depth profiles at the flexure reference lines", fontsize=11)
-    return fig, lines
-
-
-# ---- elastic-core half-thickness c(x) (moved here from the retired render_core_thinning.py; used by figures/render_core_profiles.py) ----
+# ---- elastic-core half-thickness c(x) (moved here from the retired render_core_thinning.py; used by scripts/render_core_profiles.py) ----
 def core_thickness(m):
     """Elastic-core half-thickness c(x) [m] of a plastic bending model by three estimators, plus d = H/2.
     Returns (c_y, c_m, c_s, d): (a) c_y from the contiguous not-yielded band about the neutral plane; (b) c_m from
@@ -423,3 +454,27 @@ def core_thickness(m):
         if abs(k) > 1e-6:
             c_s[i] = min(sy / abs(k), d)
     return c_y, c_m, c_s, d
+
+
+# ==== NOT USED BY THE PAPER — legacy diagnostic, kept for completeness ===========================================
+def stress_depth_profiles(mod, line_keys=("moment_max", "shear_max", "outer_rise", "2·L1"),
+                          x_window=None):
+    """Depth profiles of σxx−σzz, σxz, and ∂σxz/∂x at the named reference lines.
+    Returns (fig, lines_dict). Uses matplotlib only (no pyvista plotting)."""
+    import matplotlib.pyplot as plt
+    lines = reference_lines(mod)
+    sxx, szz, sxz = mod.cauchy_fields()
+    quantities = [(r"$\sigma_{xx}-\sigma_{zz}$ [MPa]", (sxx - szz) / 1e6),
+                  (r"$\sigma_{xz}$ [MPa]", sxz / 1e6),
+                  (r"$\partial\sigma_{xz}/\partial x$ [kPa/m]", mod.grad_x_field(sxz) / 1e3)]
+    fig, axes = plt.subplots(1, len(quantities), figsize=(4.2 * len(quantities), 4.6), sharey=True,
+                             constrained_layout=True)
+    for ax, (lab, Q) in zip(axes, quantities):
+        for key in line_keys:
+            xk = lines[key]
+            ax.plot(mod.column(Q, xk), mod.depth, lw=1.7, label=f"{key} ({xk:.0f} km)")
+        ax.axvline(0, c="0.6", lw=0.7); ax.set_xlabel(lab); ax.grid(alpha=0.25)
+    axes[0].set_ylabel("depth [km]"); axes[0].set_ylim(mod.H / 1e3, 0)
+    axes[0].legend(fontsize=7.5, loc="best")
+    fig.suptitle(f"{mod.dir}: stress depth profiles at the flexure reference lines", fontsize=11)
+    return fig, lines

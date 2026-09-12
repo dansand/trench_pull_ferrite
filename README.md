@@ -9,7 +9,7 @@ Models, analysis and figure code for
 
 > **The 'trench pull' force: constraints from elasto-plastic bending models** — Sandiford (JGR: Solid Earth, submitted 2026).
 
-<img src="data/reference_figures/hero_tresca_deep60.png" width="820">
+<img src="figures/hero_tresca_deep60.png" width="820">
 
 *The reference model (uniform Tresca, σ_Y = 150 MPa, V = 4 TN/m): topography, stress, the shear stress τzx, the equivalent density
 ρ̂ = τzx,x/g that supports the pressure deficit, and the resultants — the trench pull ΔGPE\* = 2.54 TN/m, with the equilibrium
@@ -30,12 +30,16 @@ model/        the solver and the production driver (Julia)
                 paper_models.jl              every model in the paper is a command of this script
                 idealized_beam.jl            the beam benchmarks (SI S1, S2)
 analysis/     gpe_analysis.py — deformed-mesh Cauchy integration, trench pull ΔGPE*, equivalent density ρ̂
-figures/      one render_*.py per manuscript figure (see REPRODUCE.md)
+scripts/      one render_*.py per manuscript figure (see REPRODUCE.md)
+figures/      the reference renders — what the scripts write; the manuscript's copies are taken from here
 schematic/    TikZ sources for Figures 1, 2 and the SI stress-regime grid
 data/         all model output, one folder per manuscript suite: suite1_strength, suite2_load, suite3_background,
-              suite4_thickness, appendixB_esweep; idealized_beam* (benchmarks); reference_figures/ (the shipped renders)
+              suite4_thickness; idealized_beam* (benchmarks)
+              DATA_MANIFEST.md / .json — per model: generating command, parameters, SHA-256 of every file, origin
 START_HERE.ipynb   the analysis step by step, then on any model, then the paper's figures from their scripts
 REPRODUCE.md       figure → script → data → command, for every figure in the paper
+reproduce.sh       one command that regenerates and checks every figure (and runs the notebook and the tests)
+tests/test_quick.py  fast checks (seconds): push-forward, centroid, resultants, benchmark misfits, import hygiene
 ```
 Data folders are named after the manuscript's suites; the driver's *commands* stay descriptive (`v_sweep` → `data/suite2_load`, `nd_sweep` → `data/suite3_background`).
 
@@ -50,6 +54,9 @@ julia --project=. -e 'using Pkg; Pkg.instantiate()'
 conda env create -f environment.yml && conda activate ferrite-figs
 python -m ipykernel install --user --name ferrite-figs   # so START_HERE.ipynb can select this env as its kernel
 ```
+Headless machines: the figure scripts draw with matplotlib (Agg, no display needed) — except `scripts/render_hero.py`,
+whose field panels are rendered off-screen by PyVista/VTK and need an OpenGL context. Without a display, set
+`PYVISTA_OFF_SCREEN=true` and run under Xvfb (`xvfb-run -a python scripts/render_hero.py`) or with a Mesa/OSMesa-capable VTK.
 **TikZ** (Figures 1, 2, SI grid) — [`tectonic`](https://tectonic-typesetting.github.io/); no pdflatex needed.
 
 **Run every command from the repository root.** Scripts locate `analysis/` and `data/` relative to it.
@@ -58,16 +65,19 @@ python -m ipykernel install --user --name ferrite-figs   # so START_HERE.ipynb c
 
 `REPRODUCE.md` has every figure's exact command. The short version:
 ```bash
-python figures/render_hero.py                 # Fig 3     python figures/render_benchmark.py       # S1
-python figures/render_gpe_correlation.py      # Fig 4     python figures/render_mp_benchmark.py    # S2
-python figures/render_gpe_compare.py          # Fig 5     python figures/render_core_profiles.py   # S4
-python figures/render_profiles.py             # Fig 6     python figures/render_corrected_density.py  # S5
-python figures/render_thickness_compare.py    # Fig 7     python figures/render_edge_si.py         # parked SI figure (loaded edge)
-python figures/render_esweep_test.py          # App. B (the E-sweep arm quoted in §4.1)
+python scripts/render_hero.py                 # Fig 3     python scripts/render_benchmark.py       # S1
+python scripts/render_gpe_correlation.py      # Fig 4     python scripts/render_mp_benchmark.py    # S2
+python scripts/render_gpe_compare.py          # Fig 5     python scripts/render_core_profiles.py   # S4
+python scripts/render_profiles.py             # Fig 6     python scripts/render_corrected_density.py  # S5
+python scripts/render_thickness_compare.py    # Fig 7
 ( cd schematic && python gen_equilibration_compare.py && tectonic equilibration_compare.tex \
                 && tectonic ridge_trench_overview_v2.tex && tectonic taux_cases.tex )       # Figs 1, 2, SI grid
 ```
-Each script writes its figure into `data/reference_figures/`; the shipped copies are the reference renders.
+**`./reproduce.sh` regenerates and checks every figure**: it runs every command above in order, asserts the headline
+numbers (ΔGPE\* = 2.542 TN/m, identity < 0.05 %, arm 34.9 km, the S1/S2 benchmark misfits, the reconstruction
+table), executes `START_HERE.ipynb` top to bottom and runs `pytest tests/`, exiting nonzero on any failure.
+
+Each script writes its figure into `figures/`; the shipped copies are the reference renders.
 Expect output-equivalent figures (identical data, layout and numbers) — byte-identical PNGs are not guaranteed
 across matplotlib/font builds. Several scripts print the numbers quoted in the paper (e.g. `render_gpe_compare.py`
 prints the ~2 % plate-top-arm and ~8 % sea-level-arm reconstruction errors).
@@ -81,16 +91,20 @@ The one figure-side exception: the **S2 convergence table** reads `data/converge
 
 ## 4. Re-run the models
 
-The driver is skip-existing (it will not recompute a model whose output exists — move a directory aside to force a
-rerun) and never overwrites. Output goes to `data/<suite>/<model>/`, each with a `provenance.txt` stamp.
+The driver is skip-existing and never overwrites: it checks only for `gpe_model.vtu` in the target directory, so a
+finished model is skipped and a directory with partial output (no VTU) is re-solved — reruns go into an empty or
+absent directory; move a finished directory aside to force a rerun. Output goes to `data/<suite>/<model>/`.
+Every model the driver produces gets a `provenance.txt` stamp (commit, parameters, completion flag). **The shipped
+models predate that stamp and carry none**; their provenance — generating command, parameters, SHA-256 of every
+file, origin — is recorded centrally in `data/DATA_MANIFEST.md` (`python analysis/make_manifest.py --check`
+verifies the shipped files against it).
 ```bash
 julia --project=. model/paper_models.jl suite1        # Suite 1: four strength models at V = 4 TN/m (the reference set)
 julia --project=. model/paper_models.jl v_sweep       # manuscript Suite 2: load sweep V = 1 … 4.5   → data/suite2_load
 julia --project=. model/paper_models.jl nd_sweep      # manuscript Suite 3: background N_D = −3 … +3 → data/suite3_background
 julia --project=. model/paper_models.jl thickness     # Suite 4: h = 30/40/50 km at matched deflection (secant-tuned V)
-julia --project=. model/paper_models.jl esweep        # Appendix B: Young's-modulus sweep
 julia --project=. model/paper_models.jl convergence   # SI Table S2 (not part of `all`)
-julia --project=. model/paper_models.jl all           # suite1 + nd_sweep + v_sweep + esweep + thickness
+julia --project=. model/paper_models.jl all           # suite1 + nd_sweep + v_sweep + thickness
 julia --project=. model/idealized_beam.jl             # the benchmark beams (S1, S2)
 ```
 Reference model, for orientation: uniform Tresca σ_Y = 150 MPa, h = 60 km, V = 4 TN/m → trench deflection 3233 m,

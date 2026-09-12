@@ -12,7 +12,7 @@ plate (no hydrostatic caps).  Panels:
   (d) −Δσzz(z)      [MPa]    FILLED: area = the trench pull ΔGPE* (referenced to the TRENCH column, brought
                             inboard to the leftmost complete deformed column, at the same absolute level).
 
-    /opt/anaconda3/envs/pyvista-env/bin/python render_profiles.py
+    python scripts/render_profiles.py
 """
 import sys, os; sys.path.insert(0, "analysis")
 import numpy as np
@@ -27,7 +27,7 @@ MODELS = [("data/suite1_strength/elastic_deep_60km_V4",    "elastic"),
           ("data/suite1_strength/tresca_deep_150_60km_V4",  "elasto-plastic\n(Tresca)"),
           ("data/suite1_strength/dd_vm_asym_60km_V4",    "DD-VM asym\n(weak top)"),
           ("data/suite1_strength/dd_vm_sym_60km_V4",    "DD-VM sym\n(weak surf.)")]
-OUT = "data/reference_figures/profiles.png"
+OUT = "figures/profiles.png"
 STATION_COLORS = {"moment_max": "#c0392b", "mid": "#8e44ad", "shear_max": "#16a085"}
 STATION_LABELS = {"moment_max": "max $M$", "mid": "mid", "shear_max": "first isostatic ($x_I$)"}
 ORDER = ["moment_max", "shear_max"]

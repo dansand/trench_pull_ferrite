@@ -9,7 +9,7 @@ by changing V or N_D.
   (B) ΔGPE* vs w        — both suites; do they collapse onto one line?  (linearity in topography)
   (C) V vs w            — the load→deflection map (yielding bends it away from linear).
 
-    /opt/anaconda3/envs/pyvista-env/bin/python render_gpe_correlation.py
+    python scripts/render_gpe_correlation.py
 """
 import sys; sys.path.insert(0, "analysis")
 import numpy as np
@@ -34,7 +34,7 @@ SUITE3 = [(4.0, -3, f"{P}/suite3_background/tresca_deep_150_60km_V4_mem-3"), (4.
 # Suite 2 / centre of Suite 3), so here we plot only the OTHER rheologies varying around it.
 SUITE1 = [("elastic", f"{P}/suite1_strength/elastic_deep_60km_V4"), ("DD-VM asym", f"{P}/suite1_strength/dd_vm_asym_60km_V4"),
           ("DD-VM sym", f"{P}/suite1_strength/dd_vm_sym_60km_V4")]
-OUT = f"{P}/reference_figures/gpe_correlation.png"
+OUT = "figures/gpe_correlation.png"
 
 
 def gather(rows):

@@ -8,7 +8,7 @@ LaTeX colorbars, dashed reference lines, and a line panel for the resultants:
   (d) resultants V, M, F_D vs x (normalised)
 Vertical lines mark the flexure reference locations; an extra DASHED line marks DASH_BETWEEN's midpoint.
 
-    /opt/anaconda3/envs/pyvista-env/bin/python render_hero.py
+    python scripts/render_hero.py
 """
 import sys, os; sys.path.insert(0, "analysis")
 import numpy as np
@@ -53,7 +53,7 @@ SATURATE  = 0.62
 RENDER_W  = 1500                      # px width of each PyVista panel render
 MAP_W_IN  = 6.6                       # matplotlib map-axes width [in]; height follows the plate aspect
 DIFF_DIR  = None                      # if set, fields become (MODEL_DIR − DIFF_DIR); crosses/centroid dropped
-OUT = "data/reference_figures/hero_tresca_deep60.png"
+OUT = "figures/hero_tresca_deep60.png"
 # Panels: (key, LaTeX colorbar label, cmap)
 PANELS = [("diff", r"$\sigma_{xx}-\sigma_{zz}$  [MPa]", "RdBu_r"),    # σxx−σzz
           ("sxz",  r"$\tau_{zx}$  [MPa]", "PuOr_r"),                  # vertical shear (purple/orange — distinct)

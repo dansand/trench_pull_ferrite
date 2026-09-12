@@ -2,6 +2,8 @@ __pycache__/
 *.pyc
 .DS_Store
 .ipynb_checkpoints/
+.pytest_cache/
+.reproduce_logs/
 data/_sandbox/
 scratch/
 animation/frames/

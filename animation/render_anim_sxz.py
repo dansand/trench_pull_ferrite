@@ -9,7 +9,7 @@ sigma_xz — the parent of the shear-stress gradient — through the loading cyc
 Scalar upsampled before colour-mapping so blue<->red transitions pass through white (no grey), as in
 render_anim_rho.py.  Reuses ../gpe_analysis.py READ-ONLY.  Delete animation/ to remove everything.
 
-  /opt/anaconda3/envs/pyvista-env/bin/python animation/render_anim_sxz.py
+  python animation/render_anim_sxz.py
 """
 import sys, os, glob
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "analysis"))
