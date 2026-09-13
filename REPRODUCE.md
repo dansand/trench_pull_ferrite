@@ -55,4 +55,7 @@ benchmark); everything else goes through the deformed-Cauchy extractor — see `
 - `data/BOUNDARY_ARTIFACT.md` — loaded-edge sensitivity (29 % force- vs displacement-controlled split; raw
   trench 12–14 % above the interior; convergence within 40–60 km of the loaded edge).
 - `data/CONVERGENCE.md` — the Table S3 convergence / consistency values.
+- `data/ISOSTATIC_COLUMN.md` — the cost of assuming the first isostatic column lithostatic (Σzz(x_I) = 0, as the analytic
+  estimate does) instead of measuring it: −0.13 % on the reference model, up to ~2 % in Suite 1 and ~4 % with a background
+  N_D (`python analysis/isostatic_column_test.py`, run by `reproduce.sh`). The SI quotes this.
 - `scripts/render_gpe_compare.py` prints the plate-top-arm (~2 %) and sea-level-arm (~8 %) reconstruction errors.

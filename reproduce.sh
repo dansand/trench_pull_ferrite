@@ -36,6 +36,7 @@ run hero_h30          env HERO_WINDOW_KM=200 "$PY" scripts/render_hero.py data/s
 run hero_h40          env HERO_WINDOW_KM=260 HERO_MFIX=0 "$PY" scripts/render_hero.py data/suite4_thickness/tresca_150_40km figures/hero_tresca_40km.png
 run hero_dd_vm_asym   "$PY" scripts/render_hero.py data/suite1_strength/dd_vm_asym_60km_V4 figures/hero_dd_vm_asym.png
 run hero_dd_vm_sym    "$PY" scripts/render_hero.py data/suite1_strength/dd_vm_sym_60km_V4 figures/hero_dd_vm_sym.png
+run isostatic_column  "$PY" analysis/isostatic_column_test.py
 run manifest          "$PY" analysis/make_manifest.py --check
 if command -v tectonic > /dev/null; then
     run schematic bash -c "cd schematic && $PY gen_equilibration_compare.py && tectonic equilibration_compare.tex && tectonic ridge_trench_overview_v2.tex && tectonic taux_cases.tex"

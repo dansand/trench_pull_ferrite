@@ -51,8 +51,9 @@ no manuscript figure depends on them; `gen_frames.jl` is a **model run** (24 sol
 ## Manuscript handshake
 The manuscript is `~/projects/mypapers/trench_pull_force/2026_codex/full_manuscript/` (being finalised with Codex; its LaTeX
 reads figures from its own `figures/` directory — some are renamed on copy, see `REPRODUCE.md`). `2026_version/` is a
-static relic — never read it as current. When figures are regenerated for the paper: copy them
-there and quote the commit hash they were produced at, so the paper's `PROVENANCE.md` can pin it.
+static relic — never read it as current. When figures are regenerated for the paper: copy them there. Provenance is the
+pinned solver versions (Julia 1.10.5, Ferrite.jl 1.4.1 in `Manifest.toml`) and `data/DATA_MANIFEST.md`; do not chase
+commit hashes through the README or the paper's records (Dan, 2026-09-13 — that is more detail than the package needs).
 
 ## Acceptance test
 `./reproduce.sh` passes: `pytest tests/`, every figure script from the root against `data/`, the notebook top to bottom in

@@ -73,7 +73,7 @@ def main():
     ax[0].set_xlim(-2600, 700); reflines(ax[0])
     ax[0].set_xlabel(r"corrected density  $\hat\rho_c$  [kg m$^{-3}$]  (symlog about 3300)")
     ax[0].set_ylabel("depth  [km]")
-    ax[0].set_title(r"(1)  corrected density  $\hat\rho_c=\rho+g^{-1}\partial_x\sigma_{xz}$", fontsize=10.5)
+    ax[0].set_title(r"(a)  corrected density  $\hat\rho_c=\rho+g^{-1}\partial_x\sigma_{xz}$", fontsize=10.5)
     ax[0].annotate("water deficit", (-900, -0.2), fontsize=8, ha="center", va="bottom", color="#b2182b")
     ax[0].annotate("equivalent\n(shear support)", (172, 55), fontsize=8, ha="left", va="center", color="0.3")
     tf = blended_transform_factory(ax[0].transAxes, ax[0].transData)
@@ -90,7 +90,7 @@ def main():
     ax[1].set_xlim(900, 3450); reflines(ax[1])
     ax[1].set_xlabel(r"cumulative average  $\bar\rho(z)=z^{-1}\!\int_0^z\!\hat\rho_c\,dz'$  [kg m$^{-3}$]")
     ax[1].set_ylabel("depth  [km]")
-    ax[1].set_title("(2)  every column $\\to$ the same integrated density", fontsize=10.5)
+    ax[1].set_title("(b)  every column $\\to$ the same integrated density", fontsize=10.5)
     ax[1].annotate(f"$\\bar\\rho\\to${conv:.0f}\n(equal mass)", (conv - 120, 58), fontsize=8.5, ha="right",
                    va="bottom", style="italic", color="0.3")
     ax[1].grid(alpha=0.2)                                         # no legend — same columns as panel (1)
@@ -120,7 +120,7 @@ def main():
     reflines(ax[2]); ax[2].set_xlim(0.45, 2.9)
     ax[2].set_xticks(list(slot.values())); ax[2].set_xticklabels([l for l, _, _ in glyph], fontsize=10)
     ax[2].set_ylabel("depth  [km]"); ax[2].set_xlabel(r"column   ($\Delta$GPE relative to isostatic)")
-    ax[2].set_title(r"(3)  $\Delta$GPE dipole (vs isostatic column)", fontsize=10.5)
+    ax[2].set_title(r"(c)  $\Delta$GPE dipole (vs isostatic column)", fontsize=10.5)
     ax[2].grid(alpha=0.2, axis="y")
 
     dg, _, _ = trench_pull(m)

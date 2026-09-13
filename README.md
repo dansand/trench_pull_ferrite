@@ -2,8 +2,16 @@
 
 <img src="animation/trench_pull_loading.gif" width="820">
 
-*A 60 km elasto-plastic plate loaded at its trench edge: the deflection grows with the applied shear, creating a pressure deficit
-beneath the trench that acts as a horizontal driving force — the trench pull. (24 load steps; `animation/`.)*
+*A 60 km elasto-plastic plate loaded at its trench edge: the deflection grows with the applied shear, and with it a
+pressure deficit beneath the trench — a GPE-like resultant, ΔGPE\* = −Δσ̄zz. That resultant is the trench pull. Static
+equilibrium requires it to be balanced, and in these models it is balanced by an exchange with the other horizontal
+component: an equal and opposite normal-stress-difference resultant, ΔN_D, arises. (24 load steps; `animation/`.)*
+
+*The models start from a plate carrying no horizontal force at all — true even of the horizontal normal stress, since there
+are no body forces. Loading the left edge vertically then couples the vertical load to the horizontal resultants: an
+exchange between the vertical and the horizontal force. The nature and degree of that coupling — the efficiency of the
+exchange, how far it departs from the simple picture of Section 2 of the associated manuscript, and how well it agrees
+with the analytical predictions there — is what these models measure.*
 
 Models, analysis and figure code for
 
@@ -36,6 +44,7 @@ schematic/    TikZ sources for Figures 1, 2 and the SI stress-regime grid
 data/         all model output, one folder per manuscript suite: suite1_strength, suite2_load, suite3_background,
               suite4_thickness; idealized_beam* (benchmarks)
               DATA_MANIFEST.md / .json — per model: generating command, parameters, SHA-256 of every file, origin
+              CONVERGENCE.md, ISOSTATIC_COLUMN.md, BOUNDARY_ARTIFACT.md — records behind numbers the SI quotes
 START_HERE.ipynb   the analysis step by step, then on any model, then the paper's figures from their scripts
 REPRODUCE.md       figure → script → data → command, for every figure in the paper
 reproduce.sh       one command that regenerates and checks every figure (and runs the notebook and the tests)
@@ -55,8 +64,9 @@ conda env create -f environment.yml && conda activate ferrite-figs
 python -m ipykernel install --user --name ferrite-figs   # so START_HERE.ipynb can select this env as its kernel
 ```
 Headless machines: the figure scripts draw with matplotlib (Agg, no display needed) — except `scripts/render_hero.py`,
-whose field panels are rendered off-screen by PyVista/VTK and need an OpenGL context. Without a display, set
-`PYVISTA_OFF_SCREEN=true` and run under Xvfb (`xvfb-run -a python scripts/render_hero.py`) or with a Mesa/OSMesa-capable VTK.
+whose field panels are rendered off-screen by PyVista/VTK and need an OpenGL context. On a display-less Ubuntu 22.04 VM with
+the Mesa libraries installed (`libegl1-mesa`, `libgl1-mesa-dri`) VTK falls back to Mesa's software EGL renderer by itself and
+the full `./reproduce.sh` passes (verified 2026-09-13); without Mesa, run it under Xvfb (`xvfb-run -a python scripts/render_hero.py`).
 **TikZ** (Figures 1, 2, SI grid) — [`tectonic`](https://tectonic-typesetting.github.io/); no pdflatex needed.
 
 **Run every command from the repository root.** Scripts locate `analysis/` and `data/` relative to it.
@@ -97,7 +107,10 @@ absent directory; move a finished directory aside to force a rerun. Output goes 
 Every model the driver produces gets a `provenance.txt` stamp (commit, parameters, completion flag). **The shipped
 models predate that stamp and carry none**; their provenance — generating command, parameters, SHA-256 of every
 file, origin — is recorded centrally in `data/DATA_MANIFEST.md` (`python analysis/make_manifest.py --check`
-verifies the shipped files against it).
+verifies the shipped files against it). The shipped models were produced with Julia 1.10.5 and Ferrite.jl 1.4.1 (the
+pinned `Manifest.toml`); re-solving the baseline with that environment on macOS arm64 reproduced the shipped files byte for
+byte (w_T 3233 m, ΔGPE\* 2.542 TN/m, identity residual 0.019 %). On other platforms expect the numbers, not necessarily
+the bytes.
 ```bash
 julia --project=. model/paper_models.jl suite1        # Suite 1: four strength models at V = 4 TN/m (the reference set)
 julia --project=. model/paper_models.jl v_sweep       # manuscript Suite 2: load sweep V = 1 … 4.5   → data/suite2_load

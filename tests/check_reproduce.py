@@ -3,7 +3,8 @@
 Reads the per-step logs written by reproduce.sh and the executed notebook, and checks, with tolerances:
   ΔGPE* = 2.542 TN/m ± 0.5 %   identity |ΔN_D − ΔGPE*|/ΔGPE* < 0.05 %   arm ΔGPE*/(Δρ g w_T) = 34.9 ± 0.2 km   (notebook §4–5,
   and render_profiles' panel-(d) self-check)   S1/S2 benchmark assertions passed   the Suite-1 reconstruction table
-  (render_gpe_compare: plate-top arm ≤ 3 %, sea-level arm ≤ 10 %)   S1 deflection offset 1.6 ± 0.3 %   every figure file rewritten after the run started.
+  (render_gpe_compare: plate-top arm ≤ 3 %, sea-level arm ≤ 10 %)   S1 deflection offset 1.6 ± 0.3 %   the isostatic-column
+  assumption (reference |change| ≤ 0.5 %, all models ≤ 5 %)   every figure file rewritten after the run started.
 Exit 1 on any failure; prints every check either way."""
 import glob, json, os, re, sys
 
@@ -68,6 +69,13 @@ elif os.path.isfile(os.path.join(LOG, "NOTEBOOK_SKIPPED")):
     print("  skip  notebook not executed (--no-nb)")
 else:
     check(False, "notebook: execution FAILED — no executed copy was produced (see notebook.log)")
+
+# --- the isostatic-column assumption (analysis/isostatic_column_test.py): cost of taking x_I as lithostatic
+m = re.search(r"Reference model \(Tresca, h = 60 km, V = 4 TN/m\): ([+-][\d.]+) %", log("isostatic_column"))
+check(m is not None and abs(float(m.group(1))) <= 0.5, f"isostatic-column assumption, reference model: {m and m.group(1)} % (|change| ≤ 0.5 %)")
+rows = re.findall(r"^\| suite\d\S* \| `[^`]+` \|(?:[^|]*\|){5}\s*([+-][\d.]+) \|", log("isostatic_column"), re.M)
+check(len(rows) == 20 and all(abs(float(v)) <= 5.0 for v in rows),
+      f"isostatic-column assumption, all {len(rows)} production models: max |change| {max((abs(float(v)) for v in rows), default=float('nan')):.2f} % (≤ 5 %)")
 
 # --- every figure rewritten after the run started
 t0 = float(open(os.path.join(LOG, "START")).read()) if os.path.isfile(os.path.join(LOG, "START")) else 0.0
