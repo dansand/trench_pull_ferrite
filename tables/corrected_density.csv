@@ -1,0 +1,10 @@
+# written by scripts/render_corrected_density.py, alongside figures/corrected_density.png
+# models: data/suite1_strength/tresca_deep_150_60km_V4
+# deflected_mid_plate_km=33.2103
+# deflected_base_km=63.2394
+# trench_depth_km=3.18118
+# cumulative_average_density_at_base_kg_m3=3301.6
+column,x_km,dGPE_vs_isostatic_TN,water_lobe_pressure_MPa,water_lobe_depth_km,equivalent_lobe_pressure_MPa,equivalent_lobe_depth_km,dipole_arm_km
+trench,0.930385,2.54249,71.7769,1.59059,75.7712,38.8012,37.2106
+max M,89.0731,0.538781,20.7066,0.458861,20.0668,26.9798,26.5209
+isostatic,181.86,-0,-0.0130506,-0.000289205,0.151965,9.40228,9.40257

@@ -28,7 +28,7 @@ import matplotlib
 if __name__ == "__main__":
     matplotlib.use("Agg")   # headless only when run as a script; importable in Jupyter without hijacking the backend
 import matplotlib.pyplot as plt
-from gpe_analysis import Model, trench_ref_km
+from gpe_analysis import Model, trench_ref_km, write_table
 
 
 def main():
@@ -78,6 +78,14 @@ def main():
     assert abs(P / P_APPLIED - 1) <= 0.01, f"end resultant {P/1e12:.3f} TN/m not within 1% of {P_APPLIED/1e12:.0f} TN/m"
     assert 0.005 <= off0 / 100 <= 0.03, f"thick-plate offset {off0:+.1f}% outside the expected 0.5–3% band"
     print("benchmark assertions passed")
+    write_table("benchmark_boef", ["quantity", "value", "unit"], [
+        ("end_resultant_from_FE", P / 1e12, "TN/m"), ("applied_end_shear", P_APPLIED / 1e12, "TN/m"),
+        ("alpha", ALPHA / 1e3, "km"), ("h_over_alpha", H / ALPHA, "-"), ("w0_FE", float(w_fe[0]), "m"), ("w0_thin_beam", float(w_an[0]), "m"),
+        ("w0_offset_vs_thin_beam", off0, "%"),
+        ("w_misfit_max_0_4alpha", 100 * relerr_w, "%"), ("V_misfit_max_0_4alpha", 100 * relerr_Q, "%"),
+        ("shear_parabola_misfit_max", 100 * relerr_tau, "%")],
+        script="scripts/render_benchmark.py", figure="figures/benchmark_boef.png",
+        models=["data/suite1_strength/elastic_deep_60km_V4", "data/idealized_beam_elastic"])
 
     # --- figure ---
     fig, ax = plt.subplots(1, 3, figsize=(13.5, 4.2), constrained_layout=True)

@@ -89,33 +89,63 @@ def test_reference_model_reads_manifest_and_headline_numbers():
     assert abs(arm / 1e3 - 34.9) < 0.2, arm
 
 
+def test_write_read_table_round_trip(tmp_path, monkeypatch):
+    """tables/: write_table writes a '#' provenance header + CSV; read_table returns the meta and typed rows; floats are
+    6-s.f. formatted so a rerun is byte-stable; sequence rows and dict rows write identically."""
+    from gpe_analysis import write_table, read_table
+    monkeypatch.chdir(tmp_path)
+    rows_seq = [("a", 1.23456789, 3), ("b", -2.0e-7, 4)]
+    rows_dict = [{"name": "a", "value": 1.23456789, "n": 3}, {"name": "b", "value": -2.0e-7, "n": 4}]
+    p1 = write_table("t1", ["name", "value", "n"], rows_seq, script="s.py", figure="figures/f.png", models=["data/m"], meta={"slope": 0.6476543})
+    p2 = write_table("t2", ["name", "value", "n"], rows_dict, script="s.py", figure="figures/f.png", models=["data/m"], meta={"slope": 0.6476543})
+    assert open(p1).read().replace("t1", "t") == open(p2).read().replace("t2", "t")
+    head = open(p1).read().splitlines()[:3]
+    assert head[0] == "# written by s.py, alongside figures/f.png" and head[1] == "# models: data/m" and head[2] == "# slope=0.647654"
+    meta, rows = read_table(p1)
+    assert meta == {"slope": 0.647654}
+    assert rows == [{"name": "a", "value": 1.23457, "n": 3.0}, {"name": "b", "value": -2e-07, "n": 4.0}]
+    assert open(p1).read() == open(write_table("t1", ["name", "value", "n"], rows_seq, script="s.py", figure="figures/f.png", models=["data/m"], meta={"slope": 0.6476543})).read()
+
+
+def test_every_committed_table_has_provenance_header():
+    """Every tables/*.csv names the script that wrote it and parses with read_table."""
+    from gpe_analysis import read_table
+    files = sorted(glob.glob("tables/*.csv"))
+    assert len(files) >= 14, files
+    for p in files:
+        first = open(p).readline()
+        assert first.startswith("# written by "), (p, first)
+        meta, rows = read_table(p)
+        assert rows and all(isinstance(r, dict) for r in rows), p
+
+
 def test_manifest_check_passes():
     r = subprocess.run([PY, "analysis/make_manifest.py", "--check"], capture_output=True, text=True)
     assert r.returncode == 0, r.stdout + r.stderr
 
 
 def test_convergence_script_refuses_without_data():
-    """Without data/convergence/ the script must exit nonzero and leave the recorded table untouched."""
+    """Without data/convergence/ the script must exit nonzero and leave the recorded tables untouched."""
     if os.path.isdir("data/convergence"):
         pytest.skip("data/convergence/ present — the refusal path is not exercised")
-    before = _sha("data/CONVERGENCE.md")
+    before = _sha("tables/convergence.md") + _sha("tables/convergence.csv")
     r = subprocess.run([PY, "scripts/render_convergence.py"], capture_output=True, text=True)
     assert r.returncode != 0
-    assert _sha("data/CONVERGENCE.md") == before
+    assert _sha("tables/convergence.md") + _sha("tables/convergence.csv") == before
 
 
 @pytest.mark.parametrize("script", sorted(glob.glob("scripts/render_*.py")))
 def test_import_has_no_side_effects(script):
-    """Importing a figure module must not render, write a file, or change the matplotlib backend."""
+    """Importing a figure module must not render, write a figure or table, or change the matplotlib backend."""
     mod = os.path.basename(script)[:-3]
-    snap = {p: os.path.getmtime(p) for p in glob.glob("figures/*") + glob.glob("data/*.md")}
+    snap = {p: os.path.getmtime(p) for p in glob.glob("figures/*") + glob.glob("tables/*") + glob.glob("data/*.md")}
     code = ("import sys, matplotlib; sys.path[:0] = ['analysis', 'scripts']; b0 = matplotlib.get_backend()\n"
             f"import {mod}\n"
             "assert matplotlib.get_backend() == b0, (b0, matplotlib.get_backend())\n"
             "import matplotlib.pyplot as plt; assert plt.get_fignums() == [], plt.get_fignums()\n")
     r = subprocess.run([PY, "-c", code], capture_output=True, text=True)
     assert r.returncode == 0, r.stderr[-2000:]
-    assert {p: os.path.getmtime(p) for p in glob.glob("figures/*") + glob.glob("data/*.md")} == snap
+    assert {p: os.path.getmtime(p) for p in glob.glob("figures/*") + glob.glob("tables/*") + glob.glob("data/*.md")} == snap
 
 
 @pytest.mark.parametrize("script", ["scripts/render_benchmark.py", "scripts/render_mp_benchmark.py"])

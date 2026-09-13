@@ -22,7 +22,7 @@ if __name__ == "__main__":
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FixedLocator, FixedFormatter
 from matplotlib.transforms import blended_transform_factory
-from gpe_analysis import Model, reference_lines, trench_ref_km, deformed_shear_gradient, trench_pull
+from gpe_analysis import Model, reference_lines, trench_ref_km, deformed_shear_gradient, trench_pull, write_table
 
 m = Model("data/suite1_strength/tresca_deep_150_60km_V4")
 G = 9.81; RW = 1000.0; RP = 3300.0; DR = RP - RW
@@ -127,6 +127,15 @@ def main():
     fig.suptitle(r"Corrected density: same integrated mass in every column $\Rightarrow$ trench pull is a density dipole"
                  f"  (measured pull {dg/1e12:.2f} TN/m)", fontsize=11.5)
     outp = sys.argv[1] if len(sys.argv) > 1 else "figures/corrected_density.png"
+    rows = []
+    for lab, xk, c in COLS:
+        d = dipole_lobes(xk)
+        rows.append((lab.replace("$", "").replace("\\", ""), xk, dgpe(xk), d["m_true"] * G / 1e6, d["z_true"] / 1e3, d["m_ps"] * G / 1e6, d["z_ps"] / 1e3, (d["z_ps"] - d["z_true"]) / 1e3))
+    write_table("corrected_density", ["column", "x_km", "dGPE_vs_isostatic_TN", "water_lobe_pressure_MPa", "water_lobe_depth_km",
+                                      "equivalent_lobe_pressure_MPa", "equivalent_lobe_depth_km", "dipole_arm_km"], rows,
+                script="scripts/render_corrected_density.py", figure=outp, models=[m.dir],
+                meta={"deflected_mid_plate_km": MID_T / 1e3, "deflected_base_km": BASE_T / 1e3, "trench_depth_km": W_T / 1e3,
+                      "cumulative_average_density_at_base_kg_m3": float(conv)})
     fig.savefig(outp, dpi=140); print("wrote", outp)
 
 

@@ -12,6 +12,7 @@ there for history, never develop there. **This repo is the single source of trut
 ## Layout (role-based; run everything from the repo root)
 `model/` Julia solver + `paper_models.jl` production driver · `analysis/gpe_analysis.py` (+ `make_manifest.py`) ·
 `scripts/render_*.py` (one per manuscript figure) · `figures/` the shipped reference renders (what the scripts write) ·
+`tables/` every number the paper quotes as CSV, written by the same script in the same pass as its figure ·
 `schematic/` TikZ · `data/` all model output + `DATA_MANIFEST.md/.json` (provenance: command, parameters, SHA-256, origin) ·
 `START_HERE.ipynb` · `REPRODUCE.md` (figure → script → data → command) · `reproduce.sh` (regenerate + check everything) ·
 `tests/test_quick.py` (+ `test_quick.jl`; seconds) · `animation/` (loading movies — illustrative,
@@ -21,7 +22,9 @@ no manuscript figure depends on them; `gen_frames.jl` is a **model run** (24 sol
 - **The user makes every commit and push.** Never `git commit` or `git push`. Stage if useful, then show the command.
 - **Never run a finite-element solve unprompted.** Solves take minutes–hours and only ever go through
   `model/paper_models.jl <command>` (skip-existing, never clobbers) — no ad-hoc model runs. Ask first.
-- **One script → one figure.** No ghost outputs. `render_hero.py` is the one parameterised renderer (same layout for
+- **One script → one figure (+ its table).** No ghost outputs. A figure script that produces a number the paper quotes
+  writes it to `tables/<figure>.csv` via `gpe_analysis.write_table` in the same pass, from the same arrays — never a
+  separate computation; `reproduce.sh` asserts every table was rewritten and reads its checks from the tables. `render_hero.py` is the one parameterised renderer (same layout for
   any model directory) — that is fine; several *designs* of a figure in one script is not.
 - Figure scripts must stay **importable**: `matplotlib.use("Agg")` lives under `if __name__ == "__main__"`, never at
   module level (it would hijack Jupyter's backend). Plotting helpers that take an `ax` are preferred.

@@ -1,0 +1,13 @@
+# written by scripts/render_benchmark.py, alongside figures/benchmark_boef.png
+# models: data/suite1_strength/elastic_deep_60km_V4, data/idealized_beam_elastic
+quantity,value,unit
+end_resultant_from_FE,3.99951,TN/m
+applied_end_shear,4,TN/m
+alpha,124.241,km
+h_over_alpha,0.482932,-
+w0_FE,2899.25,m
+w0_thin_beam,2853.48,m
+w0_offset_vs_thin_beam,1.60418,%
+w_misfit_max_0_4alpha,1.60418,%
+V_misfit_max_0_4alpha,0.758532,%
+shear_parabola_misfit_max,0.393898,%

@@ -1,0 +1,10 @@
+# written by scripts/render_hero.py, alongside figures/hero_tresca_40km.png
+# models: data/suite4_thickness/tresca_150_40km
+quantity,value,unit
+x_trench,0,km
+x_moment_max,61.065,km
+x_shear_max,126.001,km
+x_outer_rise,198,km
+rhohat_centroid_depth_mean_over_window,19.9282,km
+rhohat_centroid_depth_min_over_window,12.6755,km
+rhohat_centroid_depth_max_over_window,24.8659,km

@@ -21,7 +21,7 @@ if __name__ == "__main__":
     matplotlib.use("Agg")   # headless only when run as a script; importable in Jupyter without hijacking the backend
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter1d
-from gpe_analysis import Model, reference_lines, trench_pull, trench_ref_km, deformed_shear_gradient
+from gpe_analysis import Model, reference_lines, trench_pull, trench_ref_km, deformed_shear_gradient, write_table
 
 MODELS = [("data/suite1_strength/elastic_deep_60km_V4",    "elastic"),
           ("data/suite1_strength/tresca_deep_150_60km_V4",  "elasto-plastic\n(Tresca)"),
@@ -139,6 +139,7 @@ def main():
     zgrid = np.linspace(ztop, zbot, 500)
     fig, axes = plt.subplots(len(MODELS), 4, figsize=(13.0, 3.55 * len(MODELS)), sharex="col", sharey=False, constrained_layout=True)
     print("panel-(d) self-check: trench-curve area (trench−isostatic, zero outside) == trench_pull ΔGPE*:")
+    rows = []
     for i, (m, (_, rlab)) in enumerate(zip(ms, MODELS)):
         plot_row(m, axes[i], is_top=(i == 0), zgrid=zgrid)
         axes[i, 0].set_ylabel(f"{rlab}\n\ndepth below plate surface  [km]", fontsize=12)
@@ -146,6 +147,7 @@ def main():
         x_tr = trench_ref_km(m)
         area = np.trapz(szz_on_grid(m, x_tr, zgrid) - szz_on_grid(m, stations(m)["shear_max"], zgrid), zgrid)
         dGPE = trench_pull(m)[0]; wterm = DRHOG * m.deformed_line(x_tr)["z"][0] ** 2 / 2
+        rows.append((MODELS[i][0], rlab.replace(chr(10), " "), area / 1e12, dGPE / 1e12, 100 * abs(area - dGPE) / abs(dGPE)))
         print(f"   {rlab.replace(chr(10),' '):24s}: area={area/1e12:+.4f}  trench_pull={dGPE/1e12:+.4f}  (Δ={100*abs(area-dGPE)/abs(dGPE):.2f}%)   [truncated above-plate GPE ≈ {wterm/1e12:.3f}]")
     Hkm = ms[0].H / 1e3                                                      # (a)-(c): plate-surface frame (0 = plate top)
     for ax in axes[:, :3].flat:
@@ -160,6 +162,8 @@ def main():
     fig.suptitle("Depth profiles at the flexure locations (trench · max $M$ · first isostatic $x_I$); (a)-(c) below plate surface, (d) below reference level   "
                  "● = centroid of $\\tau_{zx,x}$", fontsize=12.5)
     fig.savefig(OUT, dpi=150); print("wrote", OUT)
+    write_table("profiles_selfcheck", ["model", "label", "trench_curve_area_TN", "trench_pull_TN", "diff_pct"], rows,
+                script="scripts/render_profiles.py", figure="figures/profiles.png", models=[d for d, _ in MODELS])
 
 
 if __name__ == "__main__":

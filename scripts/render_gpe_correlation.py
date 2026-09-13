@@ -18,7 +18,7 @@ if __name__ == "__main__":
     matplotlib.use("Agg")   # headless only when run as a script; importable in Jupyter without hijacking the backend
 import matplotlib.pyplot as plt
 import matplotlib.patheffects as pe
-from gpe_analysis import Model, trench_pull
+from gpe_analysis import Model, trench_pull, write_table
 
 P = "data"
 # (V, N_D, path)
@@ -141,6 +141,12 @@ def main():
     fig.savefig(OUT, dpi=140); print("wrote", OUT.split("/")[-1])
     print(f"  reference (Tresca V=4): w={wref:.2f} km, ΔGPE*={Gref:.2f} TN/m ;  uniform-plate slope Δρg·H/2 = {slope:.3f}")
     print("  Suite 1: " + ", ".join(f"{t} (w={x:.2f}, {y:.2f})" for t, x, y in zip(lab1, w1, G1)))
+    rows = ([("suite2_load", "Tresca", p, v, nd, x, y) for (v, nd, p), x, y in zip(SUITE2, w2, G2)]
+            + [("suite3_background", "Tresca", p, v, nd, x, y) for (v, nd, p), x, y in zip(SUITE3, w3, G3)]
+            + [("suite1_strength", t, p, 4.0, 0, x, y) for (t, p), x, y in zip(SUITE1, w1, G1)])
+    write_table("gpe_correlation", ["suite", "label", "model", "V_TN", "N_mem_TN", "w_T_km", "dGPE_TN"], rows,
+                script="scripts/render_gpe_correlation.py", figure=OUT, models=[r[2] for r in rows],
+                meta={"uniform_plate_slope_TN_per_km": slope, "reference_w_T_km": wref, "reference_dGPE_TN": Gref})
 
 
 if __name__ == "__main__":

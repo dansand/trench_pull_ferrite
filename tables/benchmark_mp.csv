@@ -1,0 +1,9 @@
+# written by scripts/render_mp_benchmark.py, alongside figures/benchmark_mp.png
+# models: data/idealized_beam
+quantity,value,unit
+sections_on_curve,148,-
+mean_misfit_M_over_Mp,0.094833,%
+max_misfit_M_over_Mp,0.854534,%
+kappa_max_over_kappa_y,2.26437,-
+M_over_Mp_at_kappa_max,0.936446,-
+analytic_M_over_Mp_at_kappa_max,0.93499,-

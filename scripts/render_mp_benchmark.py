@@ -27,7 +27,7 @@ if __name__ == "__main__":
     matplotlib.use("Agg")   # headless only when run as a script; importable in Jupyter without hijacking the backend
 import matplotlib.pyplot as plt
 from matplotlib import cm
-from gpe_analysis import Model
+from gpe_analysis import Model, write_table
 
 
 def main():
@@ -61,6 +61,11 @@ def main():
     assert resid.max() <= 0.01,    f"max M–κ misfit {resid.max()*100:.2f}% > 1%"
     assert ok.sum() == 148,        f"{ok.sum()} sections on the curve, SI states 148"
     print("benchmark assertions passed")
+    write_table("benchmark_mp", ["quantity", "value", "unit"], [
+        ("sections_on_curve", int(ok.sum()), "-"), ("mean_misfit_M_over_Mp", resid.mean() * 100, "%"),
+        ("max_misfit_M_over_Mp", resid.max() * 100, "%"), ("kappa_max_over_kappa_y", kmax, "-"),
+        ("M_over_Mp_at_kappa_max", float(Mn[ok][np.argmax(kn[ok])]), "-"), ("analytic_M_over_Mp_at_kappa_max", float(analytic(kmax)), "-")],
+        script="scripts/render_mp_benchmark.py", figure="figures/benchmark_mp.png", models=["data/idealized_beam"])
 
     fig, ax = plt.subplots(1, 2, figsize=(11.5, 4.6), constrained_layout=True)
 

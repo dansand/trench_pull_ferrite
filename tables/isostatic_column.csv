@@ -1,0 +1,23 @@
+# written by analysis/isostatic_column_test.py
+# models: data/suite1_strength/dd_vm_asym_60km_V4, data/suite1_strength/dd_vm_sym_60km_V4, data/suite1_strength/elastic_deep_60km_V4, data/suite1_strength/tresca_deep_150_60km_V4, data/suite2_load/tresca_deep_150_60km_V1, data/suite2_load/tresca_deep_150_60km_V1p5, data/suite2_load/tresca_deep_150_60km_V2, data/suite2_load/tresca_deep_150_60km_V2p5, data/suite2_load/tresca_deep_150_60km_V3, data/suite2_load/tresca_deep_150_60km_V3p5, data/suite2_load/tresca_deep_150_60km_V4p5, data/suite3_background/tresca_deep_150_60km_V4_mem-1, data/suite3_background/tresca_deep_150_60km_V4_mem-2, data/suite3_background/tresca_deep_150_60km_V4_mem-3, data/suite3_background/tresca_deep_150_60km_V4_mem1, data/suite3_background/tresca_deep_150_60km_V4_mem2, data/suite3_background/tresca_deep_150_60km_V4_mem3, data/suite4_thickness/tresca_150_30km, data/suite4_thickness/tresca_150_40km, data/suite4_thickness/tresca_150_50km
+suite,model,h_km,x_I_km,Szz_xI_TN,dGPE_measured_TN,dGPE_if_xI_lithostatic_TN,change_pct,net_charge_at_xI_as_deflection_m,peak_abs_szz_on_xI_MPa
+suite1_strength,dd_vm_asym_60km_V4,60,173.101,-0.0450102,2.28775,2.24274,-1.96744,-0.427375,1.81378
+suite1_strength,dd_vm_sym_60km_V4,60,170.639,-0.00576692,2.8357,2.82993,-0.203369,0.999677,0.99536
+suite1_strength,elastic_deep_60km_V4,60,194.787,-0.0153551,2.23367,2.21831,-0.687437,-0.274272,0.378994
+suite1_strength,tresca_deep_150_60km_V4,60,181.86,-0.00342097,2.54249,2.53906,-0.134552,6.73513,1.04831
+suite2_load,tresca_deep_150_60km_V1,60,194.395,-0.00097938,0.509334,0.508355,-0.192286,-0.0140483,0.0249285
+suite2_load,tresca_deep_150_60km_V1p5,60,194.46,-0.00219513,0.776901,0.774706,-0.282549,-0.0444314,0.0548926
+suite2_load,tresca_deep_150_60km_V2,60,194.525,-0.0038889,1.05273,1.04884,-0.369412,-0.0851002,0.0966066
+suite2_load,tresca_deep_150_60km_V2p5,60,194.551,-0.00601544,1.33726,1.33125,-0.449832,-0.131999,0.148554
+suite2_load,tresca_deep_150_60km_V3,60,193.539,-0.00670139,1.64899,1.64229,-0.406394,-0.192121,0.158393
+suite2_load,tresca_deep_150_60km_V3p5,60,189.696,-0.00499935,2.03252,2.02752,-0.245969,-0.861483,0.417643
+suite2_load,tresca_deep_150_60km_V4p5,60,170.237,-0.00118628,3.1981,3.19691,-0.0370933,2.77687,1.63116
+suite3_background,tresca_deep_150_60km_V4_mem-1,60,178.846,0.0476838,2.63766,2.68534,1.80781,1.15011,1.94143
+suite3_background,tresca_deep_150_60km_V4_mem-2,60,172.468,0.0675569,2.87295,2.94051,2.35148,4.91061,2.53449
+suite3_background,tresca_deep_150_60km_V4_mem-3,60,160.936,0.0561387,3.30802,3.36416,1.69705,4.91323,2.54176
+suite3_background,tresca_deep_150_60km_V4_mem1,60,182.121,-0.056731,2.52193,2.4652,-2.24951,-0.919699,2.10419
+suite3_background,tresca_deep_150_60km_V4_mem2,60,179.635,-0.0845645,2.52713,2.44257,-3.34626,-2.25113,2.88091
+suite3_background,tresca_deep_150_60km_V4_mem3,60,173.874,-0.0971674,2.55842,2.46126,-3.79794,-0.551295,3.48816
+suite4_thickness,tresca_150_30km,30,95.893,-0.00346252,1.39976,1.3963,-0.247365,14.011,1.42796
+suite4_thickness,tresca_150_40km,40,126.001,-0.00323832,1.78321,1.77998,-0.1816,7.97227,1.39665
+suite4_thickness,tresca_150_50km,50,154.644,-0.00332326,2.16048,2.15715,-0.15382,5.8107,1.2281

@@ -21,7 +21,7 @@ from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
 from matplotlib.transforms import blended_transform_factory
 import matplotlib.patheffects as pe
-from gpe_analysis import Model, reference_lines, trench_ref_km, trench_pull, deformed_shear_gradient
+from gpe_analysis import Model, reference_lines, trench_ref_km, trench_pull, deformed_shear_gradient, write_table
 
 # equivalent density gradient g⁻¹ τzx,x: HERO_BRANCH="B" (default) = FE-exported dsxz_dx; "A" = finite-difference grad_x_field
 BRANCH = os.environ.get("HERO_BRANCH", "B").upper()
@@ -343,6 +343,13 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
     if save:
         fig.savefig(out_path, dpi=180)
         print("wrote", out_path)
+        rows = [(f"x_{k}", lines[k], "km") for k in REF_KEYS]
+        if not is_diff and np.isfinite(zc_depth[wsel_c]).any():
+            rows += [("rhohat_centroid_depth_mean_over_window", float(np.nanmean(zc_depth[wsel_c])), "km"),
+                     ("rhohat_centroid_depth_min_over_window", float(np.nanmin(zc_depth[wsel_c])), "km"),
+                     ("rhohat_centroid_depth_max_over_window", float(np.nanmax(zc_depth[wsel_c])), "km")]
+        write_table(os.path.splitext(os.path.basename(out_path))[0], ["quantity", "value", "unit"], rows,
+                    script="scripts/render_hero.py", figure=out_path, models=[model_dir] + ([diff_dir] if is_diff else []))
     return fig
 
 

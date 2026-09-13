@@ -40,11 +40,14 @@ model/        the solver and the production driver (Julia)
 analysis/     gpe_analysis.py — deformed-mesh Cauchy integration, trench pull ΔGPE*, equivalent density ρ̂
 scripts/      one render_*.py per manuscript figure (see REPRODUCE.md)
 figures/      the reference renders — what the scripts write; the manuscript's copies are taken from here
+tables/       every number the paper quotes, as CSV — written by the same script, in the same pass, as its figure
+                model_summary.csv (one row per model), isostatic_column.csv, convergence.csv (Table S3), the
+                benchmark misfits, the Fig. 5 reconstruction errors, the Fig. 7 values, the hero reference lines
 schematic/    TikZ sources for Figures 1, 2 and the SI stress-regime grid
 data/         all model output, one folder per manuscript suite: suite1_strength, suite2_load, suite3_background,
               suite4_thickness; idealized_beam* (benchmarks)
               DATA_MANIFEST.md / .json — per model: generating command, parameters, SHA-256 of every file, origin
-              CONVERGENCE.md, ISOSTATIC_COLUMN.md, BOUNDARY_ARTIFACT.md — records behind numbers the SI quotes
+              BOUNDARY_ARTIFACT.md — the loaded-edge investigation record the SI quotes
 START_HERE.ipynb   the analysis step by step, then on any model, then the paper's figures from their scripts
 REPRODUCE.md       figure → script → data → command, for every figure in the paper
 reproduce.sh       one command that regenerates and checks every figure (and runs the notebook and the tests)
@@ -85,7 +88,9 @@ python scripts/render_thickness_compare.py    # Fig 7
 ```
 **`./reproduce.sh` regenerates and checks every figure**: it runs every command above in order, asserts the headline
 numbers (ΔGPE\* = 2.542 TN/m, identity < 0.05 %, arm 34.9 km, the S1/S2 benchmark misfits, the reconstruction
-table), executes `START_HERE.ipynb` top to bottom and runs `pytest tests/`, exiting nonzero on any failure.
+table), executes `START_HERE.ipynb` top to bottom and runs `pytest tests/`, exiting nonzero on any failure. The numbers it checks are
+read from `tables/*.csv`, which every figure script writes alongside its figure from the same arrays — a table and
+its figure cannot disagree, and the harness asserts both were rewritten.
 
 Each script writes its figure into `figures/`; the shipped copies are the reference renders.
 Expect output-equivalent figures (identical data, layout and numbers) — byte-identical PNGs are not guaranteed
@@ -95,9 +100,19 @@ prints the ~2 % plate-top-arm and ~8 % sea-level-arm reconstruction errors).
 Some figures are **renamed when copied into the manuscript**: `thickness_compare.png` → `ferrite_thickness_compare.png`;
 `hero_tresca_{30,40}km.png` → `ferrite_hero_h{30,40}.png`; `schematic/taux_cases.pdf` → `fig_taux_cases_grid.pdf`.
 
-The one figure-side exception: the **S2 convergence table** reads `data/convergence/`, which is not included
-(regeneration-only, several solves). Its values are in `data/CONVERGENCE.md`; to regenerate, run
+The one figure-side exception: the **Table S3 convergence table** reads `data/convergence/`, which is not included
+(regeneration-only, several solves). Its values are in `tables/convergence.csv` (and `.md`); to regenerate, run
 `julia --project=. model/paper_models.jl convergence` first.
+
+## 3b. Tables — the numbers the paper quotes
+
+`tables/` holds every model-derived number the manuscript and SI quote, as CSV, one file per figure or record. Each is
+written by the **same script, in the same pass, from the same arrays** as its figure, so a table and its figure cannot
+disagree; `./reproduce.sh` rewrites all of them and reads its numerical checks from them. Each file's `#` header names the
+script, the figure and the models it came from. `tables/README.md` is the handoff for the manuscript: which file backs
+which number, columns and units, and how to validate. Standalone tables: `model_summary.csv` (one row per production
+model: thickness, load, background N_D, w_T, the three columns, ΔGPE\*, ΔN_D, identity residual, effective arm),
+`isostatic_column.csv`, `convergence.csv` (Table S3).
 
 ## 4. Re-run the models
 

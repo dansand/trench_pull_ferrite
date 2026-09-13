@@ -23,7 +23,7 @@ if __name__ == "__main__":
     matplotlib.use("Agg")   # headless only when run as a script; importable in Jupyter without hijacking the backend
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter1d
-from gpe_analysis import Model, trench_ref_km, deformed_shear_gradient
+from gpe_analysis import Model, trench_ref_km, deformed_shear_gradient, write_table
 
 S1 = "data/suite1_strength"
 # The Tresca baseline is the reference model; SUITE1 is the full 2×2 rheology panel.  (DD-VM entries are
@@ -86,6 +86,7 @@ def _errs(dgpe, pdsea, pdtop, approx):
 def main_suite1():
     """Full Suite-1 robustness: pull = equivalent-density dipole across all four rheologies (2×2 top-panels)."""
     fig, axes = plt.subplots(2, 2, figsize=(11.0, 8.4), sharex=True, sharey=True, constrained_layout=True)
+    rows = []
     for k, (mdir, title) in enumerate(SUITE1):
         ax = axes.flat[k]
         m, x, dgpe, pdsea, pdtop, approx = profile(mdir)
@@ -95,6 +96,7 @@ def main_suite1():
         # numbers quoted in the SI; they are printed (not drawn) so the quoted values stay reproducible.
         # The h/2 miss in the title is the physical, reportable one.
         print(f"   {title:22s}: plate-top arm {etop:.1f}%,  sea-level arm {esea:.1f}%,  mid-plate approx {eap:.1f}%")
+        rows.append((mdir, title, etop, esea, eap))
         ax.set_title(f"{title}    ($h/2$ estimate off {eap:.0f}%)", fontsize=10.5)
         if k % 2 == 0:
             ax.set_ylabel(r"$\Delta$GPE$^{*}$  [TN m$^{-1}$]", fontsize=11)
@@ -103,6 +105,8 @@ def main_suite1():
     fig.suptitle(r"Trench pull $\Delta$GPE$^{*}$ = equivalent-density dipole across Suite 1 — "
                  "relatively insensitive to the strength model (plate-top arm)", fontsize=12.5)
     fig.savefig(OUT_SUITE1, dpi=135); print("wrote", OUT_SUITE1)
+    write_table("gpe_compare_reconstruction", ["model", "label", "plate_top_arm_err_pct", "sea_level_arm_err_pct", "mid_plate_approx_err_pct"],
+                rows, script="scripts/render_gpe_compare.py", figure="figures/gpe_compare_suite1.png", models=[d for d, _ in SUITE1])
 
 
 if __name__ == "__main__":

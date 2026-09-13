@@ -27,7 +27,7 @@ if __name__ == "__main__":
     matplotlib.use("Agg")   # headless only when run as a script; importable in Jupyter without hijacking the backend
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter1d
-from gpe_analysis import Model, trench_ref_km, reference_lines, trench_pull, deformed_shear_gradient, signed_centroid
+from gpe_analysis import Model, trench_ref_km, reference_lines, trench_pull, deformed_shear_gradient, signed_centroid, write_table
 
 #           model dir                                             h[km]  colour (thin→warm, thick→cool)
 MODELS = [("data/suite4_thickness/tresca_150_30km",             30,   "#c0392b"),
@@ -121,6 +121,11 @@ def main():
     fig.suptitle(r"Plate thickness controls the trench pull  (uniform Tresca, matched deflection, $\sigma_Y=150$ MPa)", fontsize=13.5)
     outp = sys.argv[1] if len(sys.argv) > 1 else OUT
     fig.savefig(outp, dpi=150); print("wrote", outp)
+    write_table("thickness_compare", ["h_km", "V_TN", "w_T_km", "x_I_km", "x_M_km", "pull_TN", "pull_over_V"],
+                [(hk, VLOAD[hk], d["m"].deformed_line(d["x_tr"])["z"][0] / 1e3, d["xi"] - d["x_tr"], d["x_mm"] - d["x_tr"], d["pull"], d["pull"] / VLOAD[hk])
+                 for (mdir, hk, col), d in zip(MODELS, data)],
+                script="scripts/render_thickness_compare.py", figure="figures/thickness_compare.png", models=[d for d, _, _ in MODELS],
+                meta={"through_origin_slope_dGPE_over_V": s0})
     print(f"  through-origin ΔGPE*/V = {s0:.3f};  ratios = " + ", ".join(f"{d['pull']/VLOAD[hk]:.3f}" for (mdir, hk, col), d in zip(MODELS, data)))
     for (mdir, hk, col), d in zip(MODELS, data):
         w = d["m"].deformed_line(d["x_tr"])["z"][0]

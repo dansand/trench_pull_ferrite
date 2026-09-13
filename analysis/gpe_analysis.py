@@ -456,6 +456,52 @@ def core_thickness(m):
     return c_y, c_m, c_s, d
 
 
+# ==== tables/: every number the paper quotes is written next to the figure it comes from ===========================
+# A table is written by the SAME script, in the SAME pass, from the SAME arrays as its figure (or record) — never
+# computed separately — so the two cannot disagree; reproduce.sh asserts both were rewritten and reads the numbers
+# from the tables.  Floats are written with 6 significant figures so a rerun on another platform leaves no diff noise.
+def write_table(name, fields, rows, script, figure=None, models=(), meta=None):
+    """Write tables/<name>.csv: a '#' provenance header (script, figure, models, scalar meta as key=value) then CSV
+    rows (dicts keyed by `fields`, or sequences in `fields` order).  Returns the path."""
+    import csv
+    os.makedirs("tables", exist_ok=True)
+    path = f"tables/{name}.csv"
+    fmt = lambda v: f"{v:.6g}" if isinstance(v, (float, np.floating)) else v
+    with open(path, "w", newline="") as f:
+        f.write(f"# written by {script}" + (f", alongside {figure}" if figure else "") + "\n")
+        if models:
+            f.write("# models: " + ", ".join(models) + "\n")
+        for k, v in (meta or {}).items():
+            f.write(f"# {k}={fmt(v)}\n")
+        w = csv.writer(f); w.writerow(fields)
+        for r in rows:
+            w.writerow([fmt(r[k]) for k in fields] if isinstance(r, dict) else [fmt(v) for v in r])
+    return path
+
+
+def read_table(path):
+    """Read a tables/*.csv written by write_table.  Returns (meta, rows): meta = the '# key=value' header lines as a
+    dict; rows = list of dicts, numeric strings parsed to float."""
+    import csv
+    meta, lines = {}, []
+    with open(path) as f:
+        for line in f:
+            if line.startswith("#"):
+                body = line[1:].strip()
+                if "=" in body and not body.startswith(("written by", "models:")):
+                    k, _, v = body.partition("="); meta[k.strip()] = _num(v.strip())
+            else:
+                lines.append(line)
+    return meta, [{k: _num(v) for k, v in r.items()} for r in csv.DictReader(lines)]
+
+
+def _num(v):
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return v
+
+
 # ==== NOT USED BY THE PAPER — legacy diagnostic, kept for completeness ===========================================
 def stress_depth_profiles(mod, line_keys=("moment_max", "shear_max", "outer_rise", "2·L1"),
                           x_window=None):

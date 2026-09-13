@@ -1,0 +1,7 @@
+# written by scripts/render_profiles.py, alongside figures/profiles.png
+# models: data/suite1_strength/elastic_deep_60km_V4, data/suite1_strength/tresca_deep_150_60km_V4, data/suite1_strength/dd_vm_asym_60km_V4, data/suite1_strength/dd_vm_sym_60km_V4
+model,label,trench_curve_area_TN,trench_pull_TN,diff_pct
+data/suite1_strength/elastic_deep_60km_V4,elastic,2.23732,2.23367,0.163442
+data/suite1_strength/tresca_deep_150_60km_V4,elasto-plastic (Tresca),2.54174,2.54249,0.0292093
+data/suite1_strength/dd_vm_asym_60km_V4,DD-VM asym (weak top),2.28655,2.28775,0.0526389
+data/suite1_strength/dd_vm_sym_60km_V4,DD-VM sym (weak surf.),2.83353,2.8357,0.0765492

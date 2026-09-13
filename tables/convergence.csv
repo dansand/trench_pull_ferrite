@@ -1,0 +1,10 @@
+# written by scripts/render_convergence.py
+# models: data/convergence/bench_400x24, data/convergence/bench_800x48, data/convergence/bench_1200x72, data/convergence/bench_800x48_ns12, data/convergence/bench_800x48, data/convergence/bench_800x48_ns48
+# note=shipped copy transcribed from the script-generated tables/convergence.md (data/convergence is regeneration-only)
+model,configuration,w_T_m,dGPE_TN,identity_residual_pct
+bench_400x24,400 × 24,3233,2.55,0.097
+bench_800x48,800 × 48 (baseline),3233,2.542,0.019
+bench_1200x72,1200 × 72,3233,2.54,0.01
+bench_800x48_ns12,12,3233,2.543,0.021
+bench_800x48,24 (baseline),3233,2.542,0.019
+bench_800x48_ns48,48,3233,2.542,0.019
