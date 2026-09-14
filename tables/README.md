@@ -13,10 +13,11 @@ asserts that every table and every figure were rewritten in that run, and reads 
 files (`tests/check_reproduce.py`). So a table can only be stale if the harness has not been run, and a stale table fails
 the harness.
 
-Each file starts with `#` header lines: the script that wrote it, the figure it accompanies, and the model directories
-it read; scalar results appear as `# key=value`. Floats are written with six significant figures.
+Each CSV is plain (header row, then rows) so GitHub and spreadsheets render it. Its provenance — the script that wrote
+it, the figure it accompanies, the model directories it read, and any scalar results — is in a sidecar of the same name,
+`tables/<name>.json`. Floats are written with six significant figures.
 
-Read them with `gpe_analysis.read_table(path)` → `(meta, rows)`, or with any CSV reader that skips `#` lines.
+Read them with `gpe_analysis.read_table(path)` → `(meta, rows)`, or with any CSV reader; the scalars are in the sidecar.
 
 ## The tables
 
@@ -74,7 +75,7 @@ typed into the text:
 ## How to validate a manuscript number against the tables
 
 1. Run `./reproduce.sh` (or trust the committed tables — they are committed only after a passing run).
-2. Find the number's row and column above; the `#` header of the file names the figure and models it came from.
+2. Find the number's row and column above; the sidecar `.json` names the figure and models it came from.
 3. Quote the value at the paper's precision. If the paper's number is not in any table, it is not a model result this
    package supports — say so rather than reading it off a figure.
 4. `tests/check_reproduce.py` lists every tolerance the harness applies; a number the paper quotes at tighter precision

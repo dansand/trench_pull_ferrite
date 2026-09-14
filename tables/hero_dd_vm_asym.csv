@@ -1,5 +1,3 @@
-# written by scripts/render_hero.py, alongside figures/hero_dd_vm_asym.png
-# models: data/suite1_strength/dd_vm_asym_60km_V4
 quantity,value,unit
 x_trench,0,km
 x_moment_max,87.0536,km

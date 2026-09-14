@@ -119,7 +119,11 @@ def deviatoric_crosses(m, f, x0):
         if np.max(np.abs(dv)) < CROSS_MIN_FRAC * maxdev:
             continue
         for k in range(2):
-            d = np.array([V[0, k], V[1, k]]); d /= (np.hypot(*d) + 1e-30)   # true orientation -> perpendicular
+            # eigenvectors live in the z-DOWN (depth) frame; the map is drawn in the y-UP frame (see load), so the
+            # vertical component flips sign.  (Before 2026-09-14 it did not, and every cross was mirrored about the
+            # horizontal — the top fibre near the trench tilted the wrong way.)  Arms are drawn at their true angle,
+            # NOT stretched by VEXAG, so the two arms stay perpendicular on the page.
+            d = np.array([V[0, k], -V[1, k]]); d /= (np.hypot(*d) + 1e-30)
             L = scale * abs(dv[k]); pts, lines = seg["t" if dv[k] > 0 else "c"]
             n = len(pts)
             pts += [[xw - L * d[0], yw - L * d[1], 0.0], [xw + L * d[0], yw + L * d[1], 0.0]]
@@ -273,7 +277,7 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
     axt.set_xlim(x0km, Lkm); axt.set_xticklabels([])
     axt.set_ylabel(ylt, fontsize=13); axt.tick_params(labelsize=11)
     axt.text(0.008, 0.85, "(a)", transform=axt.transAxes, fontsize=15, fontweight="bold")
-    axt.legend(fontsize=11, loc="lower left", frameon=False, ncol=2)
+    axt.legend(fontsize=11, loc="lower right", frameon=False, ncol=2)
     fig.add_subplot(gs[0, 1]).axis("off")
 
     for r, (key, label, cmap) in enumerate(PANELS):
@@ -301,7 +305,7 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
             ax.plot(m.xkm[wsel_c], ymid[wsel_c] / 1e3, color="white", lw=1.6, ls=(0, (5, 3)),
                     label="mid-plate ($h/2$)", zorder=6,
                     path_effects=[pe.withStroke(linewidth=3.0, foreground="black")])  # white dashes, black halo — reads over the centroid
-            ax.legend(loc="lower left", fontsize=11, frameon=False, ncol=2)
+            ax.legend(loc="lower right", fontsize=11, frameon=False, ncol=2)
         ax.set_yticks([]); ax.set_xlim(x0km, Lkm)
         ax.tick_params(labelsize=11)
         ax.set_xticklabels([])
@@ -347,7 +351,7 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
     axd.set_xlabel(r"distance from trench  [km]", fontsize=13)   # x is measured from the trench (x=0)
     axd.text(0.008, 0.88, "(e)", transform=axd.transAxes, fontsize=15, fontweight="bold")
     h1, l1 = axd.get_legend_handles_labels(); h2, l2 = axM.get_legend_handles_labels()
-    axd.legend(h1 + h2, l1 + l2, ncol=3, fontsize=9.5, loc="lower left", frameon=False, handlelength=3.4)
+    axd.legend(h1 + h2, l1 + l2, ncol=3, fontsize=9.5, loc="lower right", frameon=False, handlelength=3.4)
     fig.add_subplot(gs[4, 1]).axis("off")
 
     if save:

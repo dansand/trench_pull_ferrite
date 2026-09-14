@@ -1,5 +1,3 @@
-# written by scripts/render_hero.py, alongside figures/hero_tresca_30km.png
-# models: data/suite4_thickness/tresca_150_30km
 quantity,value,unit
 x_trench,0,km
 x_moment_max,46.7359,km

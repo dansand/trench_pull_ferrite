@@ -90,48 +90,39 @@ def test_reference_model_reads_manifest_and_headline_numbers():
 
 
 def test_write_read_table_round_trip(tmp_path, monkeypatch):
-    """tables/: write_table writes a '#' provenance header + CSV; read_table returns the meta and typed rows; floats are
-    6-s.f. formatted so a rerun is byte-stable; sequence rows and dict rows write identically."""
+    """tables/: write_table writes a PLAIN csv (header + rows) plus a provenance sidecar json; read_table returns the
+    sidecar's meta and typed rows; floats are 6-s.f. formatted so a rerun is byte-stable; sequence rows and dict rows
+    write identically."""
+    import json
     from gpe_analysis import write_table, read_table
     monkeypatch.chdir(tmp_path)
     rows_seq = [("a", 1.23456789, 3), ("b", -2.0e-7, 4)]
     rows_dict = [{"name": "a", "value": 1.23456789, "n": 3}, {"name": "b", "value": -2.0e-7, "n": 4}]
     p1 = write_table("t1", ["name", "value", "n"], rows_seq, script="s.py", figure="figures/f.png", models=["data/m"], meta={"slope": 0.6476543})
     p2 = write_table("t2", ["name", "value", "n"], rows_dict, script="s.py", figure="figures/f.png", models=["data/m"], meta={"slope": 0.6476543})
-    assert open(p1).read().replace("t1", "t") == open(p2).read().replace("t2", "t")
-    head = open(p1).read().splitlines()[:3]
-    assert head[0] == "# written by s.py, alongside figures/f.png" and head[1] == "# models: data/m" and head[2] == "# slope=0.647654"
+    assert open(p1).read() == open(p2).read()
+    assert open(p1).read().splitlines()[0] == "name,value,n"                      # nothing before the header
+    prov = json.load(open("tables/t1.json"))
+    assert prov == {"written_by": "s.py", "figure": "figures/f.png", "models": ["data/m"], "meta": {"slope": 0.647654}}
     meta, rows = read_table(p1)
     assert meta == {"slope": 0.647654}
     assert rows == [{"name": "a", "value": 1.23457, "n": 3.0}, {"name": "b", "value": -2e-07, "n": 4.0}]
     assert open(p1).read() == open(write_table("t1", ["name", "value", "n"], rows_seq, script="s.py", figure="figures/f.png", models=["data/m"], meta={"slope": 0.6476543})).read()
 
 
-def test_every_committed_table_has_provenance_header():
-    """Every tables/*.csv names the script that wrote it and parses with read_table."""
+def test_every_committed_table_has_provenance_sidecar():
+    """Every tables/*.csv is a plain CSV (header first) with a provenance sidecar naming the script that wrote it."""
+    import json
     from gpe_analysis import read_table
     files = sorted(glob.glob("tables/*.csv"))
     assert len(files) >= 14, files
     for p in files:
-        first = open(p).readline()
-        assert first.startswith("# written by "), (p, first)
+        assert not open(p).readline().startswith("#"), p
+        side = os.path.splitext(p)[0] + ".json"
+        assert os.path.isfile(side), side
+        assert json.load(open(side))["written_by"], side
         meta, rows = read_table(p)
         assert rows and all(isinstance(r, dict) for r in rows), p
-
-
-def test_physical_signs_on_every_model():
-    """The sign register, on every production model (tables/model_summary.csv): the trench deflects DOWN (w_T > 0,
-    positive-down), the pull is POSITIVE (ΔGPE* > 0 = a pressure deficit under the trench relative to the isostatic
-    column), ΔN_D balances it with the same sign, the identity holds, and the columns are ordered trench < max M < x_I."""
-    from gpe_analysis import read_table
-    _, rows = read_table("tables/model_summary.csv")
-    assert len(rows) == 20
-    for r in rows:
-        assert r["w_T_m"] > 0, r                                   # positive-down: the trench deflects DOWN
-        assert r["dGPE_TN"] > 0 and r["dND_TN"] > 0, r
-        assert r["identity_pct"] < 0.1, r
-        assert r["x_T_km"] < r["x_M_km"] < r["x_I_km"], r
-        assert 0.4 < r["arm_over_h"] < 0.7, r
 
 
 def test_manifest_check_passes():

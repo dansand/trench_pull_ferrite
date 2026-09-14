@@ -1,6 +1,3 @@
-# written by scripts/render_thickness_compare.py, alongside figures/thickness_compare.png
-# models: data/suite4_thickness/tresca_150_30km, data/suite4_thickness/tresca_150_40km, data/suite4_thickness/tresca_150_50km, data/suite1_strength/tresca_deep_150_60km_V4
-# through_origin_slope_dGPE_over_V=0.647962
 h_km,V_TN,w_T_km,x_I_km,x_M_km,pull_TN,pull_over_V
 30,2.045,3.13519,94.9377,45.7806,1.39976,0.68448
 40,2.702,3.15619,125.056,60.12,1.78321,0.659961

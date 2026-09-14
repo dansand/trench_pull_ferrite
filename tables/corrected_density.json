@@ -1,0 +1,13 @@
+{
+ "written_by": "scripts/render_corrected_density.py",
+ "figure": "figures/corrected_density.png",
+ "models": [
+  "data/suite1_strength/tresca_deep_150_60km_V4"
+ ],
+ "meta": {
+  "deflected_mid_plate_km": 33.2103,
+  "deflected_base_km": 63.2394,
+  "trench_depth_km": 3.18118,
+  "cumulative_average_density_at_base_kg_m3": 3301.6
+ }
+}

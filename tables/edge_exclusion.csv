@@ -1,5 +1,3 @@
-# written by analysis/edge_exclusion.py
-# models: data/suite1_strength/elastic_deep_60km_V4, data/suite1_strength/tresca_deep_150_60km_V4, data/suite1_strength/dd_vm_asym_60km_V4, data/suite1_strength/dd_vm_sym_60km_V4
 label,model,h_km,raw_trench_arm_km,edge_window_km,plateau_arm_km,plateau_min_km,plateau_max_km,change_raw_to_plateau_pct,plateau_arm_over_h,arm_at_40km_km,arm_at_60km_km
 elastic,elastic_deep_60km_V4,60,34.3546,8.34946,33.0129,32.7114,33.3755,-3.9053,0.550216,31.5643,30.8232
 Tresca,tresca_deep_150_60km_V4,60,35.1594,8.09176,33.8021,33.5847,34.1447,-3.86018,0.563369,32.7072,26.659

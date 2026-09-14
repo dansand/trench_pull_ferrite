@@ -1,0 +1,9 @@
+{
+ "written_by": "scripts/render_benchmark.py",
+ "figure": "figures/benchmark_boef.png",
+ "models": [
+  "data/suite1_strength/elastic_deep_60km_V4",
+  "data/idealized_beam_elastic"
+ ],
+ "meta": {}
+}

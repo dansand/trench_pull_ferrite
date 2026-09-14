@@ -1,5 +1,3 @@
-# written by scripts/render_gpe_compare.py, alongside figures/gpe_compare_suite1.png
-# models: data/suite1_strength/elastic_deep_60km_V4, data/suite1_strength/tresca_deep_150_60km_V4, data/suite1_strength/dd_vm_asym_60km_V4, data/suite1_strength/dd_vm_sym_60km_V4
 model,label,plate_top_arm_err_pct,sea_level_arm_err_pct,mid_plate_approx_err_pct
 data/suite1_strength/elastic_deep_60km_V4,elastic,1.72286,8.03966,11.838
 data/suite1_strength/tresca_deep_150_60km_V4,Tresca (uniform),1.81899,8.58453,18.3848

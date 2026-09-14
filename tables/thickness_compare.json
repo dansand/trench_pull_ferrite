@@ -1,0 +1,13 @@
+{
+ "written_by": "scripts/render_thickness_compare.py",
+ "figure": "figures/thickness_compare.png",
+ "models": [
+  "data/suite4_thickness/tresca_150_30km",
+  "data/suite4_thickness/tresca_150_40km",
+  "data/suite4_thickness/tresca_150_50km",
+  "data/suite1_strength/tresca_deep_150_60km_V4"
+ ],
+ "meta": {
+  "through_origin_slope_dGPE_over_V": 0.647962
+ }
+}

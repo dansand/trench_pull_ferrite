@@ -1,0 +1,11 @@
+{
+ "written_by": "scripts/render_gpe_compare.py",
+ "figure": "figures/gpe_compare_suite1.png",
+ "models": [
+  "data/suite1_strength/elastic_deep_60km_V4",
+  "data/suite1_strength/tresca_deep_150_60km_V4",
+  "data/suite1_strength/dd_vm_asym_60km_V4",
+  "data/suite1_strength/dd_vm_sym_60km_V4"
+ ],
+ "meta": {}
+}

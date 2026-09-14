@@ -1,0 +1,8 @@
+{
+ "written_by": "scripts/render_hero.py",
+ "figure": "figures/hero_tresca_30km.png",
+ "models": [
+  "data/suite4_thickness/tresca_150_30km"
+ ],
+ "meta": {}
+}

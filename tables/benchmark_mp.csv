@@ -1,5 +1,3 @@
-# written by scripts/render_mp_benchmark.py, alongside figures/benchmark_mp.png
-# models: data/idealized_beam
 quantity,value,unit
 sections_on_curve,148,-
 mean_misfit_M_over_Mp,0.094833,%

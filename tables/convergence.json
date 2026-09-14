@@ -1,0 +1,15 @@
+{
+ "written_by": "scripts/render_convergence.py",
+ "figure": null,
+ "models": [
+  "data/convergence/bench_400x24",
+  "data/convergence/bench_800x48",
+  "data/convergence/bench_1200x72",
+  "data/convergence/bench_800x48_ns12",
+  "data/convergence/bench_800x48",
+  "data/convergence/bench_800x48_ns48"
+ ],
+ "meta": {
+  "note": "shipped copy transcribed from the script-generated tables/convergence.md (data/convergence is regeneration-only)"
+ }
+}

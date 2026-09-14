@@ -108,8 +108,8 @@ The one figure-side exception: the **Table S3 convergence table** reads `data/co
 
 `tables/` holds every model-derived number the manuscript and SI quote, as CSV, one file per figure or record. Each is
 written by the **same script, in the same pass, from the same arrays** as its figure, so a table and its figure cannot
-disagree; `./reproduce.sh` rewrites all of them and reads its numerical checks from them. Each file's `#` header names the
-script, the figure and the models it came from. `tables/README.md` is the handoff for the manuscript: which file backs
+disagree; `./reproduce.sh` rewrites all of them and reads its numerical checks from them. A sidecar `tables/<name>.json` names the
+script, the figure and the models each came from, so the CSVs stay plain. `tables/README.md` is the handoff for the manuscript: which file backs
 which number, columns and units, and how to validate. Standalone tables: `model_summary.csv` (one row per production
 model: thickness, load, background N_D, w_T, the three columns, ΔGPE\*, ΔN_D, identity residual, effective arm),
 `isostatic_column.csv`, `convergence.csv` (Table S3).

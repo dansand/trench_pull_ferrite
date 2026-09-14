@@ -474,39 +474,38 @@ def core_thickness(m):
 # A table is written by the SAME script, in the SAME pass, from the SAME arrays as its figure (or record) — never
 # computed separately — so the two cannot disagree; reproduce.sh asserts both were rewritten and reads the numbers
 # from the tables.  Floats are written with 6 significant figures so a rerun on another platform leaves no diff noise.
+# Provenance (script, figure, models, scalar meta) lives in a sidecar tables/<name>.json so the CSV itself stays plain.
 def write_table(name, fields, rows, script, figure=None, models=(), meta=None):
-    """Write tables/<name>.csv: a '#' provenance header (script, figure, models, scalar meta as key=value) then CSV
-    rows (dicts keyed by `fields`, or sequences in `fields` order).  Returns the path."""
+    """Write tables/<name>.csv (a plain CSV: header row, then rows — nothing else, so GitHub and spreadsheets render it)
+    and its provenance sidecar tables/<name>.json (script, figure, models, scalar meta as key: value).  Rows are dicts
+    keyed by `fields`, or sequences in `fields` order.  Returns the CSV path."""
     import csv
     os.makedirs("tables", exist_ok=True)
     path = f"tables/{name}.csv"
     fmt = lambda v: f"{v:.6g}" if isinstance(v, (float, np.floating)) else v
     with open(path, "w", newline="") as f:
-        f.write(f"# written by {script}" + (f", alongside {figure}" if figure else "") + "\n")
-        if models:
-            f.write("# models: " + ", ".join(models) + "\n")
-        for k, v in (meta or {}).items():
-            f.write(f"# {k}={fmt(v)}\n")
         w = csv.writer(f); w.writerow(fields)
         for r in rows:
             w.writerow([fmt(r[k]) for k in fields] if isinstance(r, dict) else [fmt(v) for v in r])
+    prov = {"written_by": script, "figure": figure, "models": list(models),
+            "meta": {k: (float(fmt(v)) if isinstance(v, (float, np.floating)) else v) for k, v in (meta or {}).items()}}
+    with open(f"tables/{name}.json", "w") as f:
+        json.dump(prov, f, indent=1)
     return path
 
 
 def read_table(path):
-    """Read a tables/*.csv written by write_table.  Returns (meta, rows): meta = the '# key=value' header lines as a
-    dict; rows = list of dicts, numeric strings parsed to float."""
+    """Read a tables/*.csv written by write_table.  Returns (meta, rows): meta = the scalar meta from the sidecar
+    tables/<name>.json (empty if there is none); rows = list of dicts, numeric strings parsed to float."""
     import csv
-    meta, lines = {}, []
-    with open(path) as f:
-        for line in f:
-            if line.startswith("#"):
-                body = line[1:].strip()
-                if "=" in body and not body.startswith(("written by", "models:")):
-                    k, _, v = body.partition("="); meta[k.strip()] = _num(v.strip())
-            else:
-                lines.append(line)
-    return meta, [{k: _num(v) for k, v in r.items()} for r in csv.DictReader(lines)]
+    meta = {}
+    side = os.path.splitext(path)[0] + ".json"
+    if os.path.isfile(side):
+        with open(side) as f:
+            meta = {k: _num(v) for k, v in json.load(f).get("meta", {}).items()}
+    with open(path, newline="") as f:
+        rows = [{k: _num(v) for k, v in r.items()} for r in csv.DictReader(f)]
+    return meta, rows
 
 
 def _num(v):

@@ -1,0 +1,8 @@
+{
+ "written_by": "scripts/render_hero.py",
+ "figure": "figures/hero_tresca_deep60.png",
+ "models": [
+  "data/suite1_strength/tresca_deep_150_60km_V4"
+ ],
+ "meta": {}
+}

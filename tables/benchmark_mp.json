@@ -1,0 +1,8 @@
+{
+ "written_by": "scripts/render_mp_benchmark.py",
+ "figure": "figures/benchmark_mp.png",
+ "models": [
+  "data/idealized_beam"
+ ],
+ "meta": {}
+}

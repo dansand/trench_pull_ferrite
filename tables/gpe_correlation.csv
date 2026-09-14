@@ -1,8 +1,3 @@
-# written by scripts/render_gpe_correlation.py, alongside figures/gpe_correlation.png
-# models: data/suite2_load/tresca_deep_150_60km_V1, data/suite2_load/tresca_deep_150_60km_V1p5, data/suite2_load/tresca_deep_150_60km_V2, data/suite2_load/tresca_deep_150_60km_V2p5, data/suite2_load/tresca_deep_150_60km_V3, data/suite2_load/tresca_deep_150_60km_V3p5, data/suite1_strength/tresca_deep_150_60km_V4, data/suite2_load/tresca_deep_150_60km_V4p5, data/suite3_background/tresca_deep_150_60km_V4_mem-3, data/suite3_background/tresca_deep_150_60km_V4_mem-2, data/suite3_background/tresca_deep_150_60km_V4_mem-1, data/suite3_background/tresca_deep_150_60km_V4_mem1, data/suite3_background/tresca_deep_150_60km_V4_mem2, data/suite3_background/tresca_deep_150_60km_V4_mem3, data/suite1_strength/elastic_deep_60km_V4, data/suite1_strength/dd_vm_asym_60km_V4, data/suite1_strength/dd_vm_sym_60km_V4
-# uniform_plate_slope_TN_per_km=0.67689
-# reference_w_T_km=3.23294
-# reference_dGPE_TN=2.54249
 suite,label,model,V_TN,N_mem_TN,w_T_km,dGPE_TN
 suite2_load,Tresca,data/suite2_load/tresca_deep_150_60km_V1,1,0,0.727472,0.509334
 suite2_load,Tresca,data/suite2_load/tresca_deep_150_60km_V1p5,1.5,0,1.09055,0.776901

@@ -1,0 +1,8 @@
+{
+ "written_by": "scripts/render_hero.py",
+ "figure": "figures/hero_dd_vm_asym.png",
+ "models": [
+  "data/suite1_strength/dd_vm_asym_60km_V4"
+ ],
+ "meta": {}
+}
