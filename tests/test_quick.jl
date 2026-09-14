@@ -37,3 +37,14 @@ end
         end
     end
 end
+
+@testset "Tresca plastic-strain increment: (σᵗ−σ)/2G equals the general Dᵉ⁻¹:(σᵗ−σ)" begin
+    m = J2Plasticity(70.0e9, 0.25, 150.0e6, 0.0; crit = :tresca); st = PState()
+    for ϵ in (SymmetricTensor{2, 3}((4.0e-3, 0.0, 1.0e-3, 0.0, 0.0, -1.0e-3)),
+              SymmetricTensor{2, 3}((4.0e-3, 0.3e-3, 1.0e-3, -0.5e-3, 0.2e-3, -1.0e-3)))
+        σ, D, st1 = stress_tangent(ϵ, m, st); σᵗ = m.Dᵉ ⊡ ϵ; Δ = σᵗ - σ
+        @test st1.k > 0
+        @test abs(tr(Δ)) < 1.0e-9 * norm(Δ)                                   # the return is trace-free
+        @test isapprox(Δ / (2 * m.G), inv(m.Dᵉ) ⊡ Δ; rtol = 1.0e-12)
+    end
+end

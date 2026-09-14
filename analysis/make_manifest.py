@@ -80,8 +80,8 @@ def model_dirs():
     out = []
     for suite in sorted(os.listdir(DATA)):
         sd = os.path.join(DATA, suite)
-        if not os.path.isdir(sd) or suite.startswith("_") or suite == "reference_figures":
-            continue
+        if not os.path.isdir(sd) or suite.startswith("_") or suite in ("reference_figures", "convergence"):
+            continue                      # data/convergence is regeneration-only (Table S3) and never shipped: not a manifest member
         if os.path.isfile(os.path.join(sd, "gpe_model.vtu")):
             out.append(suite); continue
         for name in sorted(os.listdir(sd)):

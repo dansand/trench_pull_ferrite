@@ -39,7 +39,7 @@ S2 (verification), S3 (convergence).
 | Fig. S3 | `fig_taux_cases_grid.pdf` | `cd schematic && tectonic taux_cases.tex` → `taux_cases.pdf` (renamed on copy) | — | — | — |
 | Fig. S4 | `core_profiles_deep60.png` | `python scripts/render_core_profiles.py` | — | `suite1_strength/tresca_deep_150_60km_V4` | `suite1` |
 | Fig. S5 | `corrected_density.png` | `python scripts/render_corrected_density.py` | — | `suite1_strength/tresca_deep_150_60km_V4` | `suite1` |
-| Fig. S6 | `ferrite_hero_h30.png` | `HERO_WINDOW_KM=200 python scripts/render_hero.py data/suite4_thickness/tresca_150_30km figures/hero_tresca_30km.png` (renamed on copy) | `hero_tresca_30km.csv` | `suite4_thickness/tresca_150_30km` | `thickness` |
+| Fig. S6 | `ferrite_hero_h30.png` | `HERO_WINDOW_KM=200 HERO_MFIX=0 python scripts/render_hero.py data/suite4_thickness/tresca_150_30km figures/hero_tresca_30km.png` (renamed on copy) | `hero_tresca_30km.csv` | `suite4_thickness/tresca_150_30km` | `thickness` |
 | Fig. S7, S8 | `hero_dd_vm_asym.png`, `hero_dd_vm_sym.png` | `python scripts/render_hero.py data/suite1_strength/dd_vm_asym_60km_V4 figures/hero_dd_vm_asym.png` (and `…sym…`) | `hero_dd_vm_{asym,sym}.csv` | `suite1_strength/dd_vm_*` | `suite1` |
 | supporting (not in the live SI) | `hero_tresca_40km.png` — the 40 km member of Suite 4, same layout as S6; referenced only by the SI source snapshot | `HERO_WINDOW_KM=260 HERO_MFIX=0 python scripts/render_hero.py data/suite4_thickness/tresca_150_40km figures/hero_tresca_40km.png` | `hero_tresca_40km.csv` | `suite4_thickness/tresca_150_40km` | `thickness` |
 

@@ -27,7 +27,7 @@ if __name__ == "__main__":
     matplotlib.use("Agg")   # headless only when run as a script; importable in Jupyter without hijacking the backend
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter1d
-from gpe_analysis import Model, trench_ref_km, reference_lines, trench_pull, deformed_shear_gradient, signed_centroid, write_table
+from gpe_analysis import Model, trench_ref_km, reference_lines, trench_pull, deformed_shear_gradient, signed_centroid, write_table, G, CENTROID_RATIO_MIN
 
 #           model dir                                             h[km]  colour (thin→warm, thick→cool)
 MODELS = [("data/suite4_thickness/tresca_150_30km",             30,   "#c0392b"),
@@ -37,7 +37,7 @@ MODELS = [("data/suite4_thickness/tresca_150_30km",             30,   "#c0392b")
 VLOAD = {30: 2.045, 40: 2.702, 50: 3.354, 60: 4.000}   # tuned load per plate [TN/m] (tuned_V.txt; 60 = baseline)
 OUT = "figures/thickness_compare.png"
 WINDOW_KM = 220
-GRAV = 9.81
+GRAV = G
 
 
 def load(mdir):
@@ -66,7 +66,7 @@ def _rho(ax, data, xkey, title):
         # and ill-conditioned when |∫τ| is small against ∫|τ| (a near-balanced distribution, e.g. the fully
         # plastic h=30 hinge): the marker is then left absent.
         tot = np.trapz(tau, L["z"]); absq = np.trapz(np.abs(tau), L["z"])
-        if abs(tot) > 0.45 * absq:
+        if abs(tot) > CENTROID_RATIO_MIN * absq:
             zc = (signed_centroid(L["z"], tau) - L["z"][0]) / 1e3
             ax.plot(0.0, zc, "o", color=col, ms=9, mec="k", mew=0.9, zorder=6)   # centre-of-mass DEPTH, marked on the zero line (not on the curve)
         ax.axhline(d["H"] / 2 / 1e3, color=col, lw=1.0, alpha=.4)           # h/2 reference (thin solid)

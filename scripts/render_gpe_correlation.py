@@ -18,7 +18,7 @@ if __name__ == "__main__":
     matplotlib.use("Agg")   # headless only when run as a script; importable in Jupyter without hijacking the backend
 import matplotlib.pyplot as plt
 import matplotlib.patheffects as pe
-from gpe_analysis import Model, trench_pull, write_table
+from gpe_analysis import Model, trench_pull, write_table, DRHOG
 
 P = "data"
 # (V, N_D, path)
@@ -122,7 +122,6 @@ def main():
 
     # (B) ΔGPE* vs w — the rheology suite is labelled here; vs the uniform-plate line ΔGPE* = ΔP_T·(H/2) = Δρg·w·(H/2)
     suites(ax[1], w1, w2, w3, wref)
-    DRHOG = (3300.0 - 1000.0) * 9.81
     slope = DRHOG * (60e3 / 2) / 1e9                   # TN/m per km  (Δρg·H/2 = 0.677)
     xw = np.array([0.0, max(w2.max(), w3.max()) * 1.03])
     ax[1].plot(xw, slope * xw, "k--", lw=1.4, label=r"uniform plate:  $\Delta P_T\cdot\frac{h}{2}$")

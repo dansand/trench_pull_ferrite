@@ -18,11 +18,9 @@ isostatic);  and the peak |σzz| on the x_I column [MPa] (the internal lobe — 
 import glob, os, sys
 import numpy as np
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__))))
-from gpe_analysis import Model, reference_lines, trench_ref_km, deformed_shear_gradient, write_table
+from gpe_analysis import Model, reference_lines, trench_ref_km, deformed_shear_gradient, write_table, DRHOG
 
 SUITES = ["suite1_strength", "suite2_load", "suite3_background", "suite4_thickness"]
-RHO_A, RHO_W, G = 3300.0, 1000.0, 9.81
-DRHOG = (RHO_A - RHO_W) * G
 OUT = "tables/isostatic_column.md"
 
 

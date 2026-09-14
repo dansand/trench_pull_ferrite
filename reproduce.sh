@@ -9,7 +9,7 @@
 # .reproduce_logs/<step>.log; tests/check_reproduce.py then asserts the headline numbers against their tolerances
 # (ΔGPE* = 2.542 TN/m ± 0.5 %, identity < 0.05 %, arm 34.9 km, the S1/S2 benchmark misfits, the reconstruction table)
 # and that every figure was rewritten.  Exit status is nonzero on ANY failure.  The convergence table (Table S3) needs
-# data/convergence/, which is regeneration-only, so it is not part of this run (data/CONVERGENCE.md is the record).
+# data/convergence/, which is regeneration-only, so it is not part of this run (tables/convergence.csv is the record).
 set -uo pipefail
 cd "$(dirname "$0")"
 PY=${PYTHON:-python}
@@ -32,7 +32,7 @@ run benchmark         "$PY" scripts/render_benchmark.py
 run mp_benchmark      "$PY" scripts/render_mp_benchmark.py
 run core_profiles     "$PY" scripts/render_core_profiles.py
 run corrected_density "$PY" scripts/render_corrected_density.py
-run hero_h30          env HERO_WINDOW_KM=200 "$PY" scripts/render_hero.py data/suite4_thickness/tresca_150_30km figures/hero_tresca_30km.png
+run hero_h30          env HERO_WINDOW_KM=200 HERO_MFIX=0 "$PY" scripts/render_hero.py data/suite4_thickness/tresca_150_30km figures/hero_tresca_30km.png
 run hero_h40          env HERO_WINDOW_KM=260 HERO_MFIX=0 "$PY" scripts/render_hero.py data/suite4_thickness/tresca_150_40km figures/hero_tresca_40km.png
 run hero_dd_vm_asym   "$PY" scripts/render_hero.py data/suite1_strength/dd_vm_asym_60km_V4 figures/hero_dd_vm_asym.png
 run hero_dd_vm_sym    "$PY" scripts/render_hero.py data/suite1_strength/dd_vm_sym_60km_V4 figures/hero_dd_vm_sym.png

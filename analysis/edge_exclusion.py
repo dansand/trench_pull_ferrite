@@ -11,9 +11,9 @@ plateau.  Writes tables/edge_exclusion.csv.
 import os, sys
 import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gpe_analysis import Model, trench_ref_km, deformed_shear_gradient, reference_lines, write_table
+from gpe_analysis import Model, trench_ref_km, deformed_shear_gradient, reference_lines, write_table, RHO_M, RHO_W, G
 
-G, DR, THR = 9.81, 2300.0, 0.15
+DR, THR = RHO_M - RHO_W, 0.15
 S1 = "data/suite1_strength/"
 SUITE = [("elastic", S1 + "elastic_deep_60km_V4"), ("Tresca", S1 + "tresca_deep_150_60km_V4"),
          ("DD-VM asym", S1 + "dd_vm_asym_60km_V4"), ("DD-VM sym", S1 + "dd_vm_sym_60km_V4")]

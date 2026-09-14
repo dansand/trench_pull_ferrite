@@ -4,7 +4,7 @@ PyVista renders each field map on the warped (deflected) plate; matplotlib compo
 LaTeX colorbars, dashed reference lines, and a line panel for the resultants:
   (a) differential stress  σxx − σzz   + yield-front contour + deviatoric principal-stress crosses
   (b) vertical shear stress σxz
-  (c) equivalent density        ρ̂ = g⁻¹ g⁻¹ τzx,x
+  (c) equivalent density        ρ̂ = g⁻¹ τzx,x
   (d) resultants V, M, F_D vs x (normalised)
 Vertical lines mark the flexure reference locations; an extra DASHED line marks DASH_BETWEEN's midpoint.
 
@@ -21,13 +21,18 @@ from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
 from matplotlib.transforms import blended_transform_factory
 import matplotlib.patheffects as pe
-from gpe_analysis import Model, reference_lines, trench_ref_km, trench_pull, deformed_shear_gradient, write_table
+from gpe_analysis import Model, reference_lines, trench_ref_km, trench_pull, deformed_shear_gradient, write_table, G, DRHOG, CENTROID_RATIO_MIN
 
 # equivalent density gradient g⁻¹ τzx,x: HERO_BRANCH="B" (default) = FE-exported dsxz_dx; "A" = finite-difference grad_x_field
 BRANCH = os.environ.get("HERO_BRANCH", "B").upper()
 def pgrad(mod):
-    if BRANCH == "B" and mod.has_field("dsxz_dx [Pa/m]"):
+    if BRANCH == "B":
+        if not mod.has_field("dsxz_dx [Pa/m]"):                 # never fall back silently (audit F7)
+            raise SystemExit(f"{mod.dir}: no FE-exported dsxz_dx field. The hero figure uses Branch B (the exporter's "
+                             "gradient of the Cauchy shear); re-export the model, or set HERO_BRANCH=A explicitly for a "
+                             "finite-difference comparison render.")
         return mod.array("dsxz_dx [Pa/m]")
+    print("WARNING: HERO_BRANCH=A — finite-difference gradient of the Cauchy shear; comparison only, the paper uses Branch B")
     return mod.grad_x_field(mod.cauchy_fields()[2])
 
 # ===================== CONFIG (iterate here) =====================
@@ -35,7 +40,7 @@ MODEL_DIR = "data/suite1_strength/tresca_deep_150_60km_V4"
 WINDOW_KM = float(os.environ.get("HERO_WINDOW_KM", 300))    # env override for thinner plates (shorter flexure)
 WARP_FACTOR = 5.0                     # deflection exaggeration
 VEXAG     = 1.5                       # vertical scale of the warped geometry
-GRAV      = 9.81
+GRAV      = G
 REF_KEYS  = ["trench", "moment_max", "shear_max", "outer_rise"]
 REF_LABELS = {"trench": "trench", "moment_max": "max $M$", "shear_max": "isostatic", "outer_rise": "forebulge"}
 DASH_BETWEEN = ("moment_max", "shear_max")
@@ -82,7 +87,9 @@ def load(model_dir, diff_dir=None):
     mesh.point_data["yielded"] = m.array("yielded")[m._ix, m._iz]
     # RENDER IN HEIGHT = −depth: the native mesh is z-DOWN (y=depth), but the maps display surface-up.
     # Negate the vertical coordinate AND the vertical warp component together so the plate shows depth
-    # increasing downward and deflects DOWN at the trench (consistent with panel (a)).
+    # increasing downward and deflects DOWN at the trench (consistent with panel (a)).  Both signs flip on purpose:
+    # the VTU is z-down (depth) while VTK draws y up; flipping the coordinate alone would put the deflection the
+    # wrong way, flipping the warp alone would draw the plate upside down (audit F5).
     mesh.points[:, 1] = -mesh.points[:, 1]
     u = mesh.point_data["u"]
     mesh.point_data["u3"] = np.column_stack([u[:, 0], -u[:, 1], np.zeros(len(u))])
@@ -186,6 +193,10 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
     # nearly cancel).  This replaces the old reference-grid column-sum ρ̂.sum(depth), which is UNFAITHFUL at a
     # strongly-rotated yielded hinge: on the h=30 plate it flipped sign where the true net resultant is finite
     # and positive, planting spurious zero-crossings that blanked the whole hinge.
+    # The hero track is a CONTINUOUS centroid line over the window, masked column by column; it keeps its own,
+    # looser guard (0.35) so the line runs as far as the dipole is meaningfully signed.  The single-column MARKERS in
+    # the other figures use the shared CENTROID_RATIO_MIN (0.45) from gpe_analysis.  Changing this value moves the
+    # ends of the track in Figs 3 and S6–S8 (checked 2026-09-14) — do not unify without re-approving those figures.
     RATIO_MIN = 0.35
     wsel_c = m.xkm <= WINDOW_KM
     zc_depth = np.full(m.Nx, np.nan)                       # centroid depth below the deformed top [km]
@@ -232,7 +243,6 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
     x_dash = 0.5 * (lines[DASH_BETWEEN[0]] + lines[DASH_BETWEEN[1]])
     refs = [(lines[k], REF_LABELS[k]) for k in REF_KEYS if x0km <= lines[k] <= Lkm]
     wsel = (m.xkm >= x0km) & (m.xkm <= Lkm)
-    DRHOG = (3300.0 - 1000.0) * GRAV
     lam = 2 * np.pi * ((4 * (70e9 / (1 - 0.25**2)) * (m.H**3 / 12.0) / DRHOG) ** 0.25)  # flexural wavelength 2πα [m]
 
     def verticals(ax, top_labels=False):

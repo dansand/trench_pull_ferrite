@@ -10,11 +10,9 @@ equilibrium identity residual, and the effective arm ΔGPE*/(Δρ g w_T).  Writt
 import glob, json, os, sys
 import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gpe_analysis import Model, reference_lines, trench_ref_km, trench_pull, write_table
+from gpe_analysis import Model, reference_lines, trench_ref_km, trench_pull, write_table, DRHOG
 
 SUITES = ["suite1_strength", "suite2_load", "suite3_background", "suite4_thickness"]
-RHO_A, RHO_W, G = 3300.0, 1000.0, 9.81
-DRHOG = (RHO_A - RHO_W) * G
 
 
 def main():

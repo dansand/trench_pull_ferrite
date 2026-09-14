@@ -22,10 +22,10 @@ if __name__ == "__main__":
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FixedLocator, FixedFormatter
 from matplotlib.transforms import blended_transform_factory
-from gpe_analysis import Model, reference_lines, trench_ref_km, deformed_shear_gradient, trench_pull, write_table
+from gpe_analysis import Model, reference_lines, trench_ref_km, deformed_shear_gradient, trench_pull, write_table, RHO_M, RHO_W, G, CENTROID_RATIO_MIN
 
 m = Model("data/suite1_strength/tresca_deep_150_60km_V4")
-G = 9.81; RW = 1000.0; RP = 3300.0; DR = RP - RW
+RW, RP = RHO_W, RHO_M; DR = RP - RW
 rl = reference_lines(m); xt = trench_ref_km(m); xmm = rl["moment_max"]; xi = rl["isostatic"]
 COLS = [("trench", xt, "#b2182b"), (r"max $M$", xmm, "#ef8a62"), ("isostatic", xi, "#111111")]
 ZG = np.linspace(0, 90e3, 9001); DZ = ZG[1] - ZG[0]
@@ -52,7 +52,10 @@ def corrected(xk):                                               # full correcte
 def dipole_lobes(xk):                                            # a-priori: TRUE (water @ w/2) + equivalent (shear centroid)
     L, tau = deformed_shear_gradient(m, xk); z = L["z"]; w = z[0]
     m_true = DR * w; z_true = w / 2.0                            # water deficit — KNOWN from the deflected depth
-    m_ps = np.trapz(tau, z) / G; z_ps = np.trapz(z * tau, z) / np.trapz(tau, z)   # shear support — from the FE gradient
+    net = np.trapz(tau, z); m_ps = net / G                                          # shear support — from the FE gradient
+    # signed centre of mass; undefined where the net charge vanishes (the isostatic column: |∫τ| ≪ ∫|τ|) → NaN, as every
+    # other caller guards it (thickness_compare, hero, profiles, the notebook)
+    z_ps = np.trapz(z * tau, z) / net if abs(net) > CENTROID_RATIO_MIN * np.trapz(np.abs(tau), z) else float("nan")
     return dict(w=w, m_true=m_true, z_true=z_true, m_ps=m_ps, z_ps=z_ps)
 
 

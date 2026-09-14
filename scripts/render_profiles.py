@@ -21,7 +21,7 @@ if __name__ == "__main__":
     matplotlib.use("Agg")   # headless only when run as a script; importable in Jupyter without hijacking the backend
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter1d
-from gpe_analysis import Model, reference_lines, trench_pull, trench_ref_km, deformed_shear_gradient, write_table
+from gpe_analysis import Model, reference_lines, trench_pull, trench_ref_km, deformed_shear_gradient, write_table, G, CENTROID_RATIO_MIN
 
 MODELS = [("data/suite1_strength/elastic_deep_60km_V4",    "elastic"),
           ("data/suite1_strength/tresca_deep_150_60km_V4",  "elasto-plastic\n(Tresca)"),
@@ -33,7 +33,7 @@ STATION_LABELS = {"moment_max": "max $M$", "mid": "mid", "shear_max": "first iso
 ORDER = ["moment_max", "shear_max"]
 QT_OFFSET_KM = 0.0     # (quasi-)trench column = leftmost complete deformed column + this offset;
                        # raise it to bring the trench profile inboard, clear of the loaded-edge layer
-GRAV = 9.81
+GRAV = G
 # THIRD COLUMN toggle: paper-consistent EQUIVALENT DENSITY ρ̂ = τzx,x/g [kg m⁻³] by default; set PANEL3
 # to "grad" (or env PROFILES_PANEL3=grad) to plot the raw shear-stress gradient τzx,x [kPa m⁻¹] instead.
 # Both are the same field up to the constant 1/g, so the centroid (●) is identical either way.
@@ -91,7 +91,7 @@ def plot_row(m, axes, is_top, zgrid):
                     L0, tau = deformed_shear_gradient(m, xk)      # raw FE Cauchy-shear gradient (no smoothing)
                     ax.plot(P3SCALE(tau), (L0["z"] - L0["z"][0]) / 1e3, color=col, lw=2.0, label=STATION_LABELS[key])
                     tot = np.trapz(tau, L0["z"])                        # centroid of τzx,x (skip where ∫≈0, i.e. max V)
-                    if np.abs(tot) > 0.2 * np.trapz(np.abs(tau), L0["z"]):
+                    if np.abs(tot) > CENTROID_RATIO_MIN * np.trapz(np.abs(tau), L0["z"]):
                         zc = np.trapz(L0["z"] * tau, L0["z"]) / tot
                         ax.plot(P3SCALE(np.interp(zc, L0["z"], tau)), (zc - L0["z"][0]) / 1e3,
                                 marker="o", ms=8, color=col, mec="k", mew=0.7, zorder=6)
@@ -106,7 +106,7 @@ def plot_row(m, axes, is_top, zgrid):
                 Lq, tauq = deformed_shear_gradient(m, x_qt)
                 ax.plot(P3SCALE(tauq), (Lq["z"] - Lq["z"][0]) / 1e3, color="k", lw=2.6, label="trench", zorder=5)
                 totq = np.trapz(tauq, Lq["z"])
-                if np.abs(totq) > 0.2 * np.trapz(np.abs(tauq), Lq["z"]):
+                if np.abs(totq) > CENTROID_RATIO_MIN * np.trapz(np.abs(tauq), Lq["z"]):
                     zcq = np.trapz(Lq["z"] * tauq, Lq["z"]) / totq
                     ax.plot(P3SCALE(np.interp(zcq, Lq["z"], tauq)), (zcq - Lq["z"][0]) / 1e3,
                             marker="o", ms=8, color="k", mec="w", mew=0.8, zorder=7)

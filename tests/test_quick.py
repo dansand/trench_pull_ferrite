@@ -119,6 +119,21 @@ def test_every_committed_table_has_provenance_header():
         assert rows and all(isinstance(r, dict) for r in rows), p
 
 
+def test_physical_signs_on_every_model():
+    """The sign register, on every production model (tables/model_summary.csv): the trench deflects DOWN (w_T > 0,
+    positive-down), the pull is POSITIVE (ΔGPE* > 0 = a pressure deficit under the trench relative to the isostatic
+    column), ΔN_D balances it with the same sign, the identity holds, and the columns are ordered trench < max M < x_I."""
+    from gpe_analysis import read_table
+    _, rows = read_table("tables/model_summary.csv")
+    assert len(rows) == 20
+    for r in rows:
+        assert r["w_T_m"] > 0, r                                   # positive-down: the trench deflects DOWN
+        assert r["dGPE_TN"] > 0 and r["dND_TN"] > 0, r
+        assert r["identity_pct"] < 0.1, r
+        assert r["x_T_km"] < r["x_M_km"] < r["x_I_km"], r
+        assert 0.4 < r["arm_over_h"] < 0.7, r
+
+
 def test_manifest_check_passes():
     r = subprocess.run([PY, "analysis/make_manifest.py", "--check"], capture_output=True, text=True)
     assert r.returncode == 0, r.stdout + r.stderr

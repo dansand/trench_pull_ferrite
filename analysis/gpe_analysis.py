@@ -14,6 +14,18 @@ integral over the mesh nodes — no `sample_over_line` interpolation needed.
 import json, os
 import numpy as np
 import pyvista as pv
+
+# ==== physical constants of the production models (model/paper_models.jl: ρa = 3300, ρw = 1000, g = 9.81) ====
+# The ONE definition; every script imports these (Copilot audit F9, 2026-09-14).
+RHO_M, RHO_W, G = 3300.0, 1000.0, 9.81
+DRHOG = (RHO_M - RHO_W) * G                 # Δρ g — the Winkler foundation modulus [N/m³]
+# A signed centre of mass of τzx,x is drawn only where |∫τ dz| > CENTROID_RATIO_MIN · ∫|τ| dz: below that the
+# distribution is a near-balanced dipole and the centroid (a ratio of two small numbers) is ill-conditioned.  One
+# value for the single-column markers (audit F4); 0.45 keeps the fully plastic h = 30 km hinge (ratio 0.38) unmarked,
+# and every marked column in the paper's figures sits above 0.85.  The hero figures' continuous centroid TRACK keeps
+# its own guard (0.35, render_hero.py) — unifying it moves the track's ends.  This guard affects markers only — the
+# reported arm is the force-based ΔGPE*/(Δρ g w_T), never a centroid.
+CENTROID_RATIO_MIN = 0.45
 try:
     from scipy.integrate import simpson
     _INT = lambda y, xc: simpson(y, x=xc, axis=1)
@@ -223,7 +235,9 @@ class Model:
 
     def deformed_resultants(self, x_km):
         """∫σzz and N_D = ∫(σxx−σzz) along the DEFORMED vertical line at absolute x [km] (thin wrapper over
-        deformed_line — the one shared extractor).  Returns (∫σzz, N_D) in N/m."""
+        deformed_line — the one shared extractor).  Returns (∫σzz, N_D) in N/m.  Trapezoid on the (non-uniform)
+        deformed z: Simpson changes the reference pull by 0.008 % (checked 2026-09-14, audit F10) — not worth a
+        second integration rule."""
         L = self.deformed_line(x_km)
         return np.trapz(L["szz"], L["z"]), np.trapz(L["n_d"], L["z"])
 
@@ -356,7 +370,7 @@ def signed_centroid(z, tau):
     """Signed centre of mass ∫z·τ dz / ∫τ dz of a depth profile — for a τzx,x (equivalent-density) distribution, the
     depth at which it sits.  ALWAYS signed (CLAUDE.md): it divides by the net resultant ∫τ, so for a sign-changing profile it can
     fall outside the profile's support and is ill-conditioned when |∫τ| ≪ ∫|τ| (a near-balanced dipole) — callers
-    guard that case; a magnitude-weighted ∫z|τ|/∫|τ| is a different quantity and is never used."""
+    guard that case with CENTROID_RATIO_MIN; a magnitude-weighted ∫z|τ|/∫|τ| is a different quantity and is never used."""
     return np.trapz(z * tau, z) / np.trapz(tau, z)
 
 

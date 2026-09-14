@@ -28,14 +28,13 @@ import matplotlib
 if __name__ == "__main__":
     matplotlib.use("Agg")   # headless only when run as a script; importable in Jupyter without hijacking the backend
 import matplotlib.pyplot as plt
-from gpe_analysis import Model, trench_ref_km, write_table
+from gpe_analysis import Model, trench_ref_km, write_table, DRHOG
 
 
 def main():
     # --- config constants (match paper_models.jl) ---
     E, NU, H = 70.0e9, 0.25, 60.0e3
-    RHO_A, RHO_W, G = 3300.0, 1000.0, 9.81
-    K = (RHO_A - RHO_W) * G                       # Winkler modulus Δρg [N/m³]
+    K = DRHOG                       # Winkler modulus Δρg [N/m³]
     EP = E / (1 - NU**2); D = EP * H**3 / 12.0
     BETA = (K / (4 * D))**0.25; ALPHA = 1.0 / BETA
     m = Model("data/suite1_strength/elastic_deep_60km_V4")

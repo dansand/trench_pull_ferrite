@@ -34,7 +34,7 @@ solver is also supported (§4).
 
 ```
 model/        the solver and the production driver (Julia)
-                gpe_mvm.jl, gpe_plastic.jl   massless plane-strain flexure; in-plane Tresca / plane-strain J2 plasticity
+                gpe_plastic.jl               the solver: total-Lagrangian massless plate on a Δρg foundation; in-plane Tresca / depth-dependent von Mises plasticity
                 paper_models.jl              every model in the paper is a command of this script
                 idealized_beam.jl            the beam benchmarks (SI S1, S2)
 analysis/     gpe_analysis.py — deformed-mesh Cauchy integration, trench pull ΔGPE*, equivalent density ρ̂
@@ -131,7 +131,7 @@ julia --project=. model/paper_models.jl suite1        # Suite 1: four strength m
 julia --project=. model/paper_models.jl v_sweep       # manuscript Suite 2: load sweep V = 1 … 4.5   → data/suite2_load
 julia --project=. model/paper_models.jl nd_sweep      # manuscript Suite 3: background N_D = −3 … +3 → data/suite3_background
 julia --project=. model/paper_models.jl thickness     # Suite 4: h = 30/40/50 km at matched deflection (secant-tuned V)
-julia --project=. model/paper_models.jl convergence   # SI Table S2 (not part of `all`)
+julia --project=. model/paper_models.jl convergence   # Table S3 (not part of `all`)
 julia --project=. model/paper_models.jl all           # suite1 + nd_sweep + v_sweep + thickness
 julia --project=. model/idealized_beam.jl             # the benchmark beams (S1, S2)
 ```

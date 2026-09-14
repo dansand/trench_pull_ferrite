@@ -23,7 +23,7 @@ if __name__ == "__main__":
     matplotlib.use("Agg")   # headless only when run as a script; importable in Jupyter without hijacking the backend
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter1d
-from gpe_analysis import Model, trench_ref_km, deformed_shear_gradient, write_table
+from gpe_analysis import Model, trench_ref_km, deformed_shear_gradient, write_table, DRHOG
 
 S1 = "data/suite1_strength"
 # The Tresca baseline is the reference model; SUITE1 is the full 2×2 rheology panel.  (DD-VM entries are
@@ -34,7 +34,6 @@ SUITE1 = [(f"{S1}/elastic_deep_60km_V4",    "elastic"),
           (f"{S1}/dd_vm_sym_60km_V4",   "DD-VM (symmetric)")]
 OUT_SUITE1 = "figures/gpe_compare_suite1.png"     # Figure 5: Suite-1 robustness (2×2) — the ONLY output
 WINDOW_KM = 200
-DRHOG = (3300.0 - 1000.0) * 9.81
 # B&W-robust styling (2026-09-11, user): distinguish by weight/style, not hue, so the figure reads
 # identically when printed in greyscale.  The truth is a thick pale-GREY band; the reconstruction is a
 # thin BLACK line that traces it (agreement, both continuous — no discrete markers); the mid-plate
