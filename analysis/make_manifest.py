@@ -29,8 +29,8 @@ ORIGIN = {
     "suite4_thickness": f"committed in {ARCHIVE} at finite_strain/out/paper/set4_thickness/<model> (commit 26e6c9b, 2026-08-11)",
     "suite2_load":      f"on-disk output of `paper_models.jl v_sweep` in the working tree of {ARCHIVE} at finite_strain/out/paper/set3_v_sweep/<model>; never committed there",
     "suite3_background": f"on-disk output of `paper_models.jl nd_sweep` in the working tree of {ARCHIVE} at finite_strain/out/paper/set2_nd_sweep/<model>; never committed there",
-    "idealized_beam":   f"committed in {ARCHIVE} at finite_strain/out/idealized_beam (commit 10d0d39, 2026-08-20)",
-    "idealized_beam_elastic": f"committed in {ARCHIVE} at finite_strain/out/idealized_beam_elastic (commit 758e4dc, 2026-08-20)",
+    "idealized_beam":   "re-solved with the release code (model/idealized_beam.jl) on 2026-09-14; identical to the archive copy (finite_strain/out/idealized_beam, commit 10d0d39) on every shared field, plus the three Cauchy-gradient fields the archive export predated",
+    "idealized_beam_elastic": "re-solved with the release code (model/idealized_beam.jl) on 2026-09-14; identical to the archive copy (finite_strain/out/idealized_beam_elastic, commit 758e4dc) on every shared field, plus the three Cauchy-gradient fields the archive export predated",
 }
 
 

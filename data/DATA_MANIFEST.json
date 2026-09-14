@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-13",
+ "generated": "2026-09-14",
  "generator": "analysis/make_manifest.py",
  "models": {
   "idealized_beam": {
@@ -22,11 +22,11 @@
    },
    "files": {
     "gpe_model.vtu": {
-     "sha256": "d5bf0acd0827f4dbeecf3980a0dd4780a960739244be8608fc78bfe8ebf1a5bf",
-     "bytes": 636136
+     "sha256": "97b9b1de74f75a80e436f10e05661351297730ab4e3680a21eec307a7a7fb70f",
+     "bytes": 825354
     }
    },
-   "origin": "committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/idealized_beam (commit 10d0d39, 2026-08-20)"
+   "origin": "re-solved with the release code (model/idealized_beam.jl) on 2026-09-14; identical to the archive copy (finite_strain/out/idealized_beam, commit 10d0d39) on every shared field, plus the three Cauchy-gradient fields the archive export predated"
   },
   "idealized_beam_elastic": {
    "command": "julia --project=. model/idealized_beam.jl",
@@ -48,11 +48,11 @@
    },
    "files": {
     "gpe_model.vtu": {
-     "sha256": "df750d655d6c5ff38be6f3d010f5fb8bf5a9a532cc57c4fe7d490ce3b69f4673",
-     "bytes": 522642
+     "sha256": "0c31ab5cfff5de72a8923e428b70d777227be769706c5695126348a826415460",
+     "bytes": 711416
     }
    },
-   "origin": "committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/idealized_beam_elastic (commit 758e4dc, 2026-08-20)"
+   "origin": "re-solved with the release code (model/idealized_beam.jl) on 2026-09-14; identical to the archive copy (finite_strain/out/idealized_beam_elastic, commit 758e4dc) on every shared field, plus the three Cauchy-gradient fields the archive export predated"
   },
   "suite1_strength/dd_vm_asym_60km_V4": {
    "command": "julia --project=. model/paper_models.jl suite1",

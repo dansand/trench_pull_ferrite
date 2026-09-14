@@ -1,26 +1,26 @@
 # Data manifest — provenance of every shipped model
 
-Generated 2026-09-13 by `python analysis/make_manifest.py` (hashes computed, never typed); verify with `python analysis/make_manifest.py --check`. The machine-readable twin is `DATA_MANIFEST.json`, which `gpe_analysis.Model.stress_frame()` reads. The shipped models predate the driver's `provenance.txt` stamp; this file is their provenance record.
+Generated 2026-09-14 by `python analysis/make_manifest.py` (hashes computed, never typed); verify with `python analysis/make_manifest.py --check`. The machine-readable twin is `DATA_MANIFEST.json`, which `gpe_analysis.Model.stress_frame()` reads. The shipped models predate the driver's `provenance.txt` stamp; this file is their provenance record.
 
 **Stress frame** `massless` for every model: the stored `sigma_*` fields are the 2nd Piola–Kirchhoff stress of a run without gravity or lithostatic prestress (see README §4 for what the fields are).
 
 ## `idealized_beam`
 
 - command: `julia --project=. model/idealized_beam.jl`
-- origin: committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/<model> (commit 10d0d39, 2026-08-20)
+- origin: re-solved with the release code (model/<model>.jl) on 2026-09-14; identical to the archive copy (finite_strain/out/<model>, commit 10d0d39) on every shared field, plus the three Cauchy-gradient fields the archive export predated
 
 | model | parameters | file | bytes | sha256 |
 |---|---|---|---|---|
-| `idealized_beam` | nondimensional=True, L=10.0, h=1.0, nx=200, nz=40, E=60.0, nu=0.25, sigma_Y=1.0, delta_max=2.2, nsteps=44, element_order=2, foundation=none, gravity=none | `gpe_model.vtu` | 636136 | `d5bf0acd0827f4dbeecf3980a0dd4780a960739244be8608fc78bfe8ebf1a5bf` |
+| `idealized_beam` | nondimensional=True, L=10.0, h=1.0, nx=200, nz=40, E=60.0, nu=0.25, sigma_Y=1.0, delta_max=2.2, nsteps=44, element_order=2, foundation=none, gravity=none | `gpe_model.vtu` | 825354 | `97b9b1de74f75a80e436f10e05661351297730ab4e3680a21eec307a7a7fb70f` |
 
 ## `idealized_beam_elastic`
 
 - command: `julia --project=. model/idealized_beam.jl`
-- origin: committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/<model> (commit 758e4dc, 2026-08-20)
+- origin: re-solved with the release code (model/idealized_beam.jl) on 2026-09-14; identical to the archive copy (finite_strain/out/<model>, commit 758e4dc) on every shared field, plus the three Cauchy-gradient fields the archive export predated
 
 | model | parameters | file | bytes | sha256 |
 |---|---|---|---|---|
-| `idealized_beam_elastic` | nondimensional=True, L=10.0, h=1.0, nx=200, nz=40, E=60.0, nu=0.25, sigma_Y=1000000.0, delta_max=2.2, nsteps=44, element_order=2, foundation=none, gravity=none | `gpe_model.vtu` | 522642 | `df750d655d6c5ff38be6f3d010f5fb8bf5a9a532cc57c4fe7d490ce3b69f4673` |
+| `idealized_beam_elastic` | nondimensional=True, L=10.0, h=1.0, nx=200, nz=40, E=60.0, nu=0.25, sigma_Y=1000000.0, delta_max=2.2, nsteps=44, element_order=2, foundation=none, gravity=none | `gpe_model.vtu` | 711416 | `0c31ab5cfff5de72a8923e428b70d777227be769706c5695126348a826415460` |
 
 ## `suite1_strength`
 
