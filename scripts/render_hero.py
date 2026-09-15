@@ -101,32 +101,43 @@ def load(model_dir, diff_dir=None):
 
 
 def deviatoric_crosses(m, f, x0):
-    """(tension, compression) PolyData of headless, perpendicular principal-stress crosses."""
+    """(tension, compression) PolyData of headless principal-stress crosses.  Orientation = the in-plane principal
+    axes of the Cauchy stress; both arms have the same physical length, ∝ the maximum in-plane shear (σ1−σ2)/2,
+    scaled so the largest cross in the figure has arms of CROSS_LEN_KM.
+    The crosses are drawn on the DISPLAYED plate, whose geometry is the reference mesh warped by WARP_FACTOR × u,
+    flipped to height-up and stretched by VEXAG.  So each arm is a physical vector pushed through the SAME map the
+    mesh goes through — the display Jacobian D = S·(I + WARP_FACTOR·∇u)·F⁻¹ with S = diag(1, −VEXAG) and
+    F = I + ∇u — for its ORIENTATION only, so a surface-parallel principal axis stays parallel to the drawn surface;
+    the arm LENGTH is the physical one, so the two arms of a cross are always equal on the page (they both show
+    (σ1−σ2)/2).  The two arms are perpendicular in the physical plate, not exactly on the (exaggerated) page."""
     si, sj = CROSS_STRIDE
     ii = [i for i in range(0, m.Nx, si) if m.x[i] >= x0]
     jj = list(range(0, m.Nz, sj))
+    ux, uz = f["ux"], f["uy"]
+    dux_dx, dux_dz = np.gradient(ux, m.x, axis=0), np.gradient(ux, m.z, axis=1)
+    duz_dx, duz_dz = np.gradient(uz, m.x, axis=0), np.gradient(uz, m.z, axis=1)
+    S = np.diag([1.0, -VEXAG]); I2 = np.eye(2)
     recs, dev = [], []
     for i in ii:
         for j in jj:
             T = np.array([[f["sxx"][i, j], f["sxz"][i, j]], [f["sxz"][i, j], f["szz"][i, j]]])
-            wv, V = np.linalg.eigh(T)
-            xw = m.x[i] + WARP_FACTOR * f["ux"][i, j]
-            yw = -(m.z[j] + WARP_FACTOR * f["uy"][i, j]) * VEXAG   # height = −depth (see load)
-            recs.append((xw, yw, V, wv - wv.mean())); dev.append(np.max(np.abs(wv - wv.mean())))
+            wv, V = np.linalg.eigh(T)                                  # physical (x, z-down) principal axes of the Cauchy stress
+            Gu = np.array([[dux_dx[i, j], dux_dz[i, j]], [duz_dx[i, j], duz_dz[i, j]]])
+            Dmap = S @ (I2 + WARP_FACTOR * Gu) @ np.linalg.inv(I2 + Gu)  # physical direction → displayed direction
+            xw = m.x[i] + WARP_FACTOR * ux[i, j]
+            yw = -(m.z[j] + WARP_FACTOR * uz[i, j]) * VEXAG            # height = −depth (see load)
+            recs.append((xw, yw, V, wv - wv.mean(), Dmap)); dev.append(np.max(np.abs(wv - wv.mean())))
     maxdev = max(dev); scale = (CROSS_LEN_KM * 1e3) / (maxdev + 1e-30)
     seg = {"t": ([], []), "c": ([], [])}
-    for xw, yw, V, dv in recs:
+    for xw, yw, V, dv, Dmap in recs:
         if np.max(np.abs(dv)) < CROSS_MIN_FRAC * maxdev:
             continue
         for k in range(2):
-            # eigenvectors live in the z-DOWN (depth) frame; the map is drawn in the y-UP frame (see load), so the
-            # vertical component flips sign.  (Before 2026-09-14 it did not, and every cross was mirrored about the
-            # horizontal — the top fibre near the trench tilted the wrong way.)  Arms are drawn at their true angle,
-            # NOT stretched by VEXAG, so the two arms stay perpendicular on the page.
-            d = np.array([V[0, k], -V[1, k]]); d /= (np.hypot(*d) + 1e-30)
-            L = scale * abs(dv[k]); pts, lines = seg["t" if dv[k] > 0 else "c"]
+            d = Dmap @ V[:, k]; d /= (np.hypot(*d) + 1e-30)            # ORIENTATION follows the drawn plate (display map) …
+            a = scale * abs(dv[k]) * d                                 # … LENGTH stays the physical one: both arms equal on the page
+            pts, lines = seg["t" if dv[k] > 0 else "c"]
             n = len(pts)
-            pts += [[xw - L * d[0], yw - L * d[1], 0.0], [xw + L * d[0], yw + L * d[1], 0.0]]
+            pts += [[xw - a[0], yw - a[1], 0.0], [xw + a[0], yw + a[1], 0.0]]
             lines += [2, n, n + 1]
 
     def mk(pl):
@@ -190,7 +201,7 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
     bbox = warped.bounds
     print("reference lines [km]:", {k: round(lines[k], 0) for k in REF_KEYS})
 
-    # SIGNED ρ̂ centroid = the dipole-moment depth of τ_zx,x, via the BLESSED deformed-line pipeline (the same
+    # SIGNED ρ̂ centroid = the dipole-moment depth of τ_zx,x, via the deformed-line extractor (the same
     # estimator as thickness_compare): per column τ = g⁻¹ τzx,x on the DEFORMED line, signed centroid depth
     # z_c = ∫zτ dz / ∫τ dz.  Mask ONLY where the dipole is near-BALANCED — |∫τ| < RATIO_MIN·∫|τ| — the genuine
     # ill-conditioning of a signed centroid (the isostatic column, and a fully-plastic hinge where the ± lobes
@@ -322,7 +333,7 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
     # so N_D (dash-dot) rides ON ΔGPE.  M is the PURE bending moment ∫σxx(z−z_mid) ⇒ dM/dx (dashed) = V EXACTLY.
     axd = fig.add_subplot(gs[4, 0])
     # panel (e): resultants — the ONE definition.  V, ΔN_D, M, ΔGPE* are Cauchy integrals on the DEFORMED
-    # column (deformed_line), trench-referenced; NOT material-frame integrate_z / gpe_lab.  The identity
+    # column (deformed_line), trench-referenced; NOT the reference-grid integrate_z.  The identity
     # ΔN_D = ΔGPE* means N_D (dash-dot) rides ON ΔGPE*; dM/dx (dashed) = V (pure σxx bending moment).
     xr, Varr, ND, Mn, dGPE = resultants(m)
     xpull = lines["shear_max"]; pull = trench_pull(m)[0]

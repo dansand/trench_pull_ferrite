@@ -1,7 +1,7 @@
 """edge_exclusion.py — the loaded-edge sensitivity the SI quotes (Text S1, model formulation): what excluding the
 first ~10 km changes in the deflection-normalised effective arm.
 
-Restored (as a table, no figure) from the retired render_edge_si.py.  Per Suite-1 model: the arm ΔGPE*(x)/(Δρ g w(x))
+Per Suite-1 model: the arm ΔGPE*(x)/(Δρ g w(x))
 profile from the trench inboard, on deformed columns; the edge window L_e where the top-10-km equivalent density has
 decayed to its inboard level; the plateau arm (median over [L_e, 2L_e]); and the change from the raw trench arm to the
 plateau.  Writes tables/edge_exclusion.csv.

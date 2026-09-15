@@ -2,7 +2,8 @@
 
 Every number the paper quotes is read from the tables the scripts wrote in the same pass as their figures
 (tables/*.csv, see gpe_analysis.write_table) — nothing is scraped from printed text.  Checks, with tolerances:
-  model_summary: reference ΔGPE* = 2.542 TN/m ± 0.5 %, identity < 0.05 %, arm 34.9 ± 0.2 km, all 20 models identity < 0.1 %
+  model_summary: reference ΔGPE* = 2.542 TN/m ± 0.5 %, identity < 0.05 %, arm 34.9 ± 0.2 km, all 20 models identity < 0.1 %;
+                 reference: no yielded node within 10 km of the trench face (the edge ramp holds the face elastic)
   benchmark_boef: end resultant 4.000 ± 1 %, V misfit ≤ 1 %, deflection offset 1.6 ± 0.3 %, parabola ≤ 0.5 %
   benchmark_mp: 148 sections, mean ≤ 0.15 %, max ≤ 1 %        gpe_compare_reconstruction: plate-top ≤ 3 %, sea-level ≤ 10 %
   profiles_selfcheck: Tresca trench_pull = model_summary's (same function, same data) and area agrees to < 0.5 %
@@ -18,7 +19,7 @@ LOG = sys.argv[1] if len(sys.argv) > 1 else ".reproduce_logs"
 FIGURES = ["hero_tresca_deep60", "gpe_correlation", "gpe_compare_suite1", "profiles", "thickness_compare", "benchmark_boef",
            "benchmark_mp", "core_profiles_deep60", "corrected_density", "hero_tresca_30km", "hero_tresca_40km",
            "hero_dd_vm_asym", "hero_dd_vm_sym"]
-TABLES = ["model_summary", "isostatic_column", "frame_check", "edge_exclusion", "benchmark_boef", "benchmark_mp", "gpe_compare_reconstruction", "gpe_correlation",
+TABLES = ["model_summary", "isostatic_column", "frame_check", "edge_exclusion", "convergence", "benchmark_boef", "benchmark_mp", "gpe_compare_reconstruction", "gpe_correlation",
           "thickness_compare", "profiles_selfcheck", "corrected_density", "hero_tresca_deep60", "hero_tresca_30km", "hero_tresca_40km",
           "hero_dd_vm_asym", "hero_dd_vm_sym"]
 REF = "tresca_deep_150_60km_V4"
@@ -54,6 +55,8 @@ check(ref is not None and abs(ref["dGPE_TN"] / 2.542 - 1) <= 0.005, f"reference 
 check(ref is not None and ref["identity_pct"] < 0.05, f"reference identity residual = {ref and ref['identity_pct']} % (< 0.05 %)")
 check(ref is not None and abs(ref["arm_km"] - 34.9) <= 0.2, f"reference arm = {ref and ref['arm_km']} km (34.9 ± 0.2)")
 check(bool(ms) and all(r["identity_pct"] < 0.1 for r in ms), f"identity residual < 0.1 % on all models (max {max((r['identity_pct'] for r in ms), default=float('nan')):.3f} %)")
+# --- the reference model's loaded edge: the yield ramp keeps the face elastic (no yielded node within 10 km)
+check(ref is not None and ref["yielded_face_zone_pct"] == 0, f"reference: no yielded node within 10 km of the trench face ({ref and ref['yielded_face_zone_pct']} %)")
 
 # --- benchmarks S1, S2 (the scripts also assert these in-script; the tables are what the SI quotes)
 for name in ("benchmark", "mp_benchmark"):
@@ -66,6 +69,19 @@ check(b.get("shear_parabola_misfit_max", 99) <= 0.5, f"S1 shear parabola misfit 
 b = scalars("benchmark_mp")
 check(b.get("sections_on_curve") == 148 and b.get("mean_misfit_M_over_Mp", 99) <= 0.15 and b.get("max_misfit_M_over_Mp", 99) <= 1.0,
       f"S2 M–κ: {b.get('sections_on_curve')} sections, mean {b.get('mean_misfit_M_over_Mp')} %, max {b.get('max_misfit_M_over_Mp')} % (148, ≤ 0.15, ≤ 1)")
+
+# --- Table S3 convergence (data/convergence, solved with the release code): the production mesh row IS the reference model
+_, rows = table("convergence")
+prod = next((r for r in rows if r["model"] == "bench_800x48" and "×" in str(r["configuration"])), None)
+fine = next((r for r in rows if r["model"] == "bench_1200x72"), None)
+ns12 = next((r for r in rows if r["model"] == "bench_800x48_ns12"), None); ns48 = next((r for r in rows if r["model"] == "bench_800x48_ns48"), None)
+check(len(rows) == 6, f"convergence table has 6 rows (found {len(rows)})")
+check(prod is not None and ref is not None and abs(prod["dGPE_TN"] / ref["dGPE_TN"] - 1) < 1e-3 and abs(prod["w_T_m"] - ref["w_T_m"]) < 1.0,
+      f"convergence 800×48 row = the reference model (ΔGPE* {prod and prod['dGPE_TN']} vs {ref and ref['dGPE_TN']}; w_T {prod and prod['w_T_m']} vs {ref and ref['w_T_m']:.0f})")
+check(fine is not None and prod is not None and abs(fine["dGPE_TN"] / prod["dGPE_TN"] - 1) <= 0.002, f"convergence: 1200×72 vs 800×48 pull differ by {fine and prod and 100*abs(fine['dGPE_TN']/prod['dGPE_TN']-1):.3f} % (≤ 0.2 %)")
+check(ns12 is not None and ns48 is not None and prod is not None and abs(ns12["dGPE_TN"] / prod["dGPE_TN"] - 1) <= 0.001 and abs(ns48["dGPE_TN"] / prod["dGPE_TN"] - 1) <= 0.001,
+      "convergence: 12 and 48 load increments within 0.1 % of 24")
+check(bool(rows) and all(r["identity_residual_pct"] < 0.1 for r in rows), "convergence: identity residual < 0.1 % on every mesh")
 
 # --- Fig 5 reconstruction table
 _, rows = table("gpe_compare_reconstruction")
@@ -113,7 +129,7 @@ present = sorted(os.path.splitext(os.path.basename(p))[0] for p in glob.glob("ta
 for t in TABLES:
     p = f"tables/{t}.csv"
     check(os.path.isfile(p) and os.path.getmtime(p) >= t0 - 1, f"table rewritten: {p}")
-extra = [t for t in present if t not in TABLES and t != "convergence"]      # convergence is regeneration-only (shipped copy)
+extra = [t for t in present if t not in TABLES]
 check(not extra, f"every table in tables/ is one the harness asserts (unlisted: {extra})")
 for t in extra:
     check(os.path.getmtime(f"tables/{t}.csv") >= t0 - 1, f"table rewritten: tables/{t}.csv")

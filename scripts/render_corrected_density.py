@@ -1,4 +1,4 @@
-"""render_corrected_density.py — EXPLORATORY: the trench pull as a dipole of the CORRECTED density.
+"""render_corrected_density.py — SI Figure S5: the trench pull as a dipole of the CORRECTED density.
 
 Corrected density  ρ̂_c = true density (water above the deflected top · plate 3300 · mantle 3300) + equivalent
 density (shear support τ_zx,x/g in the plate).  Three columns — trench · max M · isostatic (the reference).

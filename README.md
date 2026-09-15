@@ -47,7 +47,6 @@ schematic/    TikZ sources for Figures 1, 2 and the SI stress-regime grid
 data/         all model output, one folder per manuscript suite: suite1_strength, suite2_load, suite3_background,
               suite4_thickness; idealized_beam* (benchmarks)
               DATA_MANIFEST.md / .json — per model: generating command, parameters, SHA-256 of every file, origin
-              BOUNDARY_ARTIFACT.md — the loaded-edge investigation record the SI quotes
 START_HERE.ipynb   the analysis step by step, then on any model, then the paper's figures from their scripts
 REPRODUCE.md       figure → script → data → command, for every figure in the paper
 reproduce.sh       one command that regenerates and checks every figure (and runs the notebook and the tests)
@@ -100,9 +99,8 @@ prints the ~2 % plate-top-arm and ~8 % sea-level-arm reconstruction errors).
 Some figures are **renamed when copied into the manuscript**: `thickness_compare.png` → `ferrite_thickness_compare.png`;
 `hero_tresca_{30,40}km.png` → `ferrite_hero_h{30,40}.png`; `schematic/taux_cases.pdf` → `fig_taux_cases_grid.pdf`.
 
-The one figure-side exception: the **Table S3 convergence table** reads `data/convergence/`, which is not included
-(regeneration-only, several solves). Its values are in `tables/convergence.csv` (and `.md`); to regenerate, run
-`julia --project=. model/paper_models.jl convergence` first.
+Table S3 (mesh and load-increment convergence) is produced like the figures: `scripts/render_convergence.py` reads the five
+models in `data/convergence/` (solved with the release code; ~20 MB) and writes `tables/convergence.csv`.
 
 ## 3b. Tables — the numbers the paper quotes
 
@@ -131,7 +129,7 @@ julia --project=. model/paper_models.jl suite1        # Suite 1: four strength m
 julia --project=. model/paper_models.jl v_sweep       # manuscript Suite 2: load sweep V = 1 … 4.5   → data/suite2_load
 julia --project=. model/paper_models.jl nd_sweep      # manuscript Suite 3: background N_D = −3 … +3 → data/suite3_background
 julia --project=. model/paper_models.jl thickness     # Suite 4: h = 30/40/50 km at matched deflection (secant-tuned V)
-julia --project=. model/paper_models.jl convergence   # Table S3 (not part of `all`)
+julia --project=. model/paper_models.jl convergence   # Table S3: the five convergence models (not part of `all`; the 1200 × 72 run is slow)
 julia --project=. model/paper_models.jl all           # suite1 + nd_sweep + v_sweep + thickness
 julia --project=. model/idealized_beam.jl             # the benchmark beams (S1, S2)
 ```

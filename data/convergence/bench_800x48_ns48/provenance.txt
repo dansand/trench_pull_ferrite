@@ -1,0 +1,13 @@
+ferrite_commit=f82f325
+generated=2026-09-14T21:53:58
+kind=tresca_deep
+stress_frame=massless
+sigma_Y_MPa=150.0
+h_km=60.0
+V_TN=4.0
+Nmem_TN=0.0
+E_Pa=7.0e10
+nx=800
+nz=48
+nsteps=48
+complete=true

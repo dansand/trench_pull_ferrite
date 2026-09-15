@@ -19,7 +19,8 @@ DATA = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
 FILES = ("gpe_model.vtu", "gpe_topo.csv", "tuned_V.txt")
 
 # Fixed facts of the production runs (model/paper_models.jl, production block; model/idealized_beam.jl).
-BASE = dict(E_Pa=70.0e9, nu=0.25, h_km=60, nx=800, nz=48, nsteps=24, L_km=1600, rho_a=3300, rho_w=1000, g=9.81)
+BASE = dict(E_Pa=70.0e9, nu=0.25, h_km=60, nx=800, nz=48, nsteps=24, L_km=1600, rho_a=3300, rho_w=1000, g=9.81,
+            edge_ramp_MPa=100, edge_ramp_km=10)   # trench-edge yield-strength ramp: bulk + A·exp(−x/λ)
 
 # Origin — recorded facts, verified 2026-09-12 by SHA-256 against the private development archive
 # (ferrite_plate_flexure, HEAD 6e7fb08 of 2026-09-11): every shipped file is byte-identical to its archive copy.
@@ -29,6 +30,7 @@ ORIGIN = {
     "suite4_thickness": f"committed in {ARCHIVE} at finite_strain/out/paper/set4_thickness/<model> (commit 26e6c9b, 2026-08-11)",
     "suite2_load":      f"on-disk output of `paper_models.jl v_sweep` in the working tree of {ARCHIVE} at finite_strain/out/paper/set3_v_sweep/<model>; never committed there",
     "suite3_background": f"on-disk output of `paper_models.jl nd_sweep` in the working tree of {ARCHIVE} at finite_strain/out/paper/set2_nd_sweep/<model>; never committed there",
+    "convergence":      "solved with the release code (model/paper_models.jl convergence) on 2026-09-14; the archive kept only its table (out/paper/CONVERGENCE.md, 2026-07-08), not the models — these reproduce it",
     "idealized_beam":   "re-solved with the release code (model/idealized_beam.jl) on 2026-09-14; identical to the archive copy (finite_strain/out/idealized_beam, commit 10d0d39) on every shared field, plus the three Cauchy-gradient fields the archive export predated",
     "idealized_beam_elastic": "re-solved with the release code (model/idealized_beam.jl) on 2026-09-14; identical to the archive copy (finite_strain/out/idealized_beam_elastic, commit 758e4dc) on every shared field, plus the three Cauchy-gradient fields the archive export predated",
 }
@@ -61,6 +63,10 @@ def describe(rel):
                 k, _, v = line.strip().partition("=")
                 if k == "V_TN": p["V_TN_tuned"] = float(v)
         return cmd + "thickness", "massless", p
+    if suite == "convergence":
+        nx, nz = map(int, re.search(r"bench_(\d+)x(\d+)", name).groups())
+        ns = re.search(r"_ns(\d+)$", name); ns = int(ns.group(1)) if ns else 24
+        return cmd + "convergence", "massless", dict(BASE, nx=nx, nz=nz, nsteps=ns, strength="Tresca, uniform", sigma_Y_MPa=150, V_TN=4.0)
     if suite in ("idealized_beam", "idealized_beam_elastic"):
         p = dict(nondimensional=True, L=10.0, h=1.0, nx=200, nz=40, E=60.0, nu=0.25, sigma_Y=(1.0e6 if suite.endswith("elastic") else 1.0),
                  delta_max=2.2, nsteps=44, element_order=2, foundation="none", gravity="none")
@@ -80,8 +86,8 @@ def model_dirs():
     out = []
     for suite in sorted(os.listdir(DATA)):
         sd = os.path.join(DATA, suite)
-        if not os.path.isdir(sd) or suite.startswith("_") or suite in ("reference_figures", "convergence"):
-            continue                      # data/convergence is regeneration-only (Table S3) and never shipped: not a manifest member
+        if not os.path.isdir(sd) or suite.startswith("_") or suite == "reference_figures":
+            continue
         if os.path.isfile(os.path.join(sd, "gpe_model.vtu")):
             out.append(suite); continue
         for name in sorted(os.listdir(sd)):

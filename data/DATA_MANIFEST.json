@@ -1,7 +1,167 @@
 {
- "generated": "2026-09-14",
+ "generated": "2026-09-15",
  "generator": "analysis/make_manifest.py",
  "models": {
+  "convergence/bench_1200x72": {
+   "command": "julia --project=. model/paper_models.jl convergence",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 1200,
+    "nz": 72,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "V_TN": 4.0
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "90a771c29f9546058acc49d74e88890e64d7b0be540ad29017b6c4a8b0187726",
+     "bytes": 8250701
+    },
+    "gpe_topo.csv": {
+     "sha256": "668c8f2e2590aa8a36f39233efbb1df4b9d0eff2792daa96c57d24e060ca1f90",
+     "bytes": 31836
+    }
+   },
+   "origin": "solved with the release code (model/paper_models.jl convergence) on 2026-09-14; the archive kept only its table (out/paper/CONVERGENCE.md, 2026-07-08), not the models \u2014 these reproduce it"
+  },
+  "convergence/bench_400x24": {
+   "command": "julia --project=. model/paper_models.jl convergence",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 400,
+    "nz": 24,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "V_TN": 4.0
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "6d1744586b71f5c31010d03dcb84d12b791c287ad5ba48c4a0bb332d167e4171",
+     "bytes": 1042452
+    },
+    "gpe_topo.csv": {
+     "sha256": "ceb41837d73e50092810414b34c4c966a8faec5c6a7b55f1227f7713bd7209e2",
+     "bytes": 10632
+    }
+   },
+   "origin": "solved with the release code (model/paper_models.jl convergence) on 2026-09-14; the archive kept only its table (out/paper/CONVERGENCE.md, 2026-07-08), not the models \u2014 these reproduce it"
+  },
+  "convergence/bench_800x48": {
+   "command": "julia --project=. model/paper_models.jl convergence",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 24,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "V_TN": 4.0
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "7ac0001648233e54a5e69446a9116efe6d732455bf1704b9a2a41e0c16b5c9d2",
+     "bytes": 3791732
+    },
+    "gpe_topo.csv": {
+     "sha256": "c04f1a5d6766a915f360e34f8867645784ab71a8776570c9cebe06719b93ea57",
+     "bytes": 21234
+    }
+   },
+   "origin": "solved with the release code (model/paper_models.jl convergence) on 2026-09-14; the archive kept only its table (out/paper/CONVERGENCE.md, 2026-07-08), not the models \u2014 these reproduce it"
+  },
+  "convergence/bench_800x48_ns12": {
+   "command": "julia --project=. model/paper_models.jl convergence",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 12,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "V_TN": 4.0
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "5fd36ca00c1f75e418d91276e887abce77375cec5ed50c6b7b63f59e6ca0e067",
+     "bytes": 3796728
+    },
+    "gpe_topo.csv": {
+     "sha256": "5b17f15d024e1059d3acd1410635fddb2aa22c9638e7ccd0c23525d123ff4cd0",
+     "bytes": 21234
+    }
+   },
+   "origin": "solved with the release code (model/paper_models.jl convergence) on 2026-09-14; the archive kept only its table (out/paper/CONVERGENCE.md, 2026-07-08), not the models \u2014 these reproduce it"
+  },
+  "convergence/bench_800x48_ns48": {
+   "command": "julia --project=. model/paper_models.jl convergence",
+   "stress_frame": "massless",
+   "parameters": {
+    "E_Pa": 70000000000.0,
+    "nu": 0.25,
+    "h_km": 60,
+    "nx": 800,
+    "nz": 48,
+    "nsteps": 48,
+    "L_km": 1600,
+    "rho_a": 3300,
+    "rho_w": 1000,
+    "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
+    "strength": "Tresca, uniform",
+    "sigma_Y_MPa": 150,
+    "V_TN": 4.0
+   },
+   "files": {
+    "gpe_model.vtu": {
+     "sha256": "27818e676c558ff0e6352dcc6ade49e23cf5ce4b2aa3fc013fbef947c8f06b92",
+     "bytes": 3791504
+    },
+    "gpe_topo.csv": {
+     "sha256": "b7286dc4e48835177365573f645f86526170919f547c2af712cff52e6ec376cf",
+     "bytes": 21234
+    }
+   },
+   "origin": "solved with the release code (model/paper_models.jl convergence) on 2026-09-14; the archive kept only its table (out/paper/CONVERGENCE.md, 2026-07-08), not the models \u2014 these reproduce it"
+  },
   "idealized_beam": {
    "command": "julia --project=. model/idealized_beam.jl",
    "stress_frame": "massless",
@@ -68,6 +228,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "V_TN": 4.0,
     "strength": "DD-VM asymmetric (depth-dependent von Mises)",
     "mu": 0.15,
@@ -100,6 +262,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "V_TN": 4.0,
     "strength": "DD-VM symmetric (depth-dependent von Mises)",
     "mu": 0.35,
@@ -132,6 +296,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "V_TN": 4.0,
     "strength": "elastic (sigma_Y -> inf: 1e12 Pa)"
    },
@@ -161,6 +327,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "V_TN": 4.0,
     "strength": "Tresca, uniform",
     "sigma_Y_MPa": 150
@@ -191,6 +359,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "strength": "Tresca, uniform",
     "sigma_Y_MPa": 150,
     "V_TN": 1.0
@@ -221,6 +391,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "strength": "Tresca, uniform",
     "sigma_Y_MPa": 150,
     "V_TN": 1.5
@@ -251,6 +423,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "strength": "Tresca, uniform",
     "sigma_Y_MPa": 150,
     "V_TN": 2.0
@@ -281,6 +455,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "strength": "Tresca, uniform",
     "sigma_Y_MPa": 150,
     "V_TN": 2.5
@@ -311,6 +487,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "strength": "Tresca, uniform",
     "sigma_Y_MPa": 150,
     "V_TN": 3.0
@@ -341,6 +519,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "strength": "Tresca, uniform",
     "sigma_Y_MPa": 150,
     "V_TN": 3.5
@@ -371,6 +551,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "strength": "Tresca, uniform",
     "sigma_Y_MPa": 150,
     "V_TN": 4.5
@@ -401,6 +583,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "strength": "Tresca, uniform",
     "sigma_Y_MPa": 150,
     "V_TN": 4.0,
@@ -432,6 +616,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "strength": "Tresca, uniform",
     "sigma_Y_MPa": 150,
     "V_TN": 4.0,
@@ -463,6 +649,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "strength": "Tresca, uniform",
     "sigma_Y_MPa": 150,
     "V_TN": 4.0,
@@ -494,6 +682,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "strength": "Tresca, uniform",
     "sigma_Y_MPa": 150,
     "V_TN": 4.0,
@@ -525,6 +715,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "strength": "Tresca, uniform",
     "sigma_Y_MPa": 150,
     "V_TN": 4.0,
@@ -556,6 +748,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "strength": "Tresca, uniform",
     "sigma_Y_MPa": 150,
     "V_TN": 4.0,
@@ -587,6 +781,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "strength": "Tresca, uniform",
     "sigma_Y_MPa": 150,
     "w_target_m": 3232.9,
@@ -623,6 +819,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "strength": "Tresca, uniform",
     "sigma_Y_MPa": 150,
     "w_target_m": 3232.9,
@@ -659,6 +857,8 @@
     "rho_a": 3300,
     "rho_w": 1000,
     "g": 9.81,
+    "edge_ramp_MPa": 100,
+    "edge_ramp_km": 10,
     "strength": "Tresca, uniform",
     "sigma_Y_MPa": 150,
     "w_target_m": 3232.9,

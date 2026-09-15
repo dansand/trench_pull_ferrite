@@ -39,7 +39,10 @@ end
 # Facesets: "left"=trench, "right"=clamp, "bottom"=top surface, "top"=base.
 const ρa, ρw, gg, L = 3300.0, 1000.0, 9.81, 1600.0e3
 const Δρg = (ρa - ρw) * gg; const Emod = 7.0e10
-ramp(bulk) = x -> bulk + 100.0e6 * exp(-x[1] / 10.0e3)         # edge yield-stress ramp at the trench (x=0), λ=10 km
+ramp(bulk, A = 100.0e6) = x -> bulk + A * exp(-x[1] / 10.0e3)   # edge yield-stress ramp at the trench (x=0), amplitude A, λ=10 km
+# The ramp exists because the parabolic face traction (peak 1.5V/h = 100 MPa at V=4, h=60) exceeds the in-plane Tresca
+# shear capacity σ_Y/2 = 75 MPa: without it the face itself yields in shear (a deformation mode unrelated to the bending
+# the paper studies).  The amplitude is recorded in the manifest (edge_ramp_MPa, edge_ramp_km).
 
 const ELASTIC = 1.0e12     # σ_Y → ∞ ⇒ purely elastic (same setup, for the elastic−plastic difference)
 # MASSLESS platform: no body force / prestress / confine (solve_plastic defaults), a single restoring Winkler
@@ -50,7 +53,7 @@ const sp_massless = [("bottom", Δρg, 0.0)]
 """Uniform massless Tresca (or elastic, σY = ELASTIC) plate of thickness `h` under end shear `V`, with an optional
 uniform background in-plane resultant `Nmem` and Young's modulus `E`.  Single top Δρg spring, edge yield-stress ramp,
 order 2, no gravity/prestress.  Writes data/<outroot>/<name>."""
-function run_tresca_deep(; σY, h, V, nx, nz, name, nsteps = 24, Nmem = 0.0, E = Emod, outroot)
+function run_tresca_deep(; σY, h, V, nx, nz, name, nsteps = 24, Nmem = 0.0, E = Emod, outroot, ramp_A = 100.0e6)
     outdir = joinpath(DATA, outroot, name)
     if isdir(outdir) && isfile(joinpath(outdir, "gpe_model.vtu"))
         @printf("%-24s exists — skipping (delete dir to force rerun)\n", name); return
@@ -62,7 +65,7 @@ function run_tresca_deep(; σY, h, V, nx, nz, name, nsteps = 24, Nmem = 0.0, E =
     # left face), reacted by the clamp ⇒ uniform N_D += Nmem (>0 = tension). Massless ⇒ no lithostatic confine.
     res = solve_plastic(; L = L, h = h, nx = nx, nz = nz, E = E, ν = 0.25, σ₀ = σY, H = 0.0,
         crit = :tresca, springs = sp_massless, bodyforce = x -> Vec{2}((0.0, 0.0)), prestress = x -> ZERO_S0₂,
-        confine_x = x -> -Nmem / h, yield = ramp(σY), tract_z = V / h, order = 2,
+        confine_x = x -> -Nmem / h, yield = ramp(σY, ramp_A), tract_z = V / h, order = 2,
         nsteps = nsteps, rtol = 1.0e-6, load_face = "left", clamp_face = "right")   # massless: no gravity/prestress
     xt, w = topography(res, h; y_surf = 0.0); ny = count(s -> s.k > 0, res.states)
     @printf("%-24s trench %5.0f m, yielded %4.1f%%  [OK]\n", name, maximum(w), 100 * ny / length(res.states))
@@ -71,7 +74,7 @@ function run_tresca_deep(; σY, h, V, nx, nz, name, nsteps = 24, Nmem = 0.0, E =
     end
     export_plastic(res, joinpath(outdir, "gpe_model"))
     write_provenance(outdir; kind = "tresca_deep", stress_frame = "massless", sigma_Y_MPa = σY/1e6, h_km = h/1e3, V_TN = V/1e12,
-                     Nmem_TN = Nmem/1e12, E_Pa = E, nx = nx, nz = nz, nsteps = nsteps)
+                     Nmem_TN = Nmem/1e12, E_Pa = E, nx = nx, nz = nz, nsteps = nsteps, edge_ramp_MPa = ramp_A/1e6, edge_ramp_km = 10.0)
 end
 
 """THICKNESS-SWEEP member (SI Suite 4): uniform massless Tresca at thickness `h`, tuned by V-bisection to a

@@ -15,6 +15,7 @@ literal the text carried then; `--compare DIR` re-checks those locations against
 | `\numRefArmKm` | 34.9 | `tables/model_summary.csv` | reference effective arm ΔGPE*/(Δρ g w_T) [km] | — | not yet quoted |
 | `\numRefXIkm` | 182 | `tables/model_summary.csv` | reference first isostatic column [km from trench] | — | not yet quoted |
 | `\numRefXMkm` | 89 | `tables/model_summary.csv` | reference max-moment column [km from trench] | — | not yet quoted |
+| `\numRefYieldThicknessPct` | 76 | `tables/model_summary.csv` | reference: yielded share of the thickness at max M [%] | — | not yet quoted |
 | `\numPullElastic` | 2.23 | `tables/model_summary.csv` | Suite 1 elastic pull [TN/m] | `sections/results.tex:132` (2.23) | not compared (run with --compare DIR) |
 | `\numPullDDVMasym` | 2.29 | `tables/model_summary.csv` | Suite 1 DD-VM asym pull [TN/m] | — | not yet quoted |
 | `\numPullDDVMsym` | 2.84 | `tables/model_summary.csv` | Suite 1 DD-VM sym pull [TN/m] | `sections/results.tex:132` (2.84) | not compared (run with --compare DIR) |
@@ -35,7 +36,7 @@ literal the text carried then; `--compare DIR` re-checks those locations against
 | `\numConvCoarseResid` | 0.097 | `tables/convergence.csv` | Table S3 400×24 residual | `si.tex:231` (0.097) | not compared (run with --compare DIR) |
 | `\numConvFinePull` | 2.540 | `tables/convergence.csv` | Table S3 1200×72 pull | `si.tex:233` (2.540) | not compared (run with --compare DIR) |
 | `\numConvFineResid` | 0.010 | `tables/convergence.csv` | Table S3 1200×72 residual | `si.tex:233` (0.010) | not compared (run with --compare DIR) |
-| `\numConvLoadIncPct` | 0.04 | `tables/convergence.csv` | Table S3: pull change 12 vs 24 load increments [%] | `si.tex:214` (0.04) | not compared (run with --compare DIR) |
+| `\numConvLoadIncPct` | 0.005 | `tables/convergence.csv` | Table S3: pull change 12 vs 24 load increments [%] (was 0.04 % from the 3-decimal transcription; full precision gives 0.005 %) | `si.tex:214` (0.04) | not compared (run with --compare DIR) |
 | `\numReconTopTrescaPct` | 1.8 | `tables/gpe_compare_reconstruction.csv` | Fig 5 Tresca plate-top-arm reconstruction error [%] | — | not yet quoted |
 | `\numReconSeaTrescaPct` | 8.6 | `tables/gpe_compare_reconstruction.csv` | Fig 5 Tresca sea-level-arm error [%] | — | not yet quoted |
 | `\numReconTopMaxPct` | 2.3 | `tables/gpe_compare_reconstruction.csv` | Fig 5 max plate-top-arm error, Suite 1 [%] | — | not yet quoted |

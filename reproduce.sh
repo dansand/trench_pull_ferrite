@@ -3,13 +3,13 @@
 #
 #   ./reproduce.sh              # everything: tests, every REPRODUCE.md command in order, the notebook, the number checks
 #   ./reproduce.sh --no-nb      # skip executing START_HERE.ipynb (the slowest step)
+#   Table S3 needs data/convergence/ (shipped; regenerate with `julia --project=. model/paper_models.jl convergence`).
 #
 # Runs in the ferrite-figs env; PYTHON=/path/to/python overrides the interpreter for the scripts AND the notebook
 # kernel (which must have ipykernel installed, as the pinned env does).  Every command's output is logged to
 # .reproduce_logs/<step>.log; tests/check_reproduce.py then asserts the headline numbers against their tolerances
 # (ΔGPE* = 2.542 TN/m ± 0.5 %, identity < 0.05 %, arm 34.9 km, the S1/S2 benchmark misfits, the reconstruction table)
-# and that every figure was rewritten.  Exit status is nonzero on ANY failure.  The convergence table (Table S3) needs
-# data/convergence/, which is regeneration-only, so it is not part of this run (tables/convergence.csv is the record).
+# and that every figure was rewritten.  Exit status is nonzero on ANY failure.
 set -uo pipefail
 cd "$(dirname "$0")"
 PY=${PYTHON:-python}
@@ -30,6 +30,7 @@ run profiles          "$PY" scripts/render_profiles.py
 run thickness_compare "$PY" scripts/render_thickness_compare.py
 run benchmark         "$PY" scripts/render_benchmark.py
 run mp_benchmark      "$PY" scripts/render_mp_benchmark.py
+run convergence       "$PY" scripts/render_convergence.py
 run core_profiles     "$PY" scripts/render_core_profiles.py
 run corrected_density "$PY" scripts/render_corrected_density.py
 run hero_h30          env HERO_WINDOW_KM=200 HERO_MFIX=0 "$PY" scripts/render_hero.py data/suite4_thickness/tresca_150_30km figures/hero_tresca_30km.png

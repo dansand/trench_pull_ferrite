@@ -28,13 +28,18 @@ def main():
             dG, dN, x_i = trench_pull(m); w_t = float(np.nanmax(m.topography()))
             par = manifest.get(d.replace("data/", ""), {}).get("parameters", {})
             eps_p = float(np.nanmax(m.array("plastic_strain"))) if m.has_field("plastic_strain") else 0.0
+            yld = m.array("yielded") > 0.5 if m.has_field("yielded") else np.zeros((m.Nx, m.Nz), bool)
+            i_m = int(np.argmin(np.abs(m.xkm - R["moment_max"]))) if np.isfinite(R["moment_max"]) else 0
+            y_thk = 100 * float(np.mean(yld[i_m]))                      # yielded share of the thickness at the max-moment column
+            y_face = 100 * float(np.mean(yld[m.xkm < 10.0]))            # yielded share of the nodes within 10 km of the trench face
             H = float(par.get("hardening_H_Pa", 0.0))
             rows.append(dict(suite=suite, model=os.path.basename(d), strength=par.get("strength", ""), h_km=m.H / 1e3,
                              V_TN=par.get("V_TN_tuned", par.get("V_TN", float("nan"))), N_mem_TN=par.get("N_mem_TN", 0.0),
                              w_T_m=w_t, x_T_km=x_t, x_I_km=x_i, x_M_km=R["moment_max"], dGPE_TN=dG / 1e12, dND_TN=dN / 1e12,
                              identity_pct=abs(dG - dN) / abs(dG) * 100, arm_km=dG / (DRHOG * w_t) / 1e3, arm_over_h=dG / (DRHOG * w_t) / m.H,
-                             max_plastic_strain=eps_p, hardening_H_Pa=H, hardening_increment_MPa=H * eps_p / 1e6))
-    fields = ["suite", "model", "strength", "h_km", "V_TN", "N_mem_TN", "w_T_m", "x_T_km", "x_I_km", "x_M_km", "dGPE_TN", "dND_TN", "identity_pct", "arm_km", "arm_over_h", "max_plastic_strain", "hardening_H_Pa", "hardening_increment_MPa"]
+                             max_plastic_strain=eps_p, hardening_H_Pa=H, hardening_increment_MPa=H * eps_p / 1e6,
+                             yielded_thickness_xM_pct=y_thk, yielded_face_zone_pct=y_face))
+    fields = ["suite", "model", "strength", "h_km", "V_TN", "N_mem_TN", "w_T_m", "x_T_km", "x_I_km", "x_M_km", "dGPE_TN", "dND_TN", "identity_pct", "arm_km", "arm_over_h", "max_plastic_strain", "hardening_H_Pa", "hardening_increment_MPa", "yielded_thickness_xM_pct", "yielded_face_zone_pct"]
     path = write_table("model_summary", fields, rows, script="analysis/model_summary.py", models=[f"data/{r['suite']}/{r['model']}" for r in rows])
     print(f"{'suite':18s} {'model':30s} {'h':>3s} {'V':>5s} {'N_mem':>5s} {'w_T[m]':>7s} {'ΔGPE*':>7s} {'ΔN_D':>7s} {'ident%':>7s} {'arm':>5s}")
     for r in rows:

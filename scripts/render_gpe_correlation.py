@@ -5,9 +5,11 @@ load sweep (Suite 2, N_D=0, V varied) and the in-plane sweep (Suite 3, V=3.5, N_
 if ΔGPE* is purely topographic it collapses onto ONE ΔGPE*-vs-w curve regardless of whether w was produced
 by changing V or N_D.
 
-  (A) ΔGPE* vs V        — Suite 2 sweeps V; Suite 3 sits at V=3.5 (so N_D spreads the pull at fixed load).
+  (A) ΔGPE* vs V        — Suite 2 sweeps V; Suite 3 sits at V=4 (so N_D spreads the pull at fixed load).
   (B) ΔGPE* vs w        — both suites; do they collapse onto one line?  (linearity in topography)
-  (C) V vs w            — the load→deflection map (yielding bends it away from linear).
+Both panels are zoomed to V ≥ 2.5 TN/m and w ≥ 2.5 km, where the strength and background-N_D members sit (Dan,
+2026-09-15); the full sweeps are shown as insets with the zoomed window boxed.  The V = 1, 1.5, 2 members stay in
+the table.
 
     python scripts/render_gpe_correlation.py
 """
@@ -18,6 +20,7 @@ if __name__ == "__main__":
     matplotlib.use("Agg")   # headless only when run as a script; importable in Jupyter without hijacking the backend
 import matplotlib.pyplot as plt
 import matplotlib.patheffects as pe
+from matplotlib.patches import Rectangle
 from gpe_analysis import Model, trench_pull, write_table, DRHOG
 
 P = "data"
@@ -35,6 +38,8 @@ SUITE3 = [(4.0, -3, f"{P}/suite3_background/tresca_deep_150_60km_V4_mem-3"), (4.
 SUITE1 = [("elastic", f"{P}/suite1_strength/elastic_deep_60km_V4"), ("DD-VM asym", f"{P}/suite1_strength/dd_vm_asym_60km_V4"),
           ("DD-VM sym", f"{P}/suite1_strength/dd_vm_sym_60km_V4")]
 OUT = "figures/gpe_correlation.png"
+VMIN, WMIN = 2.5, 2.5                     # zoom: the lower limits of the main axes in V [TN/m] and w [km]
+INSET = (0.07, 0.56, 0.36, 0.40)          # inset position (axes fraction: x0, y0, width, height)
 
 
 def gather(rows):
@@ -100,6 +105,8 @@ def main():
     C1, C2, C3 = "#2ca02c", "#1f77b4", "#d62728"     # suite 1 / 2 / 3 colours
     iref = int(np.argmin(np.abs(V2 - 4.0))); wref, Gref = w2[iref], G2[iref]      # reference = the V=4 point (member of all suites)
     fig, ax = plt.subplots(1, 2, figsize=(11.8, 5.1), constrained_layout=True)
+    ylo, yhi = 1.2, max(G2.max(), G3.max(), G1.max()) + 0.15
+    xA = (VMIN - 0.15, V2.max() + 0.2); xB = (WMIN - 0.1, max(w2.max(), w3.max()) + 0.15)   # the zoomed windows
 
     # (labels placed at the end, after the layout is frozen, via module-level smart_labels)
 
@@ -113,28 +120,50 @@ def main():
         a.scatter(x3, G3, c=C3, marker="s", s=58, ec="k", lw=0.4, zorder=6, label="Suite 3 (in-plane $N_D$)")
         a.plot([xref], [Gref], "s", color=C2, ms=6, zorder=10,
                label="reference (Tresca, $V$=4, $N_D$=0)")
-        a.grid(alpha=0.25); a.set_ylabel(r"$\Delta$GPE$^{*}$  [TN m$^{-1}$]")
+        a.grid(alpha=0.25); a.set_ylabel(r"$\Delta$GPE$^{*}$  [TN m$^{-1}$]"); a.set_ylim(ylo, yhi)
 
-    # (A) ΔGPE* vs V — the N_D models are labelled here
+    def inset(a, x2, x3, x1, xwin, title, line=None):                        # the full range, with the zoomed window boxed
+        i = a.inset_axes(list(INSET))
+        if line is not None:
+            i.plot(*line, "k--", lw=1.0)
+        i.plot(x2, G2, "-", color=C2, lw=1.2); i.plot(x2, G2, "s", color=C2, ms=3.5, mfc="white", mew=1.0)
+        i.scatter(x3, G3, c=C3, marker="s", s=12, ec="k", lw=0.3, zorder=5); i.scatter(x1, G1, c=C1, marker="^", s=14, ec="k", lw=0.3, zorder=4)
+        i.add_patch(Rectangle((xwin[0], ylo), xwin[1] - xwin[0], yhi - ylo, fill=False, ec="0.3", lw=0.8, ls="--"))
+        i.tick_params(labelsize=7); i.grid(alpha=0.2); i.set_title(title, fontsize=8, pad=2)
+        return i
+
+    # (A) ΔGPE* vs V — the N_D models are labelled here; the full load sweep as an inset
     suites(ax[0], np.full_like(G1, 4.0), V2, np.full_like(G3, 4.0), 4.0, s1=True, z1=1)
-    ax[0].set_xlabel(r"applied load  $V$  [TN m$^{-1}$]")
-    ax[0].set_title("(A)  pull vs load", fontsize=11); ax[0].legend(fontsize=8, loc="upper left")
+    ax[0].set_xlim(*xA); ax[0].set_xlabel(r"applied load  $V$  [TN m$^{-1}$]")
+    ax[0].set_title("(A)  pull vs load", fontsize=11); ax[0].legend(fontsize=8, loc="lower right")
+    iA = inset(ax[0], V2, np.full_like(G3, 4.0), np.full_like(G1, 4.0), xA, "full load sweep")
+    iA.set_xlim(0.7, V2.max() + 0.3); iA.set_ylim(0.3, yhi)
 
     # (B) ΔGPE* vs w — the rheology suite is labelled here; vs the uniform-plate line ΔGPE* = ΔP_T·(H/2) = Δρg·w·(H/2)
     suites(ax[1], w1, w2, w3, wref)
     slope = DRHOG * (60e3 / 2) / 1e9                   # TN/m per km  (Δρg·H/2 = 0.677)
     xw = np.array([0.0, max(w2.max(), w3.max()) * 1.03])
     ax[1].plot(xw, slope * xw, "k--", lw=1.4, label=r"uniform plate:  $\Delta P_T\cdot\frac{h}{2}$")
-    ax[1].set_xlabel(r"trench deflection  $w$  [km]")
-    ax[1].set_title("(B)  pull vs topography", fontsize=11); ax[1].legend(fontsize=8, loc="upper left")
+    ax[1].set_xlim(*xB); ax[1].set_xlabel(r"trench deflection  $w$  [km]")
+    ax[1].set_title("(B)  pull vs topography", fontsize=11); ax[1].legend(fontsize=8, loc="lower right")
+    iB = inset(ax[1], w2, w3, w1, xB, "full range", line=(xw, slope * xw))
+    iB.set_xlim(0, xw[1]); iB.set_ylim(0, yhi)
 
     fig.suptitle(r"Trench pull  $\Delta$GPE$^{*}$", fontsize=12)
 
     fig.canvas.draw(); fig.set_layout_engine("none")                             # freeze layout so label placement is exact
-    obstA = np.vstack([np.column_stack([V2, G2]), np.column_stack([np.full_like(G3, 4.0), G3]),
-                       np.column_stack([np.full_like(G1, 4.0), G1]), [[4.0, Gref]]])
+
+    def inset_obstacles(a, n=(9, 7)):                                           # a grid of points over the inset (axes fraction → data)
+        x0, y0, wd, ht = INSET
+        fx, fy = np.meshgrid(np.linspace(x0, x0 + wd, n[0]), np.linspace(y0, y0 + ht, n[1]))
+        return a.transData.inverted().transform(a.transAxes.transform(np.column_stack([fx.ravel(), fy.ravel()])))
+
+    inA = V2 >= xA[0]; inB = w2 >= xB[0]                                         # only points inside the zoomed window are obstacles
+    obstA = np.vstack([np.column_stack([V2[inA], G2[inA]]), np.column_stack([np.full_like(G3, 4.0), G3]),
+                       np.column_stack([np.full_like(G1, 4.0), G1]), [[4.0, Gref]], inset_obstacles(ax[0])])
     smart_labels(fig, ax[0], obstA, np.full_like(G3, 4.0), G3, [f"$N_D$={int(round(n)):+d}" for n in N3], C3)
-    obstB = np.vstack([np.column_stack([w2, G2]), np.column_stack([w3, G3]), np.column_stack([w1, G1]), [[wref, Gref]]])
+    obstB = np.vstack([np.column_stack([w2[inB], G2[inB]]), np.column_stack([w3, G3]), np.column_stack([w1, G1]), [[wref, Gref]],
+                       inset_obstacles(ax[1])])
     smart_labels(fig, ax[1], obstB, w1, G1, lab1, C1)
 
     fig.savefig(OUT, dpi=140); print("wrote", OUT.split("/")[-1])

@@ -39,6 +39,11 @@ no manuscript figure depends on them; `gen_frames.jl` is a **model run** (24 sol
 - Two distinct "arm" quantities — keep them apart in code comments and labels: **A**, the effective force-based
   arm ΔGPE\*/(Δρ g w) (the reported one, ≈35 km); **B**, the centre of mass of the τzx,x distribution (drawn,
   illustrative, undefined where the net dipole charge vanishes).
+- **The trench-edge yield ramp** (+100 MPa, e-folding 10 km, `paper_models.jl`; recorded in the manifest) exists because the
+  parabolic face traction (peak 1.5V/h = 100 MPa at V = 4) exceeds the in-plane Tresca shear capacity σY/2 = 75 MPa;
+  without it the face yields in shear. It is not what makes the trench column elastic (that is M → 0 at the free end):
+  settled 2026-09-15 by a 19-solve exploration kept PRIVATE at `~/projects/mypapers/trench_pull_force/2026_codex/edge_ramp_private/`
+  (Dan's decision: nothing from it in the repo or the SI). Do not reopen a reference-model redesign on this ground.
 - Trench pull is always trench-referenced, between the trench column and the **first isostatic column** x_I
   (`gpe_analysis.trench_pull`); the identity ΔN_D = ΔGPE\* holds to ~0.02 %.
 - Data folders are named after the manuscript's suites (`suite1_strength`, `suite2_load`, `suite3_background`,

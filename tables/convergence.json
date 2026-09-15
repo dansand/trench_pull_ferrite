@@ -9,7 +9,5 @@
   "data/convergence/bench_800x48",
   "data/convergence/bench_800x48_ns48"
  ],
- "meta": {
-  "note": "shipped copy transcribed from the script-generated tables/convergence.md (data/convergence is regeneration-only)"
- }
+ "meta": {}
 }

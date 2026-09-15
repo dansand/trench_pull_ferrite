@@ -23,11 +23,11 @@ Read them with `gpe_analysis.read_table(path)` → `(meta, rows)`, or with any C
 
 | file | figure / record | what each row is | columns (units) | backs in the manuscript |
 |---|---|---|---|---|
-| `model_summary.csv` | — (`analysis/model_summary.py`) | one production model (20) | suite, model, strength, h_km, V_TN, N_mem_TN, w_T_m, x_T_km, x_I_km, x_M_km, dGPE_TN, dND_TN, identity_pct, arm_km | the reference values ΔGPE* = 2.542 TN/m, identity 0.019 %, arm 34.9 km; any per-model value |
+| `model_summary.csv` | — (`analysis/model_summary.py`) | one production model (20) | suite, model, strength, h_km, V_TN, N_mem_TN, w_T_m, x_T_km, x_I_km, x_M_km, dGPE_TN, dND_TN, identity_pct, arm_km, arm_over_h, max_plastic_strain, hardening_H_Pa, hardening_increment_MPa, yielded_thickness_xM_pct, yielded_face_zone_pct | the reference values ΔGPE* = 2.542 TN/m, identity 0.019 %, arm 34.9 km; any per-model value; the yielded share of the thickness at max M and within 10 km of the face |
 | `isostatic_column.csv` | — (`analysis/isostatic_column_test.py`) | one production model (20) | suite, model, h_km, x_I_km, Szz_xI_TN, dGPE_measured_TN, dGPE_if_xI_lithostatic_TN, change_pct, net_charge_at_xI_as_deflection_m, peak_abs_szz_on_xI_MPa | SI: the cost of assuming the first isostatic column lithostatic (reference −0.13 %; up to ~2 % in Suite 1, ~4 % with a background N_D) |
 | `frame_check.csv` | — (`analysis/frame_check.py`) | one production model (20) | suite, model, h_km, max_slope_deg, max_cos2theta_departure_pct, mixing_term_at_trench_TN, mixing_first_below_0p02_km, mixing_below_0p02_beyond_km, slope_at_xI_deg, mixing_term_at_xI_TN, x_I_km | SI Text S2 'frame of the resultants': surface slope, cos 2θ departure, the 2V sin 2θ mixing term at the trench, its inboard decay, and at x_I |
 | `edge_exclusion.csv` | — (`analysis/edge_exclusion.py`) | one Suite-1 model (4) | label, model, h_km, raw_trench_arm_km, edge_window_km, plateau_arm_km, plateau_min/max_km, change_raw_to_plateau_pct, plateau_arm_over_h, arm_at_40km_km, arm_at_60km_km | SI Text S1 loaded-edge sensitivity: the arm change when the edge window is excluded; the inboard arm values |
-| `convergence.csv` | Table S3 (`scripts/render_convergence.py`) | one convergence run (6) | model, configuration, w_T_m, dGPE_TN, identity_residual_pct | Table S3. Shipped copy transcribed from the script-generated `convergence.md`; the data is regeneration-only |
+| `convergence.csv` | Table S3 (`scripts/render_convergence.py`) | one convergence run (6 rows, 5 models; the 800 × 48 model appears in both the mesh and the load-increment series) | model, configuration, w_T_m, dGPE_TN, identity_residual_pct | Table S3 |
 | `benchmark_boef.csv` | Fig. S1 | one quantity | quantity, value, unit | end resultant 4.000 TN/m, V misfit 0.8 %, deflection offset 1.6 %, parabola 0.39 % |
 | `benchmark_mp.csv` | Fig. S2 | one quantity | quantity, value, unit | 148 sections, mean 0.09 %, max 0.85 % |
 | `gpe_compare_reconstruction.csv` | Fig. 5 | one Suite-1 model (4) | model, label, plate_top_arm_err_pct, sea_level_arm_err_pct, mid_plate_approx_err_pct | the ~2 % plate-top-arm and ~8 % sea-level-arm reconstruction errors; the h/2 misses |
@@ -81,4 +81,5 @@ typed into the text:
 4. `tests/check_reproduce.py` lists every tolerance the harness applies; a number the paper quotes at tighter precision
    than the harness checks should be checked by eye against the table.
 
-Records that are prose, not tables, stay in `data/`: `BOUNDARY_ARTIFACT.md` (the loaded-edge investigation).
+There are no prose records: a number with no table has no source in this package (the loaded-edge displacement-controlled
+figures once quoted from an archive note were removed on 2026-09-14 for that reason).
