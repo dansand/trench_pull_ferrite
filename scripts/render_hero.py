@@ -38,11 +38,11 @@ def pgrad(mod):
 # ===================== CONFIG (iterate here) =====================
 MODEL_DIR = "data/suite1_strength/tresca_deep_150_60km_V4"
 WINDOW_KM = float(os.environ.get("HERO_WINDOW_KM", 300))    # env override for thinner plates (shorter flexure)
-WARP_FACTOR = 5.0                     # deflection exaggeration
+WARP_FACTOR = 5.0                     # VERTICAL displacement exaggeration; horizontal displacement is drawn at true scale (2026-09-18)
 VEXAG     = 1.2                       # vertical scale of the warped geometry (1.5 until 2026-09-18; 1.2 gives a wider page aspect)
 GRAV      = G
 REF_KEYS  = ["trench", "moment_max", "shear_max", "outer_rise"]
-REF_LABELS = {"trench": "trench", "moment_max": "max $M$", "shear_max": "isostatic", "outer_rise": "forebulge"}
+REF_LABELS = {"trench": "trench $x_T$", "moment_max": "max $M$", "shear_max": "isostatic", "outer_rise": "forebulge"}
 DASH_BETWEEN = ("moment_max", "shear_max")
 DASH_LABEL = "mid"
 SHOW_MID = False     # DISABLED 2026-08-05 (user): the 'mid' dashed line is the midpoint between max M and the
@@ -92,21 +92,27 @@ def load(model_dir, diff_dir=None):
     # wrong way, flipping the warp alone would draw the plate upside down (audit F5).
     mesh.points[:, 1] = -mesh.points[:, 1]
     u = mesh.point_data["u"]
-    mesh.point_data["u3"] = np.column_stack([u[:, 0], -u[:, 1], np.zeros(len(u))])
+    # Display displacement: horizontal at TRUE scale, vertical × WARP_FACTOR.  Exaggerating u_x as well drew the
+    # rotated trench edge 5× too wide (an 8 km sloping face for a 1.7 km tilt) with the "trench" line through its
+    # middle; at true scale the edge tilts by its real amount and the trench column x_T is a vertical line tangent
+    # to its lower corner, as in the analysis.
+    mesh.point_data["u3"] = np.column_stack([u[:, 0], -WARP_FACTOR * u[:, 1], np.zeros(len(u))])
     mesh.point_data["xcoord"] = mesh.points[:, 0]
-    x0 = 0.0                                      # trench at x=0 (target frame); window runs trench → WINDOW_KM
+    x0 = 0.0                                      # reference edge at X=0; window runs X = 0 → WINDOW_KM
     crop = mesh.threshold((x0, WINDOW_KM * 1e3), scalars="xcoord")
-    warped = crop.warp_by_vector("u3", factor=WARP_FACTOR).scale([1, VEXAG, 1], inplace=False)
-    return m, m2, f, warped, reference_lines(m), x0
+    warped = crop.warp_by_vector("u3", factor=1.0).scale([1, VEXAG, 1], inplace=False)
+    lines = reference_lines(m)
+    lines["trench"] = trench_ref_km(m)            # the trench COLUMN of the analysis (leftmost complete deformed column), not X = 0
+    return m, m2, f, warped, lines, x0
 
 
 def deviatoric_crosses(m, f, x0):
     """(tension, compression) PolyData of headless principal-stress crosses.  Orientation = the in-plane principal
     axes of the Cauchy stress; both arms have the same physical length, ∝ the maximum in-plane shear (σ1−σ2)/2,
     scaled so the largest cross in the figure has arms of CROSS_LEN_KM.
-    The crosses are drawn on the DISPLAYED plate, whose geometry is the reference mesh warped by WARP_FACTOR × u,
+    The crosses are drawn on the DISPLAYED plate, whose geometry is the reference mesh displaced by (u_x, WARP_FACTOR·u_z),
     flipped to height-up and stretched by VEXAG.  So each arm is a physical vector pushed through the SAME map the
-    mesh goes through — the display Jacobian D = S·(I + WARP_FACTOR·∇u)·F⁻¹ with S = diag(1, −VEXAG) and
+    mesh goes through — the display Jacobian D = S·(I + W·∇u)·F⁻¹ with W = diag(1, WARP_FACTOR), S = diag(1, −VEXAG) and
     F = I + ∇u — for its ORIENTATION only, so a surface-parallel principal axis stays parallel to the drawn surface;
     the arm LENGTH is the physical one, so the two arms of a cross are always equal on the page (they both show
     (σ1−σ2)/2).  The two arms are perpendicular in the physical plate, not exactly on the (exaggerated) page."""
@@ -116,15 +122,15 @@ def deviatoric_crosses(m, f, x0):
     ux, uz = f["ux"], f["uy"]
     dux_dx, dux_dz = np.gradient(ux, m.x, axis=0), np.gradient(ux, m.z, axis=1)
     duz_dx, duz_dz = np.gradient(uz, m.x, axis=0), np.gradient(uz, m.z, axis=1)
-    S = np.diag([1.0, -VEXAG]); I2 = np.eye(2)
+    S = np.diag([1.0, -VEXAG]); I2 = np.eye(2); Wm = np.diag([1.0, WARP_FACTOR])
     recs, dev = [], []
     for i in ii:
         for j in jj:
             T = np.array([[f["sxx"][i, j], f["sxz"][i, j]], [f["sxz"][i, j], f["szz"][i, j]]])
             wv, V = np.linalg.eigh(T)                                  # physical (x, z-down) principal axes of the Cauchy stress
             Gu = np.array([[dux_dx[i, j], dux_dz[i, j]], [duz_dx[i, j], duz_dz[i, j]]])
-            Dmap = S @ (I2 + WARP_FACTOR * Gu) @ np.linalg.inv(I2 + Gu)  # physical direction → displayed direction
-            xw = m.x[i] + WARP_FACTOR * ux[i, j]
+            Dmap = S @ (I2 + Wm @ Gu) @ np.linalg.inv(I2 + Gu)       # physical direction → displayed direction
+            xw = m.x[i] + ux[i, j]                                     # horizontal displacement at true scale
             yw = -(m.z[j] + WARP_FACTOR * uz[i, j]) * VEXAG            # height = −depth (see load)
             recs.append((xw, yw, V, wv - wv.mean(), Dmap)); dev.append(np.max(np.abs(wv - wv.mean())))
     maxdev = max(dev); scale = (CROSS_LEN_KM * 1e3) / (maxdev + 1e-30)
@@ -315,7 +321,8 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
                     path_effects=[pe.withStroke(linewidth=5.5, foreground="white")])  # halo: visible on dark blue
             jmid = int(np.argmin(np.abs(m.z - m.H / 2)))                          # mid-plate reference layer (z = h/2)
             ymid = -(m.z[jmid] + WARP_FACTOR * f["uy"][:, jmid]) * VEXAG          # warped height of mid-plate (follows the deflection)
-            ax.plot(m.xkm[wsel_c], ymid[wsel_c] / 1e3, color="white", lw=1.6, ls=(0, (5, 3)),
+            xmid = (m.x + f["ux"][:, jmid]) / 1e3                                  # its displayed x (true horizontal displacement)
+            ax.plot(xmid[wsel_c], ymid[wsel_c] / 1e3, color="white", lw=1.6, ls=(0, (5, 3)),
                     label="mid-plate ($h/2$)", zorder=6,
                     path_effects=[pe.withStroke(linewidth=3.0, foreground="black")])  # white dashes, black halo — reads over the centroid
             ax.legend(loc="lower right", fontsize=11, frameon=False, ncol=2)
