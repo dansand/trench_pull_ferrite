@@ -1,6 +1,6 @@
 # Data manifest — provenance of every shipped model
 
-Generated 2026-09-17 by `python analysis/make_manifest.py` (hashes computed, never typed); verify with `python analysis/make_manifest.py --check`. The machine-readable twin is `DATA_MANIFEST.json`, which `gpe_analysis.Model.stress_frame()` reads. The shipped models predate the driver's `provenance.txt` stamp; this file is their provenance record.
+Generated 2026-09-17 by `python analysis/make_manifest.py` (hashes computed, never typed); verify with `python analysis/make_manifest.py --check`. The machine-readable twin is `DATA_MANIFEST.json`, which `gpe_analysis.Model.stress_frame()` reads. Models solved with the release code carry a `provenance.txt` stamp (hashed here too); the older shipped models predate the stamp, and this file is their provenance record. The hashes cover the primary output files (VTU, topography CSV, tuning record, stamp).
 
 **Stress frame** `massless` for every model: the stored `sigma_*` fields are the 2nd Piola–Kirchhoff stress of a run without gravity or lithostatic prestress (see README §4 for what the fields are).
 
@@ -13,14 +13,19 @@ Generated 2026-09-17 by `python analysis/make_manifest.py` (hashes computed, nev
 |---|---|---|---|---|
 | `bench_1200x72` | E_Pa=70000000000.0, nu=0.25, h_km=60, nx=1200, nz=72, nsteps=24, L_km=1600, rho_a=3300, rho_w=1000, g=9.81, edge_ramp_MPa=100, edge_ramp_km=10, strength=Tresca, uniform, sigma_Y_MPa=150, V_TN=4.0 | `gpe_model.vtu` | 8250701 | `90a771c29f9546058acc49d74e88890e64d7b0be540ad29017b6c4a8b0187726` |
 |  |  | `gpe_topo.csv` | 31836 | `668c8f2e2590aa8a36f39233efbb1df4b9d0eff2792daa96c57d24e060ca1f90` |
+|  |  | `provenance.txt` | 191 | `83bbd0cd031333d124cdc4bf0ca21e9be47f74b9664c0be6670cda951c77f339` |
 | `bench_400x24` | E_Pa=70000000000.0, nu=0.25, h_km=60, nx=400, nz=24, nsteps=24, L_km=1600, rho_a=3300, rho_w=1000, g=9.81, edge_ramp_MPa=100, edge_ramp_km=10, strength=Tresca, uniform, sigma_Y_MPa=150, V_TN=4.0 | `gpe_model.vtu` | 1042452 | `6d1744586b71f5c31010d03dcb84d12b791c287ad5ba48c4a0bb332d167e4171` |
 |  |  | `gpe_topo.csv` | 10632 | `ceb41837d73e50092810414b34c4c966a8faec5c6a7b55f1227f7713bd7209e2` |
+|  |  | `provenance.txt` | 190 | `790adb0f2f664f43dac59d7aa1ea0160df3926a2c73263b7b56344c7d1dd2c20` |
 | `bench_800x48` | E_Pa=70000000000.0, nu=0.25, h_km=60, nx=800, nz=48, nsteps=24, L_km=1600, rho_a=3300, rho_w=1000, g=9.81, edge_ramp_MPa=100, edge_ramp_km=10, strength=Tresca, uniform, sigma_Y_MPa=150, V_TN=4.0 | `gpe_model.vtu` | 3791732 | `7ac0001648233e54a5e69446a9116efe6d732455bf1704b9a2a41e0c16b5c9d2` |
 |  |  | `gpe_topo.csv` | 21234 | `c04f1a5d6766a915f360e34f8867645784ab71a8776570c9cebe06719b93ea57` |
+|  |  | `provenance.txt` | 190 | `9cd3edc5f3d8b991cd3bd580fdda7fd29d3eabfca414bf264d923134ba7bf71d` |
 | `bench_800x48_ns12` | E_Pa=70000000000.0, nu=0.25, h_km=60, nx=800, nz=48, nsteps=12, L_km=1600, rho_a=3300, rho_w=1000, g=9.81, edge_ramp_MPa=100, edge_ramp_km=10, strength=Tresca, uniform, sigma_Y_MPa=150, V_TN=4.0 | `gpe_model.vtu` | 3796728 | `5fd36ca00c1f75e418d91276e887abce77375cec5ed50c6b7b63f59e6ca0e067` |
 |  |  | `gpe_topo.csv` | 21234 | `5b17f15d024e1059d3acd1410635fddb2aa22c9638e7ccd0c23525d123ff4cd0` |
+|  |  | `provenance.txt` | 190 | `3f39e179921d9f2c509dbbd8ea65be7430a6d52e3ecc73c4ffe1b190c312d239` |
 | `bench_800x48_ns48` | E_Pa=70000000000.0, nu=0.25, h_km=60, nx=800, nz=48, nsteps=48, L_km=1600, rho_a=3300, rho_w=1000, g=9.81, edge_ramp_MPa=100, edge_ramp_km=10, strength=Tresca, uniform, sigma_Y_MPa=150, V_TN=4.0 | `gpe_model.vtu` | 3791504 | `27818e676c558ff0e6352dcc6ade49e23cf5ce4b2aa3fc013fbef947c8f06b92` |
 |  |  | `gpe_topo.csv` | 21234 | `b7286dc4e48835177365573f645f86526170919f547c2af712cff52e6ec376cf` |
+|  |  | `provenance.txt` | 190 | `3ebae657ec45dceda5195772fbaf9e4c2d88f0f37fd41c39d22f77e9da0865fe` |
 
 ## `idealized_beam`
 

@@ -8,14 +8,15 @@ below depends on the author's other directories. If you only want to reproduce t
 The reproducibility package for *The 'trench pull' force: constraints from elasto-plastic bending models* (Sandiford;
 preprint doi:10.22541/essoar.174413825.53806221/v1, a revised version is under review). It contains the finite-element
 models (Julia, Ferrite.jl), all model output, and the scripts that turn that output into every manuscript figure and
-every number the paper quotes. It was curated from a larger private development history; that history is not needed
+the model-derived numbers the paper quotes (the manuscript-side ledger lists the few literals that are not backed by a
+table here). It was curated from a larger private development history; that history is not needed
 and not public. **This repository is the single source of truth for the paper's models and numbers.**
 
 ## Layout (run everything from the repository root)
 `model/` Julia solver (`gpe_plastic.jl`) and the production driver `paper_models.jl` (one command per suite) ·
 `analysis/gpe_analysis.py` the extraction library (+ `make_manifest.py`, `model_summary.py`, `paper_numbers.py` and
 the assumption tests) · `scripts/render_*.py` one per manuscript figure · `figures/` the shipped renders (what the
-scripts write) · `tables/` every number the paper quotes, as CSV with a JSON provenance sidecar, written by the same
+scripts write) · `tables/` the model-derived numbers the paper quotes, as CSV with a JSON provenance sidecar, written by the same
 script in the same pass as its figure (`tables/README.md` explains the contract) · `schematic/` TikZ ·
 `data/` all model output, one directory per model, with `DATA_MANIFEST.md/.json` (command, parameters, SHA-256, origin) ·
 `START_HERE.ipynb` a guided tour · `REPRODUCE.md` figure → script → data → command · `reproduce.sh` regenerates and
@@ -33,8 +34,9 @@ checks everything · `tests/` (`test_quick.py`, `test_quick.jl`, `check_reproduc
 - **Model runs only through the driver.** `julia --project=. model/paper_models.jl <command>` skips existing model
   directories and never overwrites; move a directory aside to force a rerun. Solves take minutes to hours; there are no
   ad-hoc model runs. An assistant must ask before starting any solve.
-- **Data are provenance-stamped.** Every model directory carries `provenance.txt` (parameters, solver version, completion
-  flag) and an entry in the manifest. After adding or regenerating a model, run `python analysis/make_manifest.py` and
+- **Data are provenance-documented.** Every model directory has an entry in the manifest (command, parameters, SHA-256
+  of the primary output files, origin); models solved with the release code also carry a `provenance.txt` stamp
+  (parameters, solver version, completion flag) — the five convergence models do, the older shipped models predate it. After adding or regenerating a model, run `python analysis/make_manifest.py` and
   check with `--check`. Provenance is the pinned solver versions plus the manifest, not commit hashes.
 - **Don't drop figure elements** (curves, lines, panels) when restyling without saying so.
 - **Commits and pushes are made by the author**, not by an assistant. Commit messages are one short line.

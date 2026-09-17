@@ -1,6 +1,7 @@
 """make_manifest.py — the central provenance record of every shipped model directory.
 
-The driver stamps a provenance.txt into each model it produces, but the shipped models predate the stamp and carry
+The driver stamps a provenance.txt into each model it produces; the five convergence models (solved with the release
+code) carry one, the older shipped models predate the stamp and carry
 none.  This script records, per model directory under data/: the generating command and its key parameters (from the
 driver's production block), the stress frame the stored sigma_* fields are in, the SHA-256 and size of every file,
 and the model's origin.  Hashes are computed, never typed.  Two outputs, the same content:
@@ -16,7 +17,7 @@ import hashlib, json, os, re, sys
 from datetime import date
 
 DATA = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
-FILES = ("gpe_model.vtu", "gpe_topo.csv", "tuned_V.txt")
+FILES = ("gpe_model.vtu", "gpe_topo.csv", "tuned_V.txt", "provenance.txt")   # the primary output files (+ the stamp where present)
 
 # Fixed facts of the production runs (model/paper_models.jl, production block; model/idealized_beam.jl).
 BASE = dict(E_Pa=70.0e9, nu=0.25, h_km=60, nx=800, nz=48, nsteps=24, L_km=1600, rho_a=3300, rho_w=1000, g=9.81,
@@ -113,8 +114,9 @@ def write_md(man, path):
     L = ["# Data manifest — provenance of every shipped model", "",
          f"Generated {man['generated']} by `python analysis/make_manifest.py` (hashes computed, never typed); verify with "
          "`python analysis/make_manifest.py --check`. The machine-readable twin is `DATA_MANIFEST.json`, which "
-         "`gpe_analysis.Model.stress_frame()` reads. The shipped models predate the driver's `provenance.txt` stamp; "
-         "this file is their provenance record.", "",
+         "`gpe_analysis.Model.stress_frame()` reads. Models solved with the release code carry a `provenance.txt` stamp "
+         "(hashed here too); the older shipped models predate the stamp, and this file is their provenance record. "
+         "The hashes cover the primary output files (VTU, topography CSV, tuning record, stamp).", "",
          "**Stress frame** `massless` for every model: the stored `sigma_*` fields are the 2nd Piola–Kirchhoff stress "
          "of a run without gravity or lithostatic prestress (see README §4 for what the fields are).", ""]
     by_suite = {}

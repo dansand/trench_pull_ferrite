@@ -179,6 +179,8 @@ def main(compare=None):
                     parts.append(f"integrated (macro at line {hit_mac[0]})")
                 elif v == lit:
                     parts.append("match" if near(hit_lit) else (f"match (now at line {hit_lit[0]})" if hit_lit else "literal gone"))
+                elif _rounded_match(v, lit):
+                    parts.append(f"rounded match (text has {lit})" if hit_lit else "literal gone")
                 else:
                     parts.append(f"DIFFERS: text has {lit}" if hit_lit else (f"updated (line {hit_val[0]})" if hit_val else "literal gone"))
             status = "; ".join(parts)
@@ -193,12 +195,59 @@ def main(compare=None):
         fh.write("\n".join(md) + "\n")
     print(f"wrote tables/paper_numbers.tex ({len(REGISTRY)} macros) and tables/PAPER_NUMBERS.md")
     if compare:
-        print("\ncomparison against", compare)
-        for name, v, where, status in report:
-            flag = "  ok   " if all(s == "match" for s in status.split("; ")) else "  CHECK"
-            print(f"{flag} \\num{name} = {v:>7}   {status}")
+        return compare_report(compare, report)
+    return 0
+
+
+def _rounded_match(v, lit):
+    """True when the manuscript literal is the table value quoted to fewer decimals (2.54 vs 2.542, 35 vs 34.9)."""
+    try:
+        a, b = float(v), float(lit)
+    except ValueError:
+        return False
+    d = max(len(lit.split(".")[1]) if "." in lit else 0, 0)
+    return round(a, d) == round(b, d) or abs(a - b) <= 0.5 * 10 ** (-d) + 1e-12
+
+
+def compare_report(compare, report):
+    """Print the comparison in three blocks (ok / rounded / DIFFERS) and return a nonzero exit code when anything
+    needs a human: a missing manuscript file, a literal that is gone, or a genuine difference.  Also diffs the
+    manuscript's copied paper_numbers.tex against the release file."""
+    OK = ("match", "integrated"); SOFT = ("rounded match", "updated")
+    ok, soft, bad = [], [], []
+    for name, v, where, status in report:
+        parts = status.split("; ")
+        if all(p.startswith(OK) for p in parts):       ok.append((name, v, status))
+        elif all(p.startswith(OK + SOFT) for p in parts): soft.append((name, v, status))
+        else:                                            bad.append((name, v, status))
+    print("\ncomparison against", compare)
+    print(f"  ok      {len(ok):3d}  (literal matches the table, or the macro is already in the text)")
+    print(f"  rounded {len(soft):3d}  (text quotes the table value to fewer decimals, or the literal moved)")
+    for name, v, status in soft:
+        print(f"           \\num{name} = {v:>8}   {status}")
+    print(f"  DIFFERS {len(bad):3d}  (a genuine difference, a missing file, or a literal that is gone — needs a human)")
+    for name, v, status in bad:
+        print(f"           \\num{name} = {v:>8}   {status}")
+    rc = 1 if bad else 0
+    ms = os.path.join(compare, "paper_numbers.tex")
+    if not os.path.isfile(ms):
+        print(f"  manuscript copy of paper_numbers.tex: MISSING at {ms}"); rc = 1
+    else:
+        rel = {l.split("}")[0] for l in open("tables/paper_numbers.tex") if l.startswith("\\newcommand")}
+        man = {l.split("}")[0] for l in open(ms) if l.startswith("\\newcommand")}
+        relv = dict(re.findall(r"\\newcommand\{(\\num\w+)\}\{([^}]*)\}", open("tables/paper_numbers.tex").read()))
+        manv = dict(re.findall(r"\\newcommand\{(\\num\w+)\}\{([^}]*)\}", open(ms).read()))
+        missing = sorted(set(relv) - set(manv)); stale = sorted(k for k in relv if k in manv and relv[k] != manv[k])
+        if not missing and not stale:
+            print("  manuscript copy of paper_numbers.tex: current (every macro present with the release value)")
+        else:
+            rc = 1
+            if missing: print(f"  manuscript copy of paper_numbers.tex: {len(missing)} macro(s) missing — re-copy tables/paper_numbers.tex: {', '.join(missing[:6])}{' …' if len(missing) > 6 else ''}")
+            if stale:   print(f"  manuscript copy of paper_numbers.tex: {len(stale)} macro(s) STALE (value differs from the release): {', '.join(stale[:6])}")
+    print("  exit", rc, "(0 = the manuscript is consistent with this release; 1 = something above needs attention)")
+    return rc
 
 
 if __name__ == "__main__":
     cmp = sys.argv[sys.argv.index("--compare") + 1] if "--compare" in sys.argv else None
-    main(cmp)
+    sys.exit(main(cmp) or 0)

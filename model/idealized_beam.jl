@@ -1,6 +1,7 @@
 # idealized_beam.jl — Horne's elasto-plastic bending via DISPLACEMENT CONTROL.
 #
-# A clamped–guided beam (left edge clamped; right edge a vertical slider pulled down by δ) carries a
+# A clamped–guided beam (RIGHT edge clamped; LEFT edge a vertical slider pulled down by δ — the native frame,
+# load on the left) carries a
 # CONSTANT shear V along its length, with the bending moment linear (max at the ends). Driving it by
 # the imposed end displacement δ — rather than a load — lets the solve trace *past* the limit load,
 # so the outer fibres reach DEEP yield while staying stable, with no foundation and no hardening
@@ -12,7 +13,7 @@
 #   * elastic=true  → benchmark: same geometry, no yield           → data/idealized_beam_elastic/
 # A yield-strength ramp protects BOTH ends so yielding develops in the clean span, not the corners.
 #
-#   julia --project=. idealized_beam.jl
+#   julia --project=. model/idealized_beam.jl
 include("gpe_plastic.jl")     # J2Plasticity, PState, cell_plastic!, export_plastic, Tresca return (guarded main)
 
 function assemble_vol!(K, g, dh, cv, m, u, states, states_old, yieldfn)

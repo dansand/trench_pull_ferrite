@@ -30,6 +30,10 @@
     "gpe_topo.csv": {
      "sha256": "668c8f2e2590aa8a36f39233efbb1df4b9d0eff2792daa96c57d24e060ca1f90",
      "bytes": 31836
+    },
+    "provenance.txt": {
+     "sha256": "83bbd0cd031333d124cdc4bf0ca21e9be47f74b9664c0be6670cda951c77f339",
+     "bytes": 191
     }
    },
    "origin": "solved with the release code (model/paper_models.jl convergence) on 2026-09-14; the archive kept only its table (out/paper/CONVERGENCE.md, 2026-07-08), not the models \u2014 these reproduce it"
@@ -62,6 +66,10 @@
     "gpe_topo.csv": {
      "sha256": "ceb41837d73e50092810414b34c4c966a8faec5c6a7b55f1227f7713bd7209e2",
      "bytes": 10632
+    },
+    "provenance.txt": {
+     "sha256": "790adb0f2f664f43dac59d7aa1ea0160df3926a2c73263b7b56344c7d1dd2c20",
+     "bytes": 190
     }
    },
    "origin": "solved with the release code (model/paper_models.jl convergence) on 2026-09-14; the archive kept only its table (out/paper/CONVERGENCE.md, 2026-07-08), not the models \u2014 these reproduce it"
@@ -94,6 +102,10 @@
     "gpe_topo.csv": {
      "sha256": "c04f1a5d6766a915f360e34f8867645784ab71a8776570c9cebe06719b93ea57",
      "bytes": 21234
+    },
+    "provenance.txt": {
+     "sha256": "9cd3edc5f3d8b991cd3bd580fdda7fd29d3eabfca414bf264d923134ba7bf71d",
+     "bytes": 190
     }
    },
    "origin": "solved with the release code (model/paper_models.jl convergence) on 2026-09-14; the archive kept only its table (out/paper/CONVERGENCE.md, 2026-07-08), not the models \u2014 these reproduce it"
@@ -126,6 +138,10 @@
     "gpe_topo.csv": {
      "sha256": "5b17f15d024e1059d3acd1410635fddb2aa22c9638e7ccd0c23525d123ff4cd0",
      "bytes": 21234
+    },
+    "provenance.txt": {
+     "sha256": "3f39e179921d9f2c509dbbd8ea65be7430a6d52e3ecc73c4ffe1b190c312d239",
+     "bytes": 190
     }
    },
    "origin": "solved with the release code (model/paper_models.jl convergence) on 2026-09-14; the archive kept only its table (out/paper/CONVERGENCE.md, 2026-07-08), not the models \u2014 these reproduce it"
@@ -158,6 +174,10 @@
     "gpe_topo.csv": {
      "sha256": "b7286dc4e48835177365573f645f86526170919f547c2af712cff52e6ec376cf",
      "bytes": 21234
+    },
+    "provenance.txt": {
+     "sha256": "3ebae657ec45dceda5195772fbaf9e4c2d88f0f37fd41c39d22f77e9da0865fe",
+     "bytes": 190
     }
    },
    "origin": "solved with the release code (model/paper_models.jl convergence) on 2026-09-14; the archive kept only its table (out/paper/CONVERGENCE.md, 2026-07-08), not the models \u2014 these reproduce it"

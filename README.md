@@ -42,13 +42,13 @@ model/        the solver and the production driver (Julia)
 analysis/     gpe_analysis.py — deformed-mesh Cauchy integration, trench pull ΔGPE*, equivalent density ρ̂
 scripts/      one render_*.py per manuscript figure (see REPRODUCE.md)
 figures/      the reference renders — what the scripts write; the manuscript's copies are taken from here
-tables/       every number the paper quotes, as CSV — written by the same script, in the same pass, as its figure
+tables/       the model-derived numbers the paper quotes, as CSV — written by the same script, in the same pass, as its figure
                 model_summary.csv (one row per model), isostatic_column.csv, convergence.csv (Table S3), the
                 benchmark misfits, the Fig. 5 reconstruction errors, the Fig. 7 values, the hero reference lines
 schematic/    TikZ sources for Figures 1, 2 and the SI stress-regime grid
 data/         all model output, one folder per manuscript suite: suite1_strength, suite2_load, suite3_background,
               suite4_thickness; idealized_beam* (benchmarks)
-              DATA_MANIFEST.md / .json — per model: generating command, parameters, SHA-256 of every file, origin
+              DATA_MANIFEST.md / .json — per model: generating command, parameters, SHA-256 of every primary output file, origin
 START_HERE.ipynb   the analysis step by step, then on any model, then the paper's figures from their scripts
 REPRODUCE.md       figure → script → data → command, for every figure in the paper
 reproduce.sh       one command that regenerates and checks every figure (and runs the notebook and the tests)
@@ -119,9 +119,10 @@ model: thickness, load, background N_D, w_T, the three columns, ΔGPE\*, ΔN_D, 
 The driver is skip-existing and never overwrites: it checks only for `gpe_model.vtu` in the target directory, so a
 finished model is skipped and a directory with partial output (no VTU) is re-solved — reruns go into an empty or
 absent directory; move a finished directory aside to force a rerun. Output goes to `data/<suite>/<model>/`.
-Every model the driver produces gets a `provenance.txt` stamp (commit, parameters, completion flag). **The shipped
-models predate that stamp and carry none**; their provenance — generating command, parameters, SHA-256 of every
-file, origin — is recorded centrally in `data/DATA_MANIFEST.md` (`python analysis/make_manifest.py --check`
+Every model the driver produces gets a `provenance.txt` stamp (commit, parameters, completion flag): the five
+convergence models, solved with the release code, carry one; **the other shipped models predate the stamp**. All 27 are
+documented centrally in `data/DATA_MANIFEST.md` — generating command, parameters, SHA-256 of every primary output
+file, origin (`python analysis/make_manifest.py --check`
 verifies the shipped files against it). The shipped models were produced with Julia 1.10.5 and Ferrite.jl 1.4.1 (the
 pinned `Manifest.toml`); re-solving the baseline with that environment on macOS arm64 reproduced the shipped files byte for
 byte (w_T 3233 m, ΔGPE\* 2.542 TN/m, identity residual 0.019 %). On other platforms expect the numbers, not necessarily

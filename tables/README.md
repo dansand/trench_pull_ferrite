@@ -1,4 +1,8 @@
-# tables/ — every number the paper quotes, as CSV
+# tables/ — the model-derived numbers the paper quotes, as CSV
+
+Scope: every number that comes from these models and their analysis. A handful of manuscript literals are not backed by a
+table here (external results, extrapolations, and a few claims the manuscript side is revising); the manuscript-side
+ledger `NUMBER_LEDGER_MAP.csv` is the explicit exception list.
 
 **For the paper agent.** This directory is the handoff between the model analysis and the manuscript. Every number the
 main text or the Supporting Information quotes from the models is in one of these files. Read the numbers from here,
