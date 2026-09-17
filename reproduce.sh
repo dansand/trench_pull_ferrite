@@ -3,8 +3,7 @@
 #
 #   ./reproduce.sh              # everything: tests, every REPRODUCE.md command in order, the notebook, the number checks
 #   ./reproduce.sh --no-nb      # skip executing START_HERE.ipynb (the slowest step)
-#   ./reproduce.sh --skip-schematics   # allow a machine without `tectonic`: Figs 1, 2, S3 are NOT rebuilt and the
-#                                      # final line says so (without this flag a missing tectonic is a FAILURE)
+#   The three TikZ schematics (Figs 1, 2, S3) are not model output and are built separately — see REPRODUCE.md.
 #   Table S3 needs data/convergence/ (shipped; regenerate with `julia --project=. model/paper_models.jl convergence`).
 #
 # Runs in the ferrite-figs env; PYTHON=/path/to/python overrides the interpreter for the scripts AND the notebook
@@ -45,15 +44,8 @@ run frame_check       "$PY" analysis/frame_check.py
 run edge_exclusion    "$PY" analysis/edge_exclusion.py
 run paper_numbers     "$PY" analysis/paper_numbers.py
 run manifest          "$PY" analysis/make_manifest.py --check
-skip_schem=0; no_nb=0
-for a in "$@"; do case "$a" in --skip-schematics) skip_schem=1;; --no-nb) no_nb=1;; *) echo "unknown option $a"; exit 2;; esac; done
-if command -v tectonic > /dev/null; then
-    run schematic bash -c "cd schematic && $PY gen_equilibration_compare.py && tectonic equilibration_compare.tex && tectonic ridge_trench_overview_v2.tex && tectonic taux_cases.tex"
-elif [[ $skip_schem -eq 1 ]]; then
-    echo "schematic            SKIPPED (--skip-schematics: tectonic not on PATH; Figs 1, 2, S3 not rebuilt)"
-else
-    echo "schematic            FAILED (tectonic not on PATH — install it, or pass --skip-schematics to accept unbuilt Figs 1, 2, S3)"; fail=1
-fi
+no_nb=0
+for a in "$@"; do case "$a" in --no-nb) no_nb=1;; *) echo "unknown option $a"; exit 2;; esac; done
 if [[ $no_nb -eq 0 ]]; then
     # The notebook runs in a kernel built on THIS interpreter ($PY), not whichever "python3" kernelspec happens to be
     # registered: a throwaway kernelspec under $LOG is put first on JUPYTER_PATH and selected by name.
@@ -68,6 +60,5 @@ else
 fi
 
 echo; "$PY" tests/check_reproduce.py "$LOG" || fail=1
-if [[ $fail -eq 0 && $skip_schem -eq 1 && ! -f "$LOG/schematic.log" ]]; then echo; echo "reproduce.sh: PASS WITH SCHEMATICS SKIPPED (Figs 1, 2, S3 not rebuilt)"
-elif [[ $fail -eq 0 ]]; then echo; echo "reproduce.sh: ALL CHECKS PASSED"; else echo; echo "reproduce.sh: FAILURES (see above and $LOG/)"; fi
+if [[ $fail -eq 0 ]]; then echo; echo "reproduce.sh: ALL CHECKS PASSED"; else echo; echo "reproduce.sh: FAILURES (see above and $LOG/)"; fi
 exit $fail

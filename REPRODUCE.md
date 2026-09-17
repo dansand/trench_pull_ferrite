@@ -25,6 +25,9 @@ provenance of every shipped model (command, parameters, SHA-256 of every file, o
 | 6 | `profiles.png` | `python scripts/render_profiles.py` | `profiles_selfcheck.csv` | `suite1_strength/*` (4) | `suite1` |
 | 7 | `ferrite_thickness_compare.png` | `python scripts/render_thickness_compare.py` → `thickness_compare.png` (renamed on copy) | `thickness_compare.csv` | `suite1_strength/tresca_*`, `suite4_thickness/*` (3) | `suite1 thickness` |
 
+The three TikZ schematics (Figs 1, 2, S3) are drawings, not model output, and `reproduce.sh` does not build them:
+`cd schematic && python gen_equilibration_compare.py && tectonic equilibration_compare.tex && tectonic ridge_trench_overview_v2.tex && tectonic taux_cases.tex`.
+
 ## Supporting information
 
 Numbering follows the canonical SI source (`2026_codex/full_manuscript/si.tex`): Figures S1–S8; Tables S1 (symbols),

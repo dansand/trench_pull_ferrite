@@ -34,10 +34,8 @@ checks everything · `tests/` (`test_quick.py`, `test_quick.jl`, `check_reproduc
 - **Model runs only through the driver.** `julia --project=. model/paper_models.jl <command>` skips existing model
   directories and never overwrites; move a directory aside to force a rerun. Solves take minutes to hours; there are no
   ad-hoc model runs. An assistant must ask before starting any solve.
-- **Data are provenance-documented.** Every model directory has an entry in the manifest (command, parameters, SHA-256
-  of the primary output files, origin); models solved with the release code also carry a `provenance.txt` stamp
-  (parameters, solver version, completion flag) — the five convergence models do, the older shipped models predate it. After adding or regenerating a model, run `python analysis/make_manifest.py` and
-  check with `--check`. Provenance is the pinned solver versions plus the manifest, not commit hashes.
+- **Provenance lives in one place:** `data/DATA_MANIFEST.md` (its header states exactly what it covers). After adding
+  or regenerating a model, run `python analysis/make_manifest.py` and check with `--check`.
 - **Don't drop figure elements** (curves, lines, panels) when restyling without saying so.
 - **Commits and pushes are made by the author**, not by an assistant. Commit messages are one short line.
 
@@ -72,10 +70,9 @@ checks everything · `tests/` (`test_quick.py`, `test_quick.jl`, `check_reproduc
 
 ## Manuscript handshake
 The manuscript reads figures from its own directory under the names listed in `REPRODUCE.md` (some are renamed on
-copy). Regenerated figures are copied there by hand, never written by a script. The numbers the paper quotes are consumed
-as LaTeX macros from `tables/paper_numbers.tex`; `python analysis/paper_numbers.py --compare <manuscript dir>` reports
-which manuscript literals match, differ from, or already use the macros (`tables/README.md`, "how the numbers get into
-the manuscript").
+copy). Regenerated figures are copied there by hand, never written by a script. The headline numbers reach the paper as LaTeX
+macros from `tables/paper_numbers.tex`; every other number is read from the tables by whoever writes the sentence and
+checked by hand once before submission (`tables/README.md`).
 
 ## Acceptance test
 `./reproduce.sh` passes: `pytest tests/` (Python and, if Julia is present, `test_quick.jl`), every figure script from

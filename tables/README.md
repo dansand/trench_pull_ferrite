@@ -44,37 +44,20 @@ Units: TN = 10¹² N per metre of strike (TN/m); km, m, MPa as named; percentage
 `x_*_km` are distances from the trench. `N_mem_TN` is the background in-plane force (positive = tension). `arm_km` is the
 force-based effective arm ΔGPE*/(Δρ g w_T), not a centre of mass.
 
-## The contract (agreed with the paper side, 2026-09-13)
+## How the numbers get into the manuscript
 
-    model analysis → tables/*.csv → tables/paper_numbers.tex → manuscript / SI
+    model analysis → tables/*.csv → manuscript / SI
 
-Any number presented as a result of these numerical models — including verification, convergence, reconstruction,
-sensitivity, fitted scalings and post-processing — is quoted through a macro, whose value comes from a table. No
-model-derived value is typed, rounded, updated or inferred in the LaTeX. A required value with no macro is a request to
-the model side (a registry entry in `analysis/paper_numbers.py`; the value comes from a table, never from a keyboard).
-Rounding is a registry choice, not an editorial one: where the text wants "about 2.5" the registry carries a rounded
-macro (`\numRefPullRounded`) beside the precise one (`\numRefPull`). Out of scope by nature: prescribed model inputs,
-purely analytical estimates, literature-derived values, and results of other models.
+The CSV tables are the authoritative numbers. Two routes into the text:
 
-## How the numbers get into the manuscript — `paper_numbers.tex`
-
-The tables are the source; the manuscript consumes them through **one generated LaTeX file**, so no model number is ever
-typed into the text:
-
-1. `analysis/paper_numbers.py` (run by `reproduce.sh`) reads the tables and writes `tables/paper_numbers.tex`: one
-   `\newcommand{\num<Name>}{<value>}` per quoted number, already at the precision the paper uses (e.g. `\numRefPull` =
-   2.54, `\numRefPullThree` = 2.542, `\numMpSections` = 148). `tables/PAPER_NUMBERS.md` lists every macro with its value,
-   description, and the place in the manuscript it belongs.
-2. Copy `tables/paper_numbers.tex` next to the LaTeX sources (as the figures are copied) and add `\input{paper_numbers}`
-   to the preamble of `main.tex` and `si.tex`.
-3. Replace each literal with its macro — `2.54~\si{\tera\newton\per\meter}` becomes `\numRefPull~\si{\tera\newton\per\meter}`.
-   The placement guide names the file and line for every literal that existed on 2026-09-13.
-4. When the package changes, `./reproduce.sh` regenerates the file; re-copy it and recompile. A change to a quoted number
-   then reaches the paper without anyone retyping it, and a number the paper needs that has no macro is a request to the
-   model side (add it to the registry in `paper_numbers.py`; the value comes from a table, never from a keyboard).
-
-`python analysis/paper_numbers.py --compare <manuscript dir>` re-reads the LaTeX at every registered location and reports
-`match` or `DIFFERS` for each; run it before any submission.
+1. **Headline values as LaTeX macros.** `analysis/paper_numbers.py` (run by `reproduce.sh`) reads the tables and writes
+   `tables/paper_numbers.tex`, one `\newcommand{\num<Name>}{<value>}` per headline number at the paper's precision
+   (e.g. `\numRefPull` = 2.54, `\numMpSections` = 148); `tables/PAPER_NUMBERS.md` lists them. Copy the file next to the
+   LaTeX sources, `\input{paper_numbers}`, and write the macro instead of the literal. When the package changes,
+   `reproduce.sh` regenerates the file: re-copy it and recompile.
+2. **Everything else by hand from the tables.** Find the row and column, quote at the paper's precision, and check the
+   manuscript's numbers against the tables once before submission. A number that is in no table is not a model result
+   this package supports.
 
 ## How to validate a manuscript number against the tables
 

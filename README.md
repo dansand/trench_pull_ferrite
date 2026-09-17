@@ -87,7 +87,8 @@ python scripts/render_thickness_compare.py    # Fig 7
 ( cd schematic && python gen_equilibration_compare.py && tectonic equilibration_compare.tex \
                 && tectonic ridge_trench_overview_v2.tex && tectonic taux_cases.tex )       # Figs 1, 2, SI grid
 ```
-**`./reproduce.sh` regenerates and checks every figure**: it runs every command above in order, asserts the headline
+**`./reproduce.sh` regenerates and checks every model-derived figure and table** (the three TikZ schematics are drawings,
+built by the separate command above): it runs every script above in order, asserts the headline
 numbers (ΔGPE\* = 2.542 TN/m, identity < 0.05 %, arm 34.9 km, the S1/S2 benchmark misfits, the reconstruction
 table), executes `START_HERE.ipynb` top to bottom and runs `pytest tests/`, exiting nonzero on any failure. The numbers it checks are
 read from `tables/*.csv`, which every figure script writes alongside its figure from the same arrays — a table and
@@ -119,10 +120,8 @@ model: thickness, load, background N_D, w_T, the three columns, ΔGPE\*, ΔN_D, 
 The driver is skip-existing and never overwrites: it checks only for `gpe_model.vtu` in the target directory, so a
 finished model is skipped and a directory with partial output (no VTU) is re-solved — reruns go into an empty or
 absent directory; move a finished directory aside to force a rerun. Output goes to `data/<suite>/<model>/`.
-Every model the driver produces gets a `provenance.txt` stamp (commit, parameters, completion flag): the five
-convergence models, solved with the release code, carry one; **the other shipped models predate the stamp**. All 27 are
-documented centrally in `data/DATA_MANIFEST.md` — generating command, parameters, SHA-256 of every primary output
-file, origin (`python analysis/make_manifest.py --check`
+Provenance of every shipped model — generating command, parameters, SHA-256 of the output files, origin — is
+`data/DATA_MANIFEST.md` (its header says what is and is not covered; `python analysis/make_manifest.py --check`
 verifies the shipped files against it). The shipped models were produced with Julia 1.10.5 and Ferrite.jl 1.4.1 (the
 pinned `Manifest.toml`); re-solving the baseline with that environment on macOS arm64 reproduced the shipped files byte for
 byte (w_T 3233 m, ΔGPE\* 2.542 TN/m, identity residual 0.019 %). On other platforms expect the numbers, not necessarily

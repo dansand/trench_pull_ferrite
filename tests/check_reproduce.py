@@ -135,10 +135,6 @@ for t in extra:
     check(os.path.getmtime(f"tables/{t}.csv") >= t0 - 1, f"table rewritten: tables/{t}.csv")
 for p in ("tables/paper_numbers.tex", "tables/PAPER_NUMBERS.md"):
     check(os.path.isfile(p) and os.path.getmtime(p) >= t0 - 1, f"paper numbers rewritten: {p}")
-for f in ("equilibration_compare", "ridge_trench_overview_v2", "taux_cases"):
-    p = f"schematic/{f}.pdf"
-    if os.path.isfile(os.path.join(LOG, "schematic.log")):
-        check(os.path.isfile(p) and os.path.getmtime(p) >= t0 - 1, f"schematic rebuilt: {p}")
 
 print(f"check_reproduce: {bad} failure(s)")
 sys.exit(1 if bad else 0)
