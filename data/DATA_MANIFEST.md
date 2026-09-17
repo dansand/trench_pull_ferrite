@@ -1,6 +1,6 @@
 # Data manifest — provenance of every shipped model
 
-Generated 2026-09-15 by `python analysis/make_manifest.py` (hashes computed, never typed); verify with `python analysis/make_manifest.py --check`. The machine-readable twin is `DATA_MANIFEST.json`, which `gpe_analysis.Model.stress_frame()` reads. The shipped models predate the driver's `provenance.txt` stamp; this file is their provenance record.
+Generated 2026-09-17 by `python analysis/make_manifest.py` (hashes computed, never typed); verify with `python analysis/make_manifest.py --check`. The machine-readable twin is `DATA_MANIFEST.json`, which `gpe_analysis.Model.stress_frame()` reads. The shipped models predate the driver's `provenance.txt` stamp; this file is their provenance record.
 
 **Stress frame** `massless` for every model: the stored `sigma_*` fields are the 2nd Piola–Kirchhoff stress of a run without gravity or lithostatic prestress (see README §4 for what the fields are).
 
@@ -43,7 +43,7 @@ Generated 2026-09-15 by `python analysis/make_manifest.py` (hashes computed, nev
 ## `suite1_strength`
 
 - command: `julia --project=. model/paper_models.jl suite1`
-- origin: committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set1_rheology/<model> (commit 0c6fe38, 2026-07-08)
+- origin: committed in the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set1_rheology/<model> (commit 0c6fe38, 2026-07-08)
 
 | model | parameters | file | bytes | sha256 |
 |---|---|---|---|---|
@@ -59,7 +59,7 @@ Generated 2026-09-15 by `python analysis/make_manifest.py` (hashes computed, nev
 ## `suite2_load`
 
 - command: `julia --project=. model/paper_models.jl v_sweep`
-- origin: on-disk output of `paper_models.jl v_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set3_v_sweep/<model>; never committed there
+- origin: on-disk output of `paper_models.jl v_sweep` in the working tree of the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set3_v_sweep/<model>; never committed there
 
 | model | parameters | file | bytes | sha256 |
 |---|---|---|---|---|
@@ -81,7 +81,7 @@ Generated 2026-09-15 by `python analysis/make_manifest.py` (hashes computed, nev
 ## `suite3_background`
 
 - command: `julia --project=. model/paper_models.jl nd_sweep`
-- origin: on-disk output of `paper_models.jl nd_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set2_nd_sweep/<model>; never committed there
+- origin: on-disk output of `paper_models.jl nd_sweep` in the working tree of the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set2_nd_sweep/<model>; never committed there
 
 | model | parameters | file | bytes | sha256 |
 |---|---|---|---|---|
@@ -101,7 +101,7 @@ Generated 2026-09-15 by `python analysis/make_manifest.py` (hashes computed, nev
 ## `suite4_thickness`
 
 - command: `julia --project=. model/paper_models.jl thickness`
-- origin: committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set4_thickness/<model> (commit 26e6c9b, 2026-08-11)
+- origin: committed in the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set4_thickness/<model> (commit 26e6c9b, 2026-08-11)
 
 | model | parameters | file | bytes | sha256 |
 |---|---|---|---|---|

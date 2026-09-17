@@ -15,7 +15,9 @@ with the analytical predictions there — is what these models measure.*
 
 Models, analysis and figure code for
 
-> **The 'trench pull' force: constraints from elasto-plastic bending models** — Sandiford (JGR: Solid Earth, submitted 2026).
+> Sandiford, D. **The 'trench pull' force: constraints from elasto-plastic bending models.** Preprint, ESS Open Archive,
+> 8 April 2025, doi:[10.22541/essoar.174413825.53806221/v1](https://doi.org/10.22541/essoar.174413825.53806221/v1)
+> (a substantially revised version is under review).
 
 <img src="figures/hero_tresca_deep60.png" width="820">
 
@@ -167,7 +169,13 @@ figure depends on them. To regenerate: `julia --project=. animation/gen_frames.j
 model at 24 load fractions (a model run, minutes; writes `animation/frames/`, not shipped), then
 `python animation/render_anim.py`, `render_anim_rho.py`, `render_anim_sxz.py` assemble the movies.
 
-## 6. Citation
+## 6. Citation, licence and availability
 
-Cite the paper above and the solver: Carlsson, K., Ekre, F. & Ferrite.jl contributors, *Ferrite.jl* v1.4.1,
-doi:10.5281/zenodo.13862652.
+Cite the paper above (`CITATION.cff` carries the reference in machine-readable form) and the solver: Carlsson, K.,
+Ekre, F. & Ferrite.jl contributors, *Ferrite.jl* v1.4.1, doi:10.5281/zenodo.13862652.
+
+Everything in this repository — code, model output, figures and tables — is released under the
+[Creative Commons Attribution 4.0 International licence](LICENSE) (CC BY 4.0).
+
+The release accompanying the published paper will be archived on Zenodo; the DOI will be recorded here and in the paper's
+data-availability statement once it exists. Until then this GitHub repository, at the tagged release, is the reference copy.

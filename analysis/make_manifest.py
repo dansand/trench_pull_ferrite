@@ -24,7 +24,8 @@ BASE = dict(E_Pa=70.0e9, nu=0.25, h_km=60, nx=800, nz=48, nsteps=24, L_km=1600, 
 
 # Origin — recorded facts, verified 2026-09-12 by SHA-256 against the private development archive
 # (ferrite_plate_flexure, HEAD 6e7fb08 of 2026-09-11): every shipped file is byte-identical to its archive copy.
-ARCHIVE = "the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11)"
+ARCHIVE = "the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public)"
+# ARCHIVE is the author's private development history (not public); the commits are recorded for the author's own audit trail.
 ORIGIN = {
     "suite1_strength":  f"committed in {ARCHIVE} at finite_strain/out/paper/set1_rheology/<model> (commit 0c6fe38, 2026-07-08)",
     "suite4_thickness": f"committed in {ARCHIVE} at finite_strain/out/paper/set4_thickness/<model> (commit 26e6c9b, 2026-08-11)",

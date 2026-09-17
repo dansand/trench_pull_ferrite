@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-15",
+ "generated": "2026-09-17",
  "generator": "analysis/make_manifest.py",
  "models": {
   "convergence/bench_1200x72": {
@@ -246,7 +246,7 @@
      "bytes": 21227
     }
    },
-   "origin": "committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set1_rheology/dd_vm_asym_60km_V4 (commit 0c6fe38, 2026-07-08)"
+   "origin": "committed in the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set1_rheology/dd_vm_asym_60km_V4 (commit 0c6fe38, 2026-07-08)"
   },
   "suite1_strength/dd_vm_sym_60km_V4": {
    "command": "julia --project=. model/paper_models.jl suite1",
@@ -280,7 +280,7 @@
      "bytes": 21229
     }
    },
-   "origin": "committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set1_rheology/dd_vm_sym_60km_V4 (commit 0c6fe38, 2026-07-08)"
+   "origin": "committed in the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set1_rheology/dd_vm_sym_60km_V4 (commit 0c6fe38, 2026-07-08)"
   },
   "suite1_strength/elastic_deep_60km_V4": {
    "command": "julia --project=. model/paper_models.jl suite1",
@@ -311,7 +311,7 @@
      "bytes": 21235
     }
    },
-   "origin": "committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set1_rheology/elastic_deep_60km_V4 (commit 0c6fe38, 2026-07-08)"
+   "origin": "committed in the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set1_rheology/elastic_deep_60km_V4 (commit 0c6fe38, 2026-07-08)"
   },
   "suite1_strength/tresca_deep_150_60km_V4": {
    "command": "julia --project=. model/paper_models.jl suite1",
@@ -343,7 +343,7 @@
      "bytes": 21234
     }
    },
-   "origin": "committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set1_rheology/tresca_deep_150_60km_V4 (commit 0c6fe38, 2026-07-08)"
+   "origin": "committed in the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set1_rheology/tresca_deep_150_60km_V4 (commit 0c6fe38, 2026-07-08)"
   },
   "suite2_load/tresca_deep_150_60km_V1": {
    "command": "julia --project=. model/paper_models.jl v_sweep",
@@ -375,7 +375,7 @@
      "bytes": 21235
     }
    },
-   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V1; never committed there"
+   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V1; never committed there"
   },
   "suite2_load/tresca_deep_150_60km_V1p5": {
    "command": "julia --project=. model/paper_models.jl v_sweep",
@@ -407,7 +407,7 @@
      "bytes": 21235
     }
    },
-   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V1p5; never committed there"
+   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V1p5; never committed there"
   },
   "suite2_load/tresca_deep_150_60km_V2": {
    "command": "julia --project=. model/paper_models.jl v_sweep",
@@ -439,7 +439,7 @@
      "bytes": 21235
     }
    },
-   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V2; never committed there"
+   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V2; never committed there"
   },
   "suite2_load/tresca_deep_150_60km_V2p5": {
    "command": "julia --project=. model/paper_models.jl v_sweep",
@@ -471,7 +471,7 @@
      "bytes": 21235
     }
    },
-   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V2p5; never committed there"
+   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V2p5; never committed there"
   },
   "suite2_load/tresca_deep_150_60km_V3": {
    "command": "julia --project=. model/paper_models.jl v_sweep",
@@ -503,7 +503,7 @@
      "bytes": 21234
     }
    },
-   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V3; never committed there"
+   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V3; never committed there"
   },
   "suite2_load/tresca_deep_150_60km_V3p5": {
    "command": "julia --project=. model/paper_models.jl v_sweep",
@@ -535,7 +535,7 @@
      "bytes": 21234
     }
    },
-   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V3p5; never committed there"
+   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V3p5; never committed there"
   },
   "suite2_load/tresca_deep_150_60km_V4p5": {
    "command": "julia --project=. model/paper_models.jl v_sweep",
@@ -567,7 +567,7 @@
      "bytes": 21233
     }
    },
-   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V4p5; never committed there"
+   "origin": "on-disk output of `paper_models.jl v_sweep` in the working tree of the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set3_v_sweep/tresca_deep_150_60km_V4p5; never committed there"
   },
   "suite3_background/tresca_deep_150_60km_V4_mem-1": {
    "command": "julia --project=. model/paper_models.jl nd_sweep",
@@ -600,7 +600,7 @@
      "bytes": 21313
     }
    },
-   "origin": "on-disk output of `paper_models.jl nd_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set2_nd_sweep/tresca_deep_150_60km_V4_mem-1; never committed there"
+   "origin": "on-disk output of `paper_models.jl nd_sweep` in the working tree of the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set2_nd_sweep/tresca_deep_150_60km_V4_mem-1; never committed there"
   },
   "suite3_background/tresca_deep_150_60km_V4_mem-2": {
    "command": "julia --project=. model/paper_models.jl nd_sweep",
@@ -633,7 +633,7 @@
      "bytes": 21272
     }
    },
-   "origin": "on-disk output of `paper_models.jl nd_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set2_nd_sweep/tresca_deep_150_60km_V4_mem-2; never committed there"
+   "origin": "on-disk output of `paper_models.jl nd_sweep` in the working tree of the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set2_nd_sweep/tresca_deep_150_60km_V4_mem-2; never committed there"
   },
   "suite3_background/tresca_deep_150_60km_V4_mem-3": {
    "command": "julia --project=. model/paper_models.jl nd_sweep",
@@ -666,7 +666,7 @@
      "bytes": 21256
     }
    },
-   "origin": "on-disk output of `paper_models.jl nd_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set2_nd_sweep/tresca_deep_150_60km_V4_mem-3; never committed there"
+   "origin": "on-disk output of `paper_models.jl nd_sweep` in the working tree of the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set2_nd_sweep/tresca_deep_150_60km_V4_mem-3; never committed there"
   },
   "suite3_background/tresca_deep_150_60km_V4_mem1": {
    "command": "julia --project=. model/paper_models.jl nd_sweep",
@@ -699,7 +699,7 @@
      "bytes": 21198
     }
    },
-   "origin": "on-disk output of `paper_models.jl nd_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set2_nd_sweep/tresca_deep_150_60km_V4_mem1; never committed there"
+   "origin": "on-disk output of `paper_models.jl nd_sweep` in the working tree of the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set2_nd_sweep/tresca_deep_150_60km_V4_mem1; never committed there"
   },
   "suite3_background/tresca_deep_150_60km_V4_mem2": {
    "command": "julia --project=. model/paper_models.jl nd_sweep",
@@ -732,7 +732,7 @@
      "bytes": 21199
     }
    },
-   "origin": "on-disk output of `paper_models.jl nd_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set2_nd_sweep/tresca_deep_150_60km_V4_mem2; never committed there"
+   "origin": "on-disk output of `paper_models.jl nd_sweep` in the working tree of the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set2_nd_sweep/tresca_deep_150_60km_V4_mem2; never committed there"
   },
   "suite3_background/tresca_deep_150_60km_V4_mem3": {
    "command": "julia --project=. model/paper_models.jl nd_sweep",
@@ -765,7 +765,7 @@
      "bytes": 21200
     }
    },
-   "origin": "on-disk output of `paper_models.jl nd_sweep` in the working tree of the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set2_nd_sweep/tresca_deep_150_60km_V4_mem3; never committed there"
+   "origin": "on-disk output of `paper_models.jl nd_sweep` in the working tree of the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set2_nd_sweep/tresca_deep_150_60km_V4_mem3; never committed there"
   },
   "suite4_thickness/tresca_150_30km": {
    "command": "julia --project=. model/paper_models.jl thickness",
@@ -803,7 +803,7 @@
      "bytes": 91
     }
    },
-   "origin": "committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set4_thickness/tresca_150_30km (commit 26e6c9b, 2026-08-11)"
+   "origin": "committed in the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set4_thickness/tresca_150_30km (commit 26e6c9b, 2026-08-11)"
   },
   "suite4_thickness/tresca_150_40km": {
    "command": "julia --project=. model/paper_models.jl thickness",
@@ -841,7 +841,7 @@
      "bytes": 91
     }
    },
-   "origin": "committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set4_thickness/tresca_150_40km (commit 26e6c9b, 2026-08-11)"
+   "origin": "committed in the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set4_thickness/tresca_150_40km (commit 26e6c9b, 2026-08-11)"
   },
   "suite4_thickness/tresca_150_50km": {
    "command": "julia --project=. model/paper_models.jl thickness",
@@ -879,7 +879,7 @@
      "bytes": 91
     }
    },
-   "origin": "committed in the private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11) at finite_strain/out/paper/set4_thickness/tresca_150_50km (commit 26e6c9b, 2026-08-11)"
+   "origin": "committed in the author's private development archive (ferrite_plate_flexure, HEAD 6e7fb08, 2026-09-11; not public) at finite_strain/out/paper/set4_thickness/tresca_150_50km (commit 26e6c9b, 2026-08-11)"
   }
  }
 }

@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use this code or data, please cite the paper (preferred-citation) and this repository."
+title: "trench_pull_ferrite: models, data and figure code for 'The trench pull force: constraints from elasto-plastic bending models'"
+type: software
+authors:
+  - family-names: Sandiford
+    given-names: Dan
+    affiliation: "University of Melbourne"
+repository-code: "https://github.com/dansand/trench_pull_ferrite"
+license: CC-BY-4.0
+version: "1.0.0"
+date-released: "2026-09-17"
+keywords:
+  - subduction
+  - trench pull
+  - plate flexure
+  - elasto-plastic
+  - Ferrite.jl
+preferred-citation:
+  type: article
+  title: "The 'trench pull' force: constraints from elasto-plastic bending models"
+  authors:
+    - family-names: Sandiford
+      given-names: Dan
+      affiliation: "University of Melbourne"
+  year: 2025
+  journal: "ESS Open Archive (preprint)"
+  doi: "10.22541/essoar.174413825.53806221/v1"
+  notes: "Preprint, posted 8 April 2025; a revised version is under review."

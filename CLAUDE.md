@@ -1,71 +1,84 @@
 # CLAUDE.md
 
-Guidance for Claude Code in this repository.
+Working notes for anyone (or any coding assistant) editing this repository. Written for a clone on any machine: nothing
+below depends on the author's other directories. If you only want to reproduce the figures, `README.md` and
+`REPRODUCE.md` are enough; this file is about how to change things without breaking them.
 
 ## What this is
-The **lean, public reproducibility package** for *The 'trench pull' force: constraints from elasto-plastic bending
-models* (Sandiford, JGR: Solid Earth). Everything needed to reproduce every manuscript figure from the included
-data, and to re-run the finite-element models. It was curated out of the private development archive
-`~/projects/ferrite` (`ferrite_plate_flexure`), which keeps the full history, diagnostics and dev tooling — look
-there for history, never develop there. **This repo is the single source of truth.**
+The reproducibility package for *The 'trench pull' force: constraints from elasto-plastic bending models* (Sandiford;
+preprint doi:10.22541/essoar.174413825.53806221/v1, a revised version is under review). It contains the finite-element
+models (Julia, Ferrite.jl), all model output, and the scripts that turn that output into every manuscript figure and
+every number the paper quotes. It was curated from a larger private development history; that history is not needed
+and not public. **This repository is the single source of truth for the paper's models and numbers.**
 
-## Layout (role-based; run everything from the repo root)
-`model/` Julia solver + `paper_models.jl` production driver · `analysis/gpe_analysis.py` (+ `make_manifest.py`) ·
-`scripts/render_*.py` (one per manuscript figure) · `figures/` the shipped reference renders (what the scripts write) ·
-`tables/` every number the paper quotes as CSV, written by the same script in the same pass as its figure ·
-`schematic/` TikZ · `data/` all model output + `DATA_MANIFEST.md/.json` (provenance: command, parameters, SHA-256, origin) ·
-`START_HERE.ipynb` · `REPRODUCE.md` (figure → script → data → command) · `reproduce.sh` (regenerate + check everything) ·
-`tests/test_quick.py` (+ `test_quick.jl`; seconds) · `animation/` (loading movies — illustrative,
-no manuscript figure depends on them; `gen_frames.jl` is a **model run** (24 solves) → ask before running; `frames/` is gitignored).
+## Layout (run everything from the repository root)
+`model/` Julia solver (`gpe_plastic.jl`) and the production driver `paper_models.jl` (one command per suite) ·
+`analysis/gpe_analysis.py` the extraction library (+ `make_manifest.py`, `model_summary.py`, `paper_numbers.py` and
+the assumption tests) · `scripts/render_*.py` one per manuscript figure · `figures/` the shipped renders (what the
+scripts write) · `tables/` every number the paper quotes, as CSV with a JSON provenance sidecar, written by the same
+script in the same pass as its figure (`tables/README.md` explains the contract) · `schematic/` TikZ ·
+`data/` all model output, one directory per model, with `DATA_MANIFEST.md/.json` (command, parameters, SHA-256, origin) ·
+`START_HERE.ipynb` a guided tour · `REPRODUCE.md` figure → script → data → command · `reproduce.sh` regenerates and
+checks everything · `tests/` (`test_quick.py`, `test_quick.jl`, `check_reproduce.py`) · `animation/` loading movies
+(illustrative; `gen_frames.jl` is a model run of 24 solves; `frames/` is not shipped).
 
-## Hard rules
-- **The user makes every commit and push.** Never `git commit` or `git push`. Stage if useful, then show the command.
-- **Never run a finite-element solve unprompted.** Solves take minutes–hours and only ever go through
-  `model/paper_models.jl <command>` (skip-existing, never clobbers) — no ad-hoc model runs. Ask first.
-- **One script → one figure (+ its table).** No ghost outputs. A figure script that produces a number the paper quotes
-  writes it to `tables/<figure>.csv` via `gpe_analysis.write_table` in the same pass, from the same arrays — never a
-  separate computation; `reproduce.sh` asserts every table was rewritten and reads its checks from the tables. `render_hero.py` is the one parameterised renderer (same layout for
-  any model directory) — that is fine; several *designs* of a figure in one script is not.
-- Figure scripts must stay **importable**: `matplotlib.use("Agg")` lives under `if __name__ == "__main__"`, never at
-  module level (it would hijack Jupyter's backend). Plotting helpers that take an `ax` are preferred.
-- Don't drop figure elements (curves, lines, panels) when restyling without saying so.
-- After rendering an image, open it: `open -a Preview <path>`.
+## Rules that keep the package trustworthy
+- **One script → one figure (+ its table).** A script that produces a number the paper quotes writes it to
+  `tables/<figure>.csv` through `gpe_analysis.write_table`, from the same arrays as the figure, never by a separate
+  computation. `reproduce.sh` asserts that every table was rewritten and reads all its checks from the tables.
+  `render_hero.py` is the one parameterised renderer (the same layout for any model directory); several designs of a
+  figure in one script is not allowed.
+- **Figure scripts stay importable:** `matplotlib.use("Agg")` only under `if __name__ == "__main__"`, so the notebook can
+  import them without losing its backend. Helpers that draw on a given `ax` are preferred.
+- **Model runs only through the driver.** `julia --project=. model/paper_models.jl <command>` skips existing model
+  directories and never overwrites; move a directory aside to force a rerun. Solves take minutes to hours; there are no
+  ad-hoc model runs. An assistant must ask before starting any solve.
+- **Data are provenance-stamped.** Every model directory carries `provenance.txt` (parameters, solver version, completion
+  flag) and an entry in the manifest. After adding or regenerating a model, run `python analysis/make_manifest.py` and
+  check with `--check`. Provenance is the pinned solver versions plus the manifest, not commit hashes.
+- **Don't drop figure elements** (curves, lines, panels) when restyling without saying so.
+- **Commits and pushes are made by the author**, not by an assistant. Commit messages are one short line.
 
 ## Conventions
-- Python from the pinned `environment.yml` env (`ferrite-figs`, numpy 1.26 → use `np.trapz`, not `np.trapezoid`).
-  Julia 1.10.5, `julia --project=.`, Ferrite.jl 1.4.1. TikZ compiles with **`tectonic`** (no pdflatex).
-- Terminology: **equivalent density** ρ̂ = τzx,x/g (never "pseudo-density"); the shear-gradient is written
-  `τzx,x`; **centroids are always signed** (∫z·τ/∫τ), never magnitude-weighted.
-- Two distinct "arm" quantities — keep them apart in code comments and labels: **A**, the effective force-based
-  arm ΔGPE\*/(Δρ g w) (the reported one, ≈35 km); **B**, the centre of mass of the τzx,x distribution (drawn,
-  illustrative, undefined where the net dipole charge vanishes).
-- **The trench-edge yield ramp** (+100 MPa, e-folding 10 km, `paper_models.jl`; recorded in the manifest) exists because the
-  parabolic face traction (peak 1.5V/h = 100 MPa at V = 4) exceeds the in-plane Tresca shear capacity σY/2 = 75 MPa;
-  without it the face yields in shear. It is not what makes the trench column elastic (that is M → 0 at the free end):
-  settled 2026-09-15 by a 19-solve exploration kept PRIVATE at `~/projects/mypapers/trench_pull_force/2026_codex/edge_ramp_private/`
-  (Dan's decision: nothing from it in the repo or the SI). Do not reopen a reference-model redesign on this ground.
-- Trench pull is always trench-referenced, between the trench column and the **first isostatic column** x_I
-  (`gpe_analysis.trench_pull`); the identity ΔN_D = ΔGPE\* holds to ~0.02 %.
+- Python from `environment.yml` (`ferrite-figs`: numpy 1.26, so `np.trapz`, not `np.trapezoid`). Julia 1.10.5 with the
+  shipped `Project.toml`/`Manifest.toml` (Ferrite.jl 1.4.1); both environments have been verified from clean installs.
+  TikZ compiles with `tectonic` (no pdflatex needed).
+- Terminology follows the manuscript: **equivalent density** ρ̂ = τzx,x/g (never "pseudo-density"); the shear-stress
+  gradient is written `τzx,x`; **centroids are always signed** (∫z·τ dz / ∫τ dz), never magnitude-weighted.
+- Two distinct "arm" quantities, kept apart in comments and labels: **A**, the force-based effective arm
+  ΔGPE\*/(Δρ g w_T), the one the paper reports (≈ 35 km, ≈ 0.58 h); **B**, the signed centre of mass of the τzx,x
+  distribution, drawn for illustration and undefined where the net charge of a column vanishes.
+- Trench pull is always trench-referenced: between the trench column (the leftmost complete deformed column) and the
+  **first isostatic column** x_I (first w = 0), via `gpe_analysis.trench_pull`. The identity ΔN_D = ΔGPE\* holds to
+  about 0.02 % and is asserted.
 - Data folders are named after the manuscript's suites (`suite1_strength`, `suite2_load`, `suite3_background`,
-  `suite4_thickness`); the driver commands stay descriptive (`v_sweep` → suite2, `nd_sweep` → suite3).
-- **VTU stress fields are NOT all Cauchy.** `sigma_xx/zz/xz` in `gpe_model.vtu` are the 2nd Piola–Kirchhoff stress S on the
-  reference mesh; only `sigma_xz_cauchy` (+ the gradients `dsxz_dx`, `dszz_dz`) are Cauchy. Always go through
-  `Model.cauchy_fields()` (σ = J⁻¹F S Fᵀ) for stresses — rotation mixes components at O(slope), tens of percent on the shear.
-  **One exception, by design:** the two idealized-beam benchmarks (`render_benchmark.py`, `render_mp_benchmark.py`)
-  read the exported S directly — their analytic comparisons (Hetényi, shear parabola, M–κ) are material-section
-  quantities on the reference thickness. Switching them to Cauchy broke them once (2026-09-11 → Codex audit); both
-  scripts now assert the SI numbers, so a wrong frame fails loudly.
+  `suite4_thickness`, plus `convergence` and the two `idealized_beam*` benchmarks); the driver commands stay descriptive
+  (`v_sweep` → suite2, `nd_sweep` → suite3).
+- **The trench-edge yield-strength ramp** (+100 MPa, e-folding 10 km, in `paper_models.jl`, recorded in the manifest)
+  exists because the parabolic face traction (peak 1.5V/h = 100 MPa at V = 4 TN/m) exceeds the in-plane Tresca shear
+  capacity σY/2 = 75 MPa; without it the loaded face yields in shear, a deformation mode unrelated to the bending the
+  paper studies. It is not what makes the trench column elastic (that is the bending moment vanishing at the free end).
+  This was settled by a ramp-free comparison (author's records, 2026-09-15); do not reopen a reference-model redesign
+  on this ground.
+- **VTU stress fields are not all Cauchy.** `sigma_xx/zz/xz` in `gpe_model.vtu` are the 2nd Piola–Kirchhoff stress on
+  the reference mesh; only `sigma_xz_cauchy` and the gradients `dsxz_dx`, `dszz_dz` are Cauchy. Always go through
+  `Model.cauchy_fields()` (σ = J⁻¹ F S Fᵀ) for stresses: the rotation mixes components at the order of the surface
+  slope, tens of per cent on the shear. **One deliberate exception:** the two idealized-beam benchmarks
+  (`render_benchmark.py`, `render_mp_benchmark.py`) read the exported material-frame stress directly, because their
+  analytic comparisons (Hetényi deflection, shear parabola, M–κ) are material-section quantities on the reference
+  thickness. Both scripts assert the SI numbers, so a wrong frame fails loudly.
 
 ## Manuscript handshake
-The manuscript is `~/projects/mypapers/trench_pull_force/2026_codex/full_manuscript/` (being finalised with Codex; its LaTeX
-reads figures from its own `figures/` directory — some are renamed on copy, see `REPRODUCE.md`). `2026_version/` is a
-static relic — never read it as current. When figures are regenerated for the paper: copy them there. Provenance is the
-pinned solver versions (Julia 1.10.5, Ferrite.jl 1.4.1 in `Manifest.toml`) and `data/DATA_MANIFEST.md`; do not chase
-commit hashes through the README or the paper's records (Dan, 2026-09-13 — that is more detail than the package needs).
+The manuscript reads figures from its own directory under the names listed in `REPRODUCE.md` (some are renamed on
+copy). Regenerated figures are copied there by hand, never written by a script. The numbers the paper quotes are consumed
+as LaTeX macros from `tables/paper_numbers.tex`; `python analysis/paper_numbers.py --compare <manuscript dir>` reports
+which manuscript literals match, differ from, or already use the macros (`tables/README.md`, "how the numbers get into
+the manuscript").
 
 ## Acceptance test
-`./reproduce.sh` passes: `pytest tests/`, every figure script from the root against `data/`, the notebook top to bottom in
-the `ferrite-figs` env, `make_manifest.py --check`, and the headline numbers ASSERTED (not printed) by
-`tests/check_reproduce.py` — ΔGPE\* = 2.542 TN/m ± 0.5 %, identity < 0.05 % (0.019 %), arm 34.9 km, the S1/S2 benchmark
-misfits, the Suite-1 reconstruction table. Run it after any change to scripts, analysis or paths; a passing run is the
-definition of done. (Lesson of the 2026-09-12 audit: a printed number nobody re-reads is not a check.)
+`./reproduce.sh` passes: `pytest tests/` (Python and, if Julia is present, `test_quick.jl`), every figure script from
+the root against `data/`, the notebook top to bottom, `make_manifest.py --check`, and the headline numbers asserted by
+`tests/check_reproduce.py` (ΔGPE\* = 2.542 TN/m ± 0.5 %, identity < 0.05 %, arm 34.9 ± 0.2 km, the S1/S2 benchmark
+misfits, the reconstruction and convergence tables, the isostatic-column bounds, every figure and table rewritten).
+Run it after any change to scripts, analysis, data or paths; a passing run is the definition of done. A printed number
+nobody re-reads is not a check.
