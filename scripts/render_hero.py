@@ -39,7 +39,7 @@ def pgrad(mod):
 MODEL_DIR = "data/suite1_strength/tresca_deep_150_60km_V4"
 WINDOW_KM = float(os.environ.get("HERO_WINDOW_KM", 300))    # env override for thinner plates (shorter flexure)
 WARP_FACTOR = 5.0                     # deflection exaggeration
-VEXAG     = 1.5                       # vertical scale of the warped geometry
+VEXAG     = 1.2                       # vertical scale of the warped geometry (1.5 until 2026-09-18; 1.2 gives a wider page aspect)
 GRAV      = G
 REF_KEYS  = ["trench", "moment_max", "shear_max", "outer_rise"]
 REF_LABELS = {"trench": "trench", "moment_max": "max $M$", "shear_max": "isostatic", "outer_rise": "forebulge"}
@@ -203,7 +203,7 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
 
     # SIGNED ρ̂ centroid = the dipole-moment depth of τ_zx,x, via the deformed-line extractor (the same
     # estimator as thickness_compare): per column τ = g⁻¹ τzx,x on the DEFORMED line, signed centroid depth
-    # z_c = ∫zτ dz / ∫τ dz.  Mask ONLY where the dipole is near-BALANCED — |∫τ| < RATIO_MIN·∫|τ| — the genuine
+    # z_c = ∫zτ dz / ∫τ dz.  Only COMPLETE columns count (the track therefore starts at the trench column, ≈1 km in).  Mask ONLY where the dipole is near-BALANCED — |∫τ| < RATIO_MIN·∫|τ| — the genuine
     # ill-conditioning of a signed centroid (the isostatic column, and a fully-plastic hinge where the ± lobes
     # nearly cancel).  This replaces the old reference-grid column-sum ρ̂.sum(depth), which is UNFAITHFUL at a
     # strongly-rotated yielded hinge: on the h=30 plate it flipped sign where the true net resultant is finite
@@ -222,8 +222,10 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
         except Exception:
             continue
         z = L["z"]
-        if z.size < 4:
-            continue
+        if z.size < m.Nz:                                  # the line must cut the WHOLE plate: a vertical line at
+            continue                                       # reference x = 0 exits through the rotated edge face part way
+                                                           # down (23 of 49 layers) and its "centroid" is that of the
+                                                           # truncated column — the false shallowing seen before 2026-09-18
         Q = np.trapz(tau, z); A = np.trapz(np.abs(tau), z)
         if A <= 0 or abs(Q) < RATIO_MIN * A:              # near-balanced ⇒ signed centroid ill-conditioned ⇒ skip
             continue
@@ -249,8 +251,8 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
     y0km, y1km = bbox[2] / 1e3, bbox[3] / 1e3
     aspect = (bbox[1] - bbox[0]) / (bbox[3] - bbox[2])
     map_h = MAP_W_IN / aspect
-    line_h = map_h * 1.25
-    top_h = 0.5 * line_h
+    line_h = map_h                                    # all five panels the same height (2026-09-18)
+    top_h = map_h
     fig = plt.figure(figsize=(MAP_W_IN + 1.5, top_h + 3 * map_h + line_h + 1.2), constrained_layout=True)
     gs = fig.add_gridspec(5, 2, width_ratios=[MAP_W_IN, 0.22],
                           height_ratios=[top_h, map_h, map_h, map_h, line_h])
