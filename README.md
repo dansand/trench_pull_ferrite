@@ -5,7 +5,7 @@
 *A 60 km elasto-plastic plate loaded at its trench edge: the deflection grows with the applied shear, and with it a
 pressure deficit beneath the trench — a GPE-like resultant, ΔGPE\* = −Δσ̄zz. That resultant is the trench pull. Static
 equilibrium requires it to be balanced, and in these models it is balanced by an exchange with the other horizontal
-component: an equal and opposite normal-stress-difference resultant, ΔN_D, arises. (24 load steps; `animation/`.)*
+component: a change in the normal-stress-difference resultant of the same size, ΔN_D = ΔGPE\*. (24 load steps; `animation/`.)*
 
 *The models start from a plate carrying no horizontal force at all — true even of the horizontal normal stress, since there
 are no body forces. Loading the left edge vertically then couples the vertical load to the horizontal resultants: an
@@ -89,7 +89,7 @@ python scripts/render_thickness_compare.py    # Fig 7
 ```
 **`./reproduce.sh` regenerates and checks every model-derived figure and table** (the three TikZ schematics are drawings,
 built by the separate command above): it runs every script above in order, asserts the headline
-numbers (ΔGPE\* = 2.542 TN/m, identity < 0.05 %, arm 34.9 km, the S1/S2 benchmark misfits, the reconstruction
+numbers (ΔGPE\* = 2.542 TN/m, identity < 0.05 %, arm 35.4 km, the S1/S2 benchmark misfits, the reconstruction
 table), executes `START_HERE.ipynb` top to bottom and runs `pytest tests/`, exiting nonzero on any failure. The numbers it checks are
 read from `tables/*.csv`, which every figure script writes alongside its figure from the same arrays — a table and
 its figure cannot disagree, and the harness asserts both were rewritten.
@@ -135,7 +135,7 @@ julia --project=. model/paper_models.jl convergence   # Table S3: the five conve
 julia --project=. model/paper_models.jl all           # suite1 + nd_sweep + v_sweep + thickness
 julia --project=. model/idealized_beam.jl             # the benchmark beams (S1, S2)
 ```
-Reference model, for orientation: uniform Tresca σ_Y = 150 MPa, h = 60 km, V = 4 TN/m → trench deflection 3233 m,
+Reference model, for orientation: uniform Tresca σ_Y = 150 MPa, h = 60 km, V = 4 TN/m → trench deflection 3181 m on the trench column (3233 m at the rotated edge),
 ΔGPE\* = 2.54 TN/m, with the equilibrium identity ΔN_D = ΔGPE\* satisfied to 0.02 %.
 
 ### What is in a model's `gpe_model.vtu` — read this before using the fields directly

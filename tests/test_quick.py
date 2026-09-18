@@ -78,15 +78,15 @@ def test_scalar_vs_batched_deformed_resultants():
 
 def test_reference_model_reads_manifest_and_headline_numbers():
     """The shipped reference model resolves its stress frame from data/DATA_MANIFEST.json (no heuristic), and the
-    paper's headline numbers hold: ΔGPE* = 2.542 TN/m (±0.5 %), identity < 0.05 %, arm 34.9 km (±0.2)."""
-    from gpe_analysis import Model, trench_pull
+    paper's headline numbers hold: ΔGPE* = 2.542 TN/m (±0.5 %), identity < 0.05 %, arm 35.4 km (±0.2; w_T on the trench column)."""
+    from gpe_analysis import Model, trench_pull, trench_deflection
     m = Model(REF)
     assert m.manifest_entry().get("stress_frame") == "massless" and m.stress_frame() == "massless"
     dG, dN, x_I = trench_pull(m)
     assert abs(dG / 2.542e12 - 1) < 0.005, dG
     assert abs(dG - dN) / abs(dG) < 5e-4
-    arm = dG / ((3300.0 - 1000.0) * 9.81 * float(np.nanmax(m.topography())))
-    assert abs(arm / 1e3 - 34.9) < 0.2, arm
+    arm = dG / ((3300.0 - 1000.0) * 9.81 * trench_deflection(m))
+    assert abs(arm / 1e3 - 35.4) < 0.2, arm
 
 
 def test_write_read_table_round_trip(tmp_path, monkeypatch):

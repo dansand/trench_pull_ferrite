@@ -46,7 +46,7 @@ checks everything · `tests/` (`test_quick.py`, `test_quick.jl`, `check_reproduc
 - Terminology follows the manuscript: **equivalent density** ρ̂ = τzx,x/g (never "pseudo-density"); the shear-stress
   gradient is written `τzx,x`; **centroids are always signed** (∫z·τ dz / ∫τ dz), never magnitude-weighted.
 - Two distinct "arm" quantities, kept apart in comments and labels: **A**, the force-based effective arm
-  ΔGPE\*/(Δρ g w_T), the one the paper reports (≈ 35 km, ≈ 0.58 h); **B**, the signed centre of mass of the τzx,x
+  ΔGPE\*/(Δρ g w_T), the one the paper reports (≈ 35 km, ≈ 0.59 h; w_T is the trench column's own deflection); **B**, the signed centre of mass of the τzx,x
   distribution, drawn for illustration and undefined where the net charge of a column vanishes.
 - Trench pull is always trench-referenced: between the trench column (the leftmost complete deformed column) and the
   **first isostatic column** x_I (first w = 0), via `gpe_analysis.trench_pull`. The identity ΔN_D = ΔGPE\* holds to
@@ -77,7 +77,7 @@ checked by hand once before submission (`tables/README.md`).
 ## Acceptance test
 `./reproduce.sh` passes: `pytest tests/` (Python and, if Julia is present, `test_quick.jl`), every figure script from
 the root against `data/`, the notebook top to bottom, `make_manifest.py --check`, and the headline numbers asserted by
-`tests/check_reproduce.py` (ΔGPE\* = 2.542 TN/m ± 0.5 %, identity < 0.05 %, arm 34.9 ± 0.2 km, the S1/S2 benchmark
+`tests/check_reproduce.py` (ΔGPE\* = 2.542 TN/m ± 0.5 %, identity < 0.05 %, arm 35.4 ± 0.2 km, the S1/S2 benchmark
 misfits, the reconstruction and convergence tables, the isostatic-column bounds, every figure and table rewritten).
 Run it after any change to scripts, analysis, data or paths; a passing run is the definition of done. A printed number
 nobody re-reads is not a check.

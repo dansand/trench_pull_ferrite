@@ -1,7 +1,7 @@
 """render_profiles.py — depth-profile companion to the hero figure (elastic / Tresca / depth-dependent
 von Mises, DD-VM), MASSLESS models, in the TRUE DEFORMED frame via the deformed-Cauchy pipeline.
 
-Three rows (one rheology each), four DEPTH PROFILES per row (value vs deformed depth), at the SAME
+Three rows (one strength model each), four DEPTH PROFILES per row (value vs deformed depth), at the SAME
 flexure stations as the hero — max M · mid · max V.  Every field is the CAUCHY stress interpolated onto
 the deformed vertical line (gpe_analysis.Model.deformed_line); massless ⇒ stress is zero outside the
 plate (no hydrostatic caps).  Panels:
@@ -49,7 +49,7 @@ def stations(m):
             "shear_max": L["shear_max"]}
 
 
-DRHOG = (3300.0 - 1000.0) * 9.81      # water–rock contrast (only for the truncated above-plate GPE diagnostic)
+DRHOG = (3300.0 - 1000.0) * 9.81      # water–rock contrast: the above-plate (water-wedge) term ½Δρ g w_T² the massless column omits
 
 
 def szz_on_grid(m, x_km, zgrid):
@@ -69,7 +69,7 @@ def plot_row(m, axes, is_top, zgrid):
     zt = zgrid / 1e3
     for k, (ax, (lab, kind)) in enumerate(zip(axes, [
             (r"$(\sigma_{xx}-\sigma_{zz})(z)$  [MPa]", "n_d"),
-            (r"$\sigma_{xz}(z)$  [MPa]",               "sxz"),
+            (r"$\tau_{zx}(z)$  [MPa]",                 "sxz"),
             (P3LABEL,                                  "tau"),
             (r"$\sigma_{zz}(z)-\sigma_{zz}^{\rm iso}(z)$  [MPa]", "dszz")])):
         if kind == "dszz":
@@ -147,7 +147,8 @@ def main():
         x_tr = trench_ref_km(m)
         area = np.trapz(szz_on_grid(m, x_tr, zgrid) - szz_on_grid(m, stations(m)["shear_max"], zgrid), zgrid)
         dGPE = trench_pull(m)[0]; wterm = DRHOG * m.deformed_line(x_tr)["z"][0] ** 2 / 2
-        rows.append((MODELS[i][0], rlab.replace(chr(10), " "), area / 1e12, dGPE / 1e12, 100 * abs(area - dGPE) / abs(dGPE)))
+        rows.append((MODELS[i][0], rlab.replace(chr(10), " "), area / 1e12, dGPE / 1e12, 100 * abs(area - dGPE) / abs(dGPE),
+                     wterm / 1e12, 100 * wterm / abs(dGPE)))                   # the above-plate wedge ½Δρ g w_T², absent from the massless column
         print(f"   {rlab.replace(chr(10),' '):24s}: area={area/1e12:+.4f}  trench_pull={dGPE/1e12:+.4f}  (Δ={100*abs(area-dGPE)/abs(dGPE):.2f}%)   [truncated above-plate GPE ≈ {wterm/1e12:.3f}]")
     Hkm = ms[0].H / 1e3                                                      # (a)-(c): plate-surface frame (0 = plate top)
     for ax in axes[:, :3].flat:
@@ -162,7 +163,8 @@ def main():
     fig.suptitle("Depth profiles at the flexure locations (trench · max $M$ · first isostatic $x_I$); (a)-(c) below plate surface, (d) below reference level   "
                  "● = centroid of $\\tau_{zx,x}$", fontsize=12.5)
     fig.savefig(OUT, dpi=150); print("wrote", OUT)
-    write_table("profiles_selfcheck", ["model", "label", "trench_curve_area_TN", "trench_pull_TN", "diff_pct"], rows,
+    write_table("profiles_selfcheck", ["model", "label", "trench_curve_area_TN", "trench_pull_TN", "diff_pct",
+                                       "above_plate_wedge_TN", "above_plate_wedge_pct"], rows,
                 script="scripts/render_profiles.py", figure="figures/profiles.png", models=[d for d, _ in MODELS])
 
 

@@ -25,6 +25,7 @@ run() {                       # run <name> <command...>  — logs, reports, neve
 
 run tests             "$PY" -m pytest tests/ -q -p no:cacheprovider
 run hero              "$PY" scripts/render_hero.py
+run hero_full         env HERO_PANELS=dsr "$PY" scripts/render_hero.py data/suite1_strength/tresca_deep_150_60km_V4 figures/hero_tresca_deep60_full.png
 run gpe_correlation   "$PY" scripts/render_gpe_correlation.py
 run gpe_compare       "$PY" scripts/render_gpe_compare.py
 run profiles          "$PY" scripts/render_profiles.py
@@ -34,10 +35,10 @@ run mp_benchmark      "$PY" scripts/render_mp_benchmark.py
 run convergence       "$PY" scripts/render_convergence.py
 run core_profiles     "$PY" scripts/render_core_profiles.py
 run corrected_density "$PY" scripts/render_corrected_density.py
-run hero_h30          env HERO_WINDOW_KM=200 HERO_MFIX=0 "$PY" scripts/render_hero.py data/suite4_thickness/tresca_150_30km figures/hero_tresca_30km.png
-run hero_h40          env HERO_WINDOW_KM=260 HERO_MFIX=0 "$PY" scripts/render_hero.py data/suite4_thickness/tresca_150_40km figures/hero_tresca_40km.png
-run hero_dd_vm_asym   "$PY" scripts/render_hero.py data/suite1_strength/dd_vm_asym_60km_V4 figures/hero_dd_vm_asym.png
-run hero_dd_vm_sym    "$PY" scripts/render_hero.py data/suite1_strength/dd_vm_sym_60km_V4 figures/hero_dd_vm_sym.png
+run hero_h30          env HERO_PANELS=dsr HERO_WINDOW_KM=200 HERO_MFIX=0 "$PY" scripts/render_hero.py data/suite4_thickness/tresca_150_30km figures/hero_tresca_30km.png
+run hero_h40          env HERO_PANELS=dsr HERO_WINDOW_KM=260 HERO_MFIX=0 "$PY" scripts/render_hero.py data/suite4_thickness/tresca_150_40km figures/hero_tresca_40km.png
+run hero_dd_vm_asym   env HERO_PANELS=dsr "$PY" scripts/render_hero.py data/suite1_strength/dd_vm_asym_60km_V4 figures/hero_dd_vm_asym.png
+run hero_dd_vm_sym    env HERO_PANELS=dsr "$PY" scripts/render_hero.py data/suite1_strength/dd_vm_sym_60km_V4 figures/hero_dd_vm_sym.png
 run isostatic_column  "$PY" analysis/isostatic_column_test.py
 run model_summary     "$PY" analysis/model_summary.py
 run frame_check       "$PY" analysis/frame_check.py

@@ -10,7 +10,7 @@ equilibrium identity residual, and the effective arm ΔGPE*/(Δρ g w_T).  Writt
 import glob, json, os, sys
 import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gpe_analysis import Model, reference_lines, trench_ref_km, trench_pull, write_table, DRHOG
+from gpe_analysis import Model, reference_lines, trench_ref_km, trench_pull, trench_deflection, write_table, DRHOG
 
 SUITES = ["suite1_strength", "suite2_load", "suite3_background", "suite4_thickness"]
 
@@ -25,7 +25,7 @@ def main():
             if not os.path.isfile(os.path.join(d, "gpe_model.vtu")):
                 continue
             m = Model(d); R = reference_lines(m); x_t = trench_ref_km(m)
-            dG, dN, x_i = trench_pull(m); w_t = float(np.nanmax(m.topography()))
+            dG, dN, x_i = trench_pull(m); w_t = trench_deflection(m)           # w_T on the trench column (same column as the pull)
             par = manifest.get(d.replace("data/", ""), {}).get("parameters", {})
             eps_p = float(np.nanmax(m.array("plastic_strain"))) if m.has_field("plastic_strain") else 0.0
             yld = m.array("yielded") > 0.5 if m.has_field("yielded") else np.zeros((m.Nx, m.Nz), bool)

@@ -92,9 +92,10 @@ class Model:
     def N(self):   return self.integrate_z(self.cauchy_fields()[0])                    # ∫σxx dz  (reference grid)
     def V(self):   return self.integrate_z(self.cauchy_fields()[2])                    # ∫σxz dz  (reference grid)
     def GPE(self): return self.integrate_z(self.cauchy_fields()[1])                    # RAW ∫σzz dz (σzz<0)  (reference grid)
-    # SIGN CONVENTION (main.tex): the manuscript GPE ≡ −σ̄_zz = −∫σzz dz = −GPE().  The trench-pull identity
-    # is ΔN_D = −Δσ̄_zz ≡ ΔGPE, i.e. ΔN_D = ΔGPE (same sign), both = −∫δσzz.  So for the manuscript ΔGPE use
-    # −(GPE()−far); it is NEGATIVE at the trench (pressure deficit) and POSITIVE at the outer rise. fx() = N_D.
+    # SIGN CONVENTION (manuscript): GPE* ≡ −σ̄zz = −∫σzz dz = −GPE().  Δ(·) ≡ (·)(x_I) − (·)(x_T), trench-referenced:
+    # ΔGPE* = −[Σzz(x_I) − Σzz(x_T)] = +2.54 TN/m for the reference model, and the identity is ΔN_D = ΔGPE* (same
+    # sign).  trench_pull() below is the one quoted implementation; GPE() here is the raw reference-grid integral used
+    # only for locating columns.  fx() = N_D.
     def fx(self):  Cxx, Czz, _ = self.cauchy_fields(); return self.integrate_z(Cxx - Czz)      # N_D = ∫(σxx−σzz)dz  (reference grid)
     def M(self):                                                                       # bending moment ∫σxx(z−h/2)dz  (reference grid)
         return self.integrate_z(self.cauchy_fields()[0] * (self.z - self.H / 2)[None, :])  # z = depth, arm about mid-plane
@@ -361,6 +362,15 @@ def deformed_shear_gradient(mod, x_km, delta_km=4.0, force_branch=None):
     else:                                                     # backward (near the clamp)
         tau = (L0["sxz"] - np.interp(zc, Lm["z"], Lm["sxz"])) / (delta_km * 1e3)
     return L0, tau
+
+
+def trench_deflection(mod):
+    """The trench deflection w_T [m]: the deflection of the TRENCH COLUMN (trench_ref_km, the leftmost complete deformed
+    column, tangent to the rotated lower corner), i.e. that column's own plate-top depth.  This is the deflection that
+    pairs with the pull in the effective arm ΔGPE*/(Δρ g w_T): numerator and denominator are read on the same column
+    (decided 2026-09-18).  It is ~50 m less than the maximum of the topography, which sits on the rotated edge itself
+    (reference model: 3181 m vs 3233 m; the edge maximum remains the thickness-suite tuner's target, a solver input)."""
+    return float(mod.deformed_line(trench_ref_km(mod))["z"][0])
 
 
 def trench_pull(mod):

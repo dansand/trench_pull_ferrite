@@ -96,7 +96,7 @@ def main():
             ax[1].plot(sxx[i] / sY[i], zeta, color=cmap(nrm(yf[i])), lw=1.8)
     ax[1].axvline(1, color="0.6", lw=0.8, ls="--"); ax[1].axvline(-1, color="0.6", lw=0.8, ls="--")
     ax[1].text(1.03, -0.9, r"$\pm\sigma_Y$", fontsize=8, color="0.4"); ax[1].set_xlim(-1.2, 1.2); ax[1].set_ylim(1, -1)
-    ax[1].set_xlabel(r"$\sigma_{xx}/\sigma_Y$"); ax[1].set_ylabel(r"$\zeta=(z-h/2)/(h/2)$")
+    ax[1].set_xlabel(r"$\sigma_{xx}/\sigma_Y$"); ax[1].set_ylabel(r"normalized depth  $(z-h/2)/(h/2)$")
     ax[1].set_title("(b)  stress truncates at $\\pm\\sigma_Y$ (the $M_p$ mechanism)", fontsize=10.5)
     ax[1].grid(alpha=0.2)
 

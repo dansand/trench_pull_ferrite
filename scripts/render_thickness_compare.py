@@ -1,4 +1,4 @@
-"""render_thickness_compare.py — SI Suite 4: does plate THICKNESS control the trench pull?
+"""render_thickness_compare.py — Fig. 7 (Suite 4): does plate THICKNESS control the trench pull?
 
 Four uniform-Tresca models (σ_Y = 150 MPa, identical strength profile), each tuned to the SAME trench
 deflection (3233 m) but a different mechanical thickness h ∈ {30, 40, 50, 60} km — h=60 is the locked
@@ -121,7 +121,7 @@ def main():
     fig.suptitle(r"Plate thickness controls the trench pull  (uniform Tresca, matched deflection, $\sigma_Y=150$ MPa)", fontsize=13.5)
     outp = sys.argv[1] if len(sys.argv) > 1 else OUT
     fig.savefig(outp, dpi=150); print("wrote", outp)
-    write_table("thickness_compare", ["h_km", "V_TN", "w_T_km", "x_I_km", "x_M_km", "pull_TN", "pull_over_V"],
+    write_table("thickness_compare", ["h_km", "V_TN", "w_T_km", "x_I_from_xT_km", "x_M_from_xT_km", "pull_TN", "pull_over_V"],
                 [(hk, VLOAD[hk], d["m"].deformed_line(d["x_tr"])["z"][0] / 1e3, d["xi"] - d["x_tr"], d["x_mm"] - d["x_tr"], d["pull"], d["pull"] / VLOAD[hk])
                  for (mdir, hk, col), d in zip(MODELS, data)],
                 script="scripts/render_thickness_compare.py", figure="figures/thickness_compare.png", models=[d for d, _, _ in MODELS],

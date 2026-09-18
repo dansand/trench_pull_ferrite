@@ -6,16 +6,18 @@ next to the LaTeX sources and `\input{paper_numbers}`. Numbers not listed here a
 
 | macro | value | source table | description |
 |---|---|---|---|
-| `\numRefTrenchDepthKm` | 3.23 | `tables/model_summary.csv` | reference model trench depth [km] |
+| `\numRefTrenchDepthKm` | 3.18 | `tables/model_summary.csv` | reference model trench depth [km] |
 | `\numRefPull` | 2.54 | `tables/model_summary.csv` | reference trench pull ΔGPE* [TN/m], 2 dp |
 | `\numRefPullThree` | 2.542 | `tables/model_summary.csv` | reference trench pull ΔGPE* [TN/m], 3 dp |
 | `\numRefIdentityPct` | 0.019 | `tables/model_summary.csv` | reference |ΔN_D − ΔGPE*|/ΔGPE* [%] |
 | `\numRefXIkm` | 182 | `tables/model_summary.csv` | reference first isostatic column [km from trench] |
+| `\numWedgeAbovePlateTN` | 0.11 | `tables/profiles_selfcheck.csv` | above-plate (water-wedge) term ½Δρ g w_T² omitted by the massless column, reference model [TN/m] |
+| `\numWedgeAbovePlatePct` | 4.5 | `tables/profiles_selfcheck.csv` | the same as % of the reference pull |
 | `\numPullElastic` | 2.23 | `tables/model_summary.csv` | Suite 1 elastic pull [TN/m] |
 | `\numPullDDVMasym` | 2.29 | `tables/model_summary.csv` | Suite 1 DD-VM asym pull [TN/m] |
 | `\numPullDDVMsym` | 2.84 | `tables/model_summary.csv` | Suite 1 DD-VM sym pull [TN/m] |
-| `\numDepthElasticKm` | 2.90 | `tables/model_summary.csv` | Suite 1 elastic trench depth [km] |
-| `\numDepthDDVMsymKm` | 3.35 | `tables/model_summary.csv` | Suite 1 DD-VM sym trench depth [km] |
+| `\numDepthElasticKm` | 2.87 | `tables/model_summary.csv` | Suite 1 elastic trench depth [km] |
+| `\numDepthDDVMsymKm` | 3.29 | `tables/model_summary.csv` | Suite 1 DD-VM sym trench depth [km] |
 | `\numPullHthirty` | 1.40 | `tables/thickness_compare.csv` | Suite 4 h=30 km pull [TN/m] |
 | `\numThicknessSlope` | 0.65 | `tables/thickness_compare.csv` | Suite 4 through-origin ΔGPE*/V |
 | `\numBoefEndResultant` | 4.000 | `tables/benchmark_boef.csv` | S1 end resultant [TN/m] |
@@ -36,9 +38,9 @@ next to the LaTeX sources and `\input{paper_numbers}`. Numbers not listed here a
 | `\numSfiveBaseKm` | 63 | `tables/corrected_density.csv` | Fig S5 deflected base depth [km] |
 | `\numRefPullRounded` | 2.5 | `tables/model_summary.csv` | reference pull, 1 dp ("about 2.5") |
 | `\numRefArmRoundedKm` | 35 | `tables/model_summary.csv` | reference effective arm, rounded [km] ("approximately 35") |
-| `\numRefArmOverH` | 0.58 | `tables/model_summary.csv` | reference arm / h ("approximately 0.6h") |
+| `\numRefArmOverH` | 0.59 | `tables/model_summary.csv` | reference arm / h ("approximately 0.6h") |
 | `\numArmOverHMin` | 0.52 | `tables/model_summary.csv` | min arm/h over all production models (the 0.55 ± 0.10 coefficient) |
-| `\numArmOverHMax` | 0.64 | `tables/model_summary.csv` | max arm/h over all production models |
+| `\numArmOverHMax` | 0.66 | `tables/model_summary.csv` | max arm/h over all production models |
 | `\numMidPlateApproxMinPct` | 9 | `tables/gpe_compare_reconstruction.csv` | Fig 5: smallest h/2 under-estimate [%] ("10–20 %") |
 | `\numMidPlateApproxMaxPct` | 20 | `tables/gpe_compare_reconstruction.csv` | Fig 5: largest h/2 under-estimate [%] |
 | `\numFrameMaxSlopeDeg` | 3.3 | `tables/frame_check.csv` | largest surface slope over all production models [deg] ("below 2.5°") |

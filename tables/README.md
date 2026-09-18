@@ -36,12 +36,12 @@ Read them with `gpe_analysis.read_table(path)` → `(meta, rows)`, or with any C
 | `benchmark_mp.csv` | Fig. S2 | one quantity | quantity, value, unit | 148 sections, mean 0.09 %, max 0.85 % |
 | `gpe_compare_reconstruction.csv` | Fig. 5 | one Suite-1 model (4) | model, label, plate_top_arm_err_pct, sea_level_arm_err_pct, mid_plate_approx_err_pct | the ~2 % plate-top-arm and ~8 % sea-level-arm reconstruction errors; the h/2 misses |
 | `gpe_correlation.csv` | Fig. 4 | one plotted model (17) | suite, label, model, V_TN, N_mem_TN, w_T_km, dGPE_TN; meta: uniform_plate_slope_TN_per_km, reference_w_T_km, reference_dGPE_TN | every point in Fig. 4; the uniform-plate slope Δρ g h/2 |
-| `thickness_compare.csv` | Fig. 7 | one thickness member (4) | h_km, V_TN, w_T_km, x_I_km, x_M_km, pull_TN, pull_over_V; meta: through_origin_slope_dGPE_over_V | Fig. 7 panel (a) values; ΔGPE* ≈ 0.65 V |
+| `thickness_compare.csv` | Fig. 7 | one thickness member (4) | h_km, V_TN, w_T_km, x_I_from_xT_km, x_M_from_xT_km, pull_TN, pull_over_V; meta: through_origin_slope_dGPE_over_V | Fig. 7 panel (a) values; ΔGPE* ≈ 0.65 V |
 | `profiles_selfcheck.csv` | Fig. 6 | one Suite-1 model (4) | model, label, trench_curve_area_TN, trench_pull_TN, diff_pct | the panel-(d) self-check: trench-curve area equals the pull to < 0.2 % |
-| `hero_tresca_deep60.csv`, `hero_tresca_30km.csv`, `hero_tresca_40km.csv`, `hero_dd_vm_asym.csv`, `hero_dd_vm_sym.csv` | Fig. 3, S6, S7, S8 and the 40 km supporting render | one quantity | quantity, value, unit | reference-line positions (trench, max M, first isostatic, forebulge) and the ρ̂ centroid depth over the window |
+| `hero_tresca_deep60.csv`, `hero_tresca_deep60_full.csv`, `hero_tresca_30km.csv`, `hero_tresca_40km.csv`, `hero_dd_vm_asym.csv`, `hero_dd_vm_sym.csv` | Fig. 3, its five-panel SI version, S6, S7, S8 and the 40 km supporting render | one quantity | quantity, value, unit | reference-line positions (trench, max M, first isostatic, forebulge) and the ρ̂ centroid depth over the window |
 
-Units: TN = 10¹² N per metre of strike (TN/m); km, m, MPa as named; percentages are relative unless the column says otherwise.
-`x_*_km` are distances from the trench. `N_mem_TN` is the background in-plane force (positive = tension). `arm_km` is the
+Units: forces per unit length in TN m⁻¹ (1 TN = 10¹² N; written TN/m in the CSV `unit` column); km, m, MPa as named; percentages are relative unless the column says otherwise.
+`x_*_km` are absolute positions from the reference edge (x_T ≈ 1 km); `thickness_compare.csv` gives `x_I_from_xT_km`, `x_M_from_xT_km` relative to the trench column. `N_mem_TN` is the background normal-stress-difference resultant N_D (positive = tension-like). `arm_km` is the
 force-based effective arm ΔGPE*/(Δρ g w_T), not a centre of mass.
 
 ## How the numbers get into the manuscript

@@ -13,7 +13,7 @@ Two refinement axes: spatial (mesh) and load-increment count. Writes a Markdown 
 import sys; sys.path.insert(0, "analysis")
 import os
 import numpy as np
-from gpe_analysis import Model, trench_pull, write_table
+from gpe_analysis import Model, trench_pull, trench_deflection, write_table
 
 
 def main():
@@ -35,7 +35,7 @@ def main():
         if not os.path.isfile(os.path.join(d, "gpe_model.vtu")):
             return f"| {label} | — | — | — (missing) |"
         m = Model(d)
-        wT = float(np.nanmax(m.topography()))
+        wT = trench_deflection(m)                                  # w_T on the trench column
         dG, dNd, _ = trench_pull(m)
         resid = abs(dG - dNd) / abs(dG) * 100
         rows_csv.append((name, label, wT, dG / 1e12, resid))

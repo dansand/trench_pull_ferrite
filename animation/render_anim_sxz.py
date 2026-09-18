@@ -67,11 +67,11 @@ def main():
 
         fig, (axL, axR) = plt.subplots(1, 2, figsize=(12.8, 5.4), gridspec_kw={"width_ratios": [2.15, 1]},
                                        constrained_layout=True)
-        axL.pcolormesh(Xu, Yu, Cu, cmap="PuOr_r", norm=norm, shading="gouraud")
+        axL.pcolormesh(Xu, Yu, Cu, cmap="PRGn", norm=norm, shading="gouraud")
         axL.axhline(0, color="0.5", lw=0.6); axL.set_xlim(0, WINDOW_KM); axL.set_ylim(ylo, 3.0)
         axL.set_xlabel("distance from trench  [km]"); axL.set_ylabel("height  [km]  (deflection ×%g)" % WARP)
         axL.set_title(rf"vertical shear stress  $\sigma_{{xz}}$  ·  $V={V:.2f}$ TN m$^{{-1}}$", fontsize=11)
-        cb = fig.colorbar(ScalarMappable(norm, "PuOr_r"), ax=axL, pad=0.01, fraction=0.045)
+        cb = fig.colorbar(ScalarMappable(norm, "PRGn"), ax=axL, pad=0.01, fraction=0.045)
         cb.set_label(r"$\sigma_{xz}$  [MPa]", fontsize=9)
 
         for lab, xf, col, lw in COLS:

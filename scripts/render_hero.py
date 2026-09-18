@@ -2,9 +2,10 @@
 
 PyVista renders each field map on the warped (deflected) plate; matplotlib composites them with
 LaTeX colorbars, dashed reference lines, and a line panel for the resultants:
-  (a) differential stress  σxx − σzz   + yield-front contour + deviatoric principal-stress crosses
-  (b) vertical shear stress σxz
-  (c) equivalent density        ρ̂ = g⁻¹ τzx,x
+  (a) topography w with the Winkler support (dV/dx)/Δρg
+  map panels, selected by HERO_PANELS: normal-stress difference σxx − σzz (+ yield-front contour + principal-stress
+  crosses), vertical shear stress τzx (SI layout only), equivalent density ρ̂ = g⁻¹ τzx,x (+ signed centroid track)
+  last panel: the resultants V, M, ΔGPE*, ΔN_D
   (d) resultants V, M, F_D vs x (normalised)
 Vertical lines mark the flexure reference locations; an extra DASHED line marks DASH_BETWEEN's midpoint.
 
@@ -59,10 +60,19 @@ RENDER_W  = 1500                      # px width of each PyVista panel render
 MAP_W_IN  = 6.6                       # matplotlib map-axes width [in]; height follows the plate aspect
 DIFF_DIR  = None                      # if set, fields become (MODEL_DIR − DIFF_DIR); crosses/centroid dropped
 OUT = "figures/hero_tresca_deep60.png"
-# Panels: (key, LaTeX colorbar label, cmap)
-PANELS = [("diff", r"$\sigma_{xx}-\sigma_{zz}$  [MPa]", "RdBu_r"),    # σxx−σzz
-          ("sxz",  r"$\tau_{zx}$  [MPa]", "PuOr_r"),                  # vertical shear (purple/orange — distinct)
-          ("rho",  r"$\hat{\rho}=g^{-1}\tau_{zx,x}$  [kg m$^{-3}$]", "seismic")]  # stress gradient
+# Map panels: (key, LaTeX colorbar label, cmap).  HERO_PANELS selects which are drawn, by key letter:
+#   d = σxx−σzz with the crosses, s = τzx, r = ρ̂.  Fig. 3 (the default invocation) draws "dr" — the shear panel is
+#   omitted because everything on it appears elsewhere (its yield contours on the σxx−σzz panel, its gradient on the
+#   ρ̂ panel, its profiles in Fig. 6) and the four-panel figure fits a page with its caption (2026-09-18).  The SI
+#   hero figures pass HERO_PANELS=dsr for the full five-panel layout.  Panel letters re-run a, b, c, … in order.
+ALL_PANELS = {"d": ("diff", r"$\sigma_{xx}-\sigma_{zz}$  [MPa]", "BrBG"),      # σxx−σzz: brown (compression) – teal (tension)
+              "s": ("sxz",  r"$\tau_{zx}$  [MPa]", "PRGn"),                    # vertical shear: purple – green
+              "r": ("rho",  r"$\hat{\rho}=g^{-1}\tau_{zx,x}$  [kg m$^{-3}$]", "seismic")}  # stress gradient: blue – red
+# One colour map per quantity, everywhere (Fig. 3, the SI heroes, the animations): σxx−σzz brown–teal, τzx purple–green,
+# ρ̂ blue–red (2026-09-18: ρ̂ is mostly positive and its faint negative field reads best in pale blue; σxx−σzz and τzx use
+# both halves of their maps).
+PANEL_KEYS = os.environ.get("HERO_PANELS", "dr")
+PANELS = [ALL_PANELS[k] for k in PANEL_KEYS]
 # ================================================================
 
 
@@ -179,7 +189,7 @@ def render_field(warped, key, cmap, clim, contour, tcross, ccross, bbox):
 def resultants(m):
     """Panel-(e) resultants on the DEFORMED column (Cauchy, Model.deformed_line), trench-referenced — the
     one definition.  V=∫σxz, ΔN_D=∫(σxx−σzz)−(trench), M=∫σxx(z−z_mid) (PURE bending moment, so dM/dx=V holds
-    exactly — the differential-stress moment couples in σzz and breaks it), ΔGPE*=−(∫σzz−∫σzz_trench)."""
+    exactly — a moment of σxx−σzz couples in σzz and breaks it), ΔGPE*=−(∫σzz−∫σzz_trench)."""
     x_tr = trench_ref_km(m)
     xs = np.linspace(x_tr, WINDOW_KM, 90)
     Szz0 = m.deformed_resultants(x_tr)[0]
@@ -274,9 +284,10 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
     map_h = MAP_W_IN / aspect
     line_h = map_h                                    # all five panels the same height (2026-09-18)
     top_h = map_h
-    fig = plt.figure(figsize=(MAP_W_IN + 1.5, top_h + 3 * map_h + line_h + 1.2), constrained_layout=True)
-    gs = fig.add_gridspec(5, 2, width_ratios=[MAP_W_IN, 0.22],
-                          height_ratios=[top_h, map_h, map_h, map_h, line_h])
+    nmap = len(PANELS)
+    fig = plt.figure(figsize=(MAP_W_IN + 1.5, top_h + nmap * map_h + line_h + 1.2), constrained_layout=True)
+    gs = fig.add_gridspec(nmap + 2, 2, width_ratios=[MAP_W_IN, 0.22],
+                          height_ratios=[top_h] + [map_h] * nmap + [line_h])
 
     x_dash = 0.5 * (lines[DASH_BETWEEN[0]] + lines[DASH_BETWEEN[1]])
     refs = [(lines[k], REF_LABELS[k]) for k in REF_KEYS if x0km <= lines[k] <= Lkm]
@@ -317,7 +328,7 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
     for r, (key, label, cmap) in enumerate(PANELS):
         ax = fig.add_subplot(gs[r + 1, 0])
         ax.imshow(imgs[r], extent=[x0km, Lkm, y0km, y1km], aspect="auto", origin="upper")
-        if r != 0:                          # skip reference lines on panel (b): keep the focus on the principal stresses
+        if key != "diff":                   # skip reference lines on the σxx−σzz panel: keep the focus on the principal stresses
             verticals(ax)
         if False:                           # phase-shift annotation commented out (may not make the manuscript)
             tr = blended_transform_factory(ax.transData, ax.transAxes)
@@ -330,7 +341,7 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
             ax.text(0.985, 0.88, r"$\lambda=2\pi\alpha\approx%d$ km" % round(lam / 1e3), transform=ax.transAxes,
                     ha="right", va="top", fontsize=9.5, color="0.2",
                     bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none", alpha=0.7))
-        if r == 2 and not is_diff:          # signed equivalent density (dipole-moment) centroid depth on the map
+        if key == "rho" and not is_diff:    # signed equivalent density (dipole-moment) centroid depth on the map
             ax.plot(m.xkm[wsel_c], yc_warp[wsel_c] / 1e3, color="black", lw=3.0,
                     label=r"$\hat{\rho}$ centroid",
                     path_effects=[pe.withStroke(linewidth=5.5, foreground="white")])  # halo: visible on dark blue
@@ -344,7 +355,7 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
         ax.set_yticks([]); ax.set_xlim(x0km, Lkm)
         ax.tick_params(labelsize=11)
         ax.set_xticklabels([])
-        ax.text(0.008, 0.88, f"({'bcd'[r]})", transform=ax.transAxes, fontsize=15, fontweight="bold")
+        ax.text(0.008, 0.88, f"({'bcdef'[r]})", transform=ax.transAxes, fontsize=15, fontweight="bold")
         cax = fig.add_subplot(gs[r + 1, 1])
         cb = fig.colorbar(ScalarMappable(Normalize(-clims[r], clims[r]), cmap), cax=cax)
         cb.set_label((r"$\Delta$ " + label) if is_diff else label, fontsize=12); cax.tick_params(labelsize=11)
@@ -352,10 +363,10 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
     # panel (e): resultants, ALL direct stress-field integrals — no analytic/flexure input, no ad-hoc
     # offsets.  N_D=∫(σxx−σzz)dz, the PURE bending moment M=∫σxx(z−h/2)dz, and V=∫σxz dz vanish naturally in
     # the undeflected far field (massless: σ→0), so they are plotted raw.  GPE carries the lithostat, so ΔGPE
-    # is referenced.  M is the σxx moment (NOT differential-stress) so dM/dx = V exactly (σzz would break it).
-    # MANUSCRIPT CONVENTION: GPE ≡ −σ̄_zz ⇒ ΔGPE = −∫δσzz (negative at the trench); identity ΔN_D = ΔGPE,
-    # so N_D (dash-dot) rides ON ΔGPE.  M is the PURE bending moment ∫σxx(z−z_mid) ⇒ dM/dx (dashed) = V EXACTLY.
-    axd = fig.add_subplot(gs[4, 0])
+    # is referenced.  M is the σxx moment (NOT of σxx−σzz) so dM/dx = V exactly (σzz would break it).
+    # MANUSCRIPT CONVENTION: Δ(·) ≡ (·)(x) − (·)(x_T), trench-referenced; ΔGPE* = −Δσ̄zz is zero at the trench and rises
+    # to the pull (+2.54 TN/m) at x_I; identity ΔN_D = ΔGPE* (same sign), so N_D (dash-dot) rides ON ΔGPE*.  M is the PURE bending moment ∫σxx(z−z_mid) ⇒ dM/dx (dashed) = V EXACTLY.
+    axd = fig.add_subplot(gs[nmap + 1, 0])
     # panel (e): resultants — the ONE definition.  V, ΔN_D, M, ΔGPE* are Cauchy integrals on the DEFORMED
     # column (deformed_line), trench-referenced; NOT the reference-grid integrate_z.  The identity
     # ΔN_D = ΔGPE* means N_D (dash-dot) rides ON ΔGPE*; dM/dx (dashed) = V (pure σxx bending moment).
@@ -367,7 +378,7 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
     axd.plot(xr, ND / 1e12, "k", lw=2.6, ls=(0, (9, 4, 1.5, 4)), label=r"$\Delta N_D$")         # dash-dot, rides on ΔGPE*
     # the trench pull is ΔGPE* read at the FIRST ISOSTATIC column (first w=0)
     axd.plot(xpull, pull / 1e12, "o", color="C3", ms=10, mec="k", mew=0.9, zorder=7)
-    axd.annotate(f"pull = {pull/1e12:.2f} TN/m", (xpull, pull / 1e12),
+    axd.annotate(f"pull = {pull/1e12:.2f} TN m$^{{-1}}$", (xpull, pull / 1e12),
                  textcoords="offset points", xytext=(6, -14), fontsize=10, color="C3", fontweight="bold")
     axd.axhline(0, color="0.7", lw=0.6)
     axd.set_ylabel(r"$V,\ \Delta\mathrm{GPE}^{*},\ \Delta N_D$  [TN m$^{-1}$]", fontsize=12)
@@ -384,10 +395,10 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
     verticals(axd)
     axd.set_xlim(x0km, Lkm)
     axd.set_xlabel(r"distance from trench  [km]", fontsize=13)   # x is measured from the trench (x=0)
-    axd.text(0.008, 0.88, "(e)", transform=axd.transAxes, fontsize=15, fontweight="bold")
+    axd.text(0.008, 0.88, f"({'bcdef'[nmap]})", transform=axd.transAxes, fontsize=15, fontweight="bold")
     h1, l1 = axd.get_legend_handles_labels(); h2, l2 = axM.get_legend_handles_labels()
     axd.legend(h1 + h2, l1 + l2, ncol=3, fontsize=9.5, loc="lower right", frameon=False, handlelength=3.4)
-    fig.add_subplot(gs[4, 1]).axis("off")
+    fig.add_subplot(gs[nmap + 1, 1]).axis("off")
 
     if save:
         fig.savefig(out_path, dpi=180)

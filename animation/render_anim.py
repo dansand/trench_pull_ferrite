@@ -72,14 +72,14 @@ def main():
 
         fig, (axT, axB) = plt.subplots(2, 1, figsize=(9.5, 7.2),
                                        gridspec_kw={"height_ratios": [2.05, 1]}, constrained_layout=True)
-        axT.pcolormesh(Xd[sel], Yd[sel], C[sel], cmap="RdBu_r", vmin=-clim, vmax=clim, shading="gouraud")
+        axT.pcolormesh(Xd[sel], Yd[sel], C[sel], cmap="BrBG", vmin=-clim, vmax=clim, shading="gouraud")
         if np.nanmax(yld) > 0.5:
             axT.contour(Xd[sel], Yd[sel], yld[sel], [0.5], colors="k", linewidths=1.1)
         axT.axhline(0, color="0.5", lw=0.6)
         axT.set_xlim(0, WINDOW_KM); axT.set_ylim(ylo, yhi)
         axT.set_ylabel("height  [km]  (deflection ×%g)" % WARP); axT.set_xticklabels([])
         axT.set_title(rf"Trench-pull loading  ·  $V={r['V']:.2f}$ TN m$^{{-1}}$  ·  $\sigma_{{xx}}-\sigma_{{zz}}$ (yield front in black)", fontsize=11)
-        cb = fig.colorbar(ScalarMappable(Normalize(-clim, clim), "RdBu_r"), ax=axT, pad=0.01, fraction=0.05)
+        cb = fig.colorbar(ScalarMappable(Normalize(-clim, clim), "BrBG"), ax=axT, pad=0.01, fraction=0.05)
         cb.set_label(r"$\sigma_{xx}-\sigma_{zz}$  [MPa]", fontsize=9)
 
         # bottom: pull (left) and deflection (right) accumulating vs load V

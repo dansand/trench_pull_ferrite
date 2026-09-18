@@ -2,7 +2,7 @@
 
 Every number the paper quotes is read from the tables the scripts wrote in the same pass as their figures
 (tables/*.csv, see gpe_analysis.write_table) — nothing is scraped from printed text.  Checks, with tolerances:
-  model_summary: reference ΔGPE* = 2.542 TN/m ± 0.5 %, identity < 0.05 %, arm 34.9 ± 0.2 km, all 20 models identity < 0.1 %;
+  model_summary: reference ΔGPE* = 2.542 TN/m ± 0.5 %, identity < 0.05 %, arm 35.4 ± 0.2 km (w_T on the trench column), all 20 models identity < 0.1 %;
                  reference: no yielded node within 10 km of the trench face (the edge ramp holds the face elastic)
   benchmark_boef: end resultant 4.000 ± 1 %, V misfit ≤ 1 %, deflection offset 1.6 ± 0.3 %, parabola ≤ 0.5 %
   benchmark_mp: 148 sections, mean ≤ 0.15 %, max ≤ 1 %        gpe_compare_reconstruction: plate-top ≤ 3 %, sea-level ≤ 10 %
@@ -16,11 +16,11 @@ sys.path.insert(0, "analysis")
 from gpe_analysis import read_table
 
 LOG = sys.argv[1] if len(sys.argv) > 1 else ".reproduce_logs"
-FIGURES = ["hero_tresca_deep60", "gpe_correlation", "gpe_compare_suite1", "profiles", "thickness_compare", "benchmark_boef",
+FIGURES = ["hero_tresca_deep60", "hero_tresca_deep60_full", "gpe_correlation", "gpe_compare_suite1", "profiles", "thickness_compare", "benchmark_boef",
            "benchmark_mp", "core_profiles_deep60", "corrected_density", "hero_tresca_30km", "hero_tresca_40km",
            "hero_dd_vm_asym", "hero_dd_vm_sym"]
 TABLES = ["model_summary", "isostatic_column", "frame_check", "edge_exclusion", "convergence", "benchmark_boef", "benchmark_mp", "gpe_compare_reconstruction", "gpe_correlation",
-          "thickness_compare", "profiles_selfcheck", "corrected_density", "hero_tresca_deep60", "hero_tresca_30km", "hero_tresca_40km",
+          "thickness_compare", "profiles_selfcheck", "corrected_density", "hero_tresca_deep60", "hero_tresca_deep60_full", "hero_tresca_30km", "hero_tresca_40km",
           "hero_dd_vm_asym", "hero_dd_vm_sym"]
 REF = "tresca_deep_150_60km_V4"
 bad = 0
@@ -53,7 +53,7 @@ ref = next((r for r in ms if r["model"] == REF and r["suite"] == "suite1_strengt
 check(len(ms) == 20, f"model_summary has 20 production models (found {len(ms)})")
 check(ref is not None and abs(ref["dGPE_TN"] / 2.542 - 1) <= 0.005, f"reference ΔGPE* = {ref and ref['dGPE_TN']} TN/m (2.542 ± 0.5 %)")
 check(ref is not None and ref["identity_pct"] < 0.05, f"reference identity residual = {ref and ref['identity_pct']} % (< 0.05 %)")
-check(ref is not None and abs(ref["arm_km"] - 34.9) <= 0.2, f"reference arm = {ref and ref['arm_km']} km (34.9 ± 0.2)")
+check(ref is not None and abs(ref["arm_km"] - 35.4) <= 0.2, f"reference arm = {ref and ref['arm_km']} km (35.4 ± 0.2)")
 check(bool(ms) and all(r["identity_pct"] < 0.1 for r in ms), f"identity residual < 0.1 % on all models (max {max((r['identity_pct'] for r in ms), default=float('nan')):.3f} %)")
 # --- the reference model's loaded edge: the yield ramp keeps the face elastic (no yielded node within 10 km)
 check(ref is not None and ref["yielded_face_zone_pct"] == 0, f"reference: no yielded node within 10 km of the trench face ({ref and ref['yielded_face_zone_pct']} %)")
@@ -113,7 +113,7 @@ if os.path.isfile(nbp):
     check(m is not None and ref is not None and abs(float(m.group(1)) / ref["dGPE_TN"] - 1) <= 1e-3, f"notebook: ΔGPE* = {m and m.group(1)} TN/m (= model_summary)")
     check(m is not None and float(m.group(3)) < 0.05, f"notebook: identity residual = {m and m.group(3)} % (< 0.05 %)")
     m = re.search(r"effective arm ΔGPE\*/\(Δρ g w_T\) = ([\d.]+) km", out)
-    check(m is not None and abs(float(m.group(1)) - 34.9) <= 0.2, f"notebook: arm = {m and m.group(1)} km (34.9 ± 0.2)")
+    check(m is not None and abs(float(m.group(1)) - 35.4) <= 0.2, f"notebook: arm = {m and m.group(1)} km (35.4 ± 0.2)")
     check(not any(o.get("output_type") == "error" for c in cells for o in c.get("outputs", [])), "notebook: no error outputs")
 elif os.path.isfile(os.path.join(LOG, "NOTEBOOK_SKIPPED")):
     print("  skip  notebook not executed (--no-nb)")

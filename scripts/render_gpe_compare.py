@@ -26,7 +26,7 @@ from scipy.ndimage import gaussian_filter1d
 from gpe_analysis import Model, trench_ref_km, deformed_shear_gradient, write_table, DRHOG
 
 S1 = "data/suite1_strength"
-# The Tresca baseline is the reference model; SUITE1 is the full 2×2 rheology panel.  (DD-VM entries are
+# The Tresca baseline is the reference model; SUITE1 is the full 2×2 strength-model panel.  (DD-VM entries are
 # whatever currently sits in suite1_strength — refreshed when the friction DD-VMs are promoted.)
 SUITE1 = [(f"{S1}/elastic_deep_60km_V4",    "elastic"),
           (f"{S1}/tresca_deep_150_60km_V4", "Tresca (uniform)"),
@@ -83,7 +83,7 @@ def _errs(dgpe, pdsea, pdtop, approx):
 
 
 def main_suite1():
-    """Full Suite-1 robustness: pull = equivalent-density dipole across all four rheologies (2×2 top-panels)."""
+    """Full Suite-1 robustness: pull = equivalent-density dipole across all four strength mogies (2×2 top-panels)."""
     fig, axes = plt.subplots(2, 2, figsize=(11.0, 8.4), sharex=True, sharey=True, constrained_layout=True)
     rows = []
     for k, (mdir, title) in enumerate(SUITE1):

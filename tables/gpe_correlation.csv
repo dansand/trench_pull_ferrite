@@ -1,18 +1,18 @@
 suite,label,model,V_TN,N_mem_TN,w_T_km,dGPE_TN
-suite2_load,Tresca,data/suite2_load/tresca_deep_150_60km_V1,1,0,0.727472,0.509334
-suite2_load,Tresca,data/suite2_load/tresca_deep_150_60km_V1p5,1.5,0,1.09055,0.776901
-suite2_load,Tresca,data/suite2_load/tresca_deep_150_60km_V2,2,0,1.45318,1.05273
-suite2_load,Tresca,data/suite2_load/tresca_deep_150_60km_V2p5,2.5,0,1.81647,1.33726
-suite2_load,Tresca,data/suite2_load/tresca_deep_150_60km_V3,3,0,2.20273,1.64899
-suite2_load,Tresca,data/suite2_load/tresca_deep_150_60km_V3p5,3.5,0,2.65616,2.03252
-suite2_load,Tresca,data/suite1_strength/tresca_deep_150_60km_V4,4,0,3.23294,2.54249
-suite2_load,Tresca,data/suite2_load/tresca_deep_150_60km_V4p5,4.5,0,3.95482,3.1981
-suite3_background,Tresca,data/suite3_background/tresca_deep_150_60km_V4_mem-3,4,-3,3.87865,3.30802
-suite3_background,Tresca,data/suite3_background/tresca_deep_150_60km_V4_mem-2,4,-2,3.53794,2.87295
-suite3_background,Tresca,data/suite3_background/tresca_deep_150_60km_V4_mem-1,4,-1,3.3397,2.63766
-suite3_background,Tresca,data/suite3_background/tresca_deep_150_60km_V4_mem1,4,1,3.1893,2.52193
-suite3_background,Tresca,data/suite3_background/tresca_deep_150_60km_V4_mem2,4,2,3.19689,2.52713
-suite3_background,Tresca,data/suite3_background/tresca_deep_150_60km_V4_mem3,4,3,3.25461,2.55842
-suite1_strength,elastic,data/suite1_strength/elastic_deep_60km_V4,4,0,2.89925,2.23367
-suite1_strength,DD-VM asym,data/suite1_strength/dd_vm_asym_60km_V4,4,0,3.22584,2.28775
-suite1_strength,DD-VM sym,data/suite1_strength/dd_vm_sym_60km_V4,4,0,3.34907,2.8357
+suite2_load,Tresca,data/suite2_load/tresca_deep_150_60km_V1,1,0,0.72534,0.509334
+suite2_load,Tresca,data/suite2_load/tresca_deep_150_60km_V1p5,1.5,0,1.08577,0.776901
+suite2_load,Tresca,data/suite2_load/tresca_deep_150_60km_V2,2,0,1.44471,1.05273
+suite2_load,Tresca,data/suite2_load/tresca_deep_150_60km_V2p5,2.5,0,1.80325,1.33726
+suite2_load,Tresca,data/suite2_load/tresca_deep_150_60km_V3,3,0,2.18289,1.64899
+suite2_load,Tresca,data/suite2_load/tresca_deep_150_60km_V3p5,3.5,0,2.62535,2.03252
+suite2_load,Tresca,data/suite1_strength/tresca_deep_150_60km_V4,4,0,3.18118,2.54249
+suite2_load,Tresca,data/suite2_load/tresca_deep_150_60km_V4p5,4.5,0,3.8634,3.1981
+suite3_background,Tresca,data/suite3_background/tresca_deep_150_60km_V4_mem-3,4,-3,3.7749,3.30802
+suite3_background,Tresca,data/suite3_background/tresca_deep_150_60km_V4_mem-2,4,-2,3.4648,2.87295
+suite3_background,Tresca,data/suite3_background/tresca_deep_150_60km_V4_mem-1,4,-1,3.28111,2.63766
+suite3_background,Tresca,data/suite3_background/tresca_deep_150_60km_V4_mem1,4,1,3.14001,2.52193
+suite3_background,Tresca,data/suite3_background/tresca_deep_150_60km_V4_mem2,4,2,3.14684,2.52713
+suite3_background,Tresca,data/suite3_background/tresca_deep_150_60km_V4_mem3,4,3,3.2005,2.55842
+suite1_strength,elastic,data/suite1_strength/elastic_deep_60km_V4,4,0,2.86581,2.23367
+suite1_strength,DD-VM asym,data/suite1_strength/dd_vm_asym_60km_V4,4,0,3.17466,2.28775
+suite1_strength,DD-VM sym,data/suite1_strength/dd_vm_sym_60km_V4,4,0,3.2896,2.8357
