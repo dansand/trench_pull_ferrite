@@ -127,7 +127,7 @@ def plot_row(m, axes, is_top, zgrid):
         axes[3].legend(fontsize=8.5, loc="lower right", title="column", framealpha=0.9)
     # annotate the trench pull (the trench-curve area) — the ONE definition, trench vs isostatic, no caps
     dGPE = trench_pull(m)[0]
-    axes[3].text(0.055, 0.05, f"trench area $=$ pull\n$\\Delta$GPE$^* = {dGPE/1e12:+.2f}$ TN m$^{{-1}}$",
+    axes[3].text(0.055, 0.05, f"trench area $=$ pull\n$\\Delta\\mathrm{{GPE}}^{{*}} = {dGPE/1e12:+.2f}$ TN m$^{{-1}}$",
                  transform=axes[3].transAxes, fontsize=9.5, va="bottom", fontweight="bold", color="k",
                  bbox=dict(boxstyle="round,pad=0.25", fc="white", ec="0.5", alpha=0.9))
 

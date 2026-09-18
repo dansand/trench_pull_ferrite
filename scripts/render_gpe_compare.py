@@ -66,7 +66,7 @@ def profile(model_dir):
 def _plot_pull(ax, x, dgpe, pdtop, approx, s=1e12, legend=False):
     """Top-panel content: true ΔGPE*, the equivalent-density dipole (plate-top arm), the mid-plate approx."""
     ax.plot(x, dgpe / s, color=C_BAND, lw=6.0, solid_capstyle="round", zorder=2,
-            label=r"$\Delta$GPE$^{*}$ (direct $-\!\int\sigma_{zz}\,dz$)")
+            label=r"$\Delta\mathrm{GPE}^{*}$ (direct $-\!\int\sigma_{zz}\,dz$)")
     ax.plot(x, pdtop / s, color=C_LINE, lw=1.5, solid_capstyle="round", zorder=4,
             label=r"$\hat\rho$ dipole reconstruction (plate-top arm)")
     ax.plot(x, approx / s, color=C_LINE, lw=1.5, ls=(0, (5, 3)), zorder=3,
@@ -98,10 +98,10 @@ def main_suite1():
         rows.append((mdir, title, etop, esea, eap))
         ax.set_title(f"{title}    ($h/2$ estimate off {eap:.0f}%)", fontsize=10.5)
         if k % 2 == 0:
-            ax.set_ylabel(r"$\Delta$GPE$^{*}$  [TN m$^{-1}$]", fontsize=11)
+            ax.set_ylabel(r"$\Delta\mathrm{GPE}^{*}$  [TN m$^{-1}$]", fontsize=11)
         if k >= 2:
             ax.set_xlabel(r"distance from trench  [km]", fontsize=11)
-    fig.suptitle(r"Trench pull $\Delta$GPE$^{*}$ = equivalent-density dipole across Suite 1 — "
+    fig.suptitle(r"Trench pull $\Delta\mathrm{GPE}^{*}$ = equivalent-density dipole across Suite 1 — "
                  "relatively insensitive to the strength model (plate-top arm)", fontsize=12.5)
     fig.savefig(OUT_SUITE1, dpi=135); print("wrote", OUT_SUITE1)
     write_table("gpe_compare_reconstruction", ["model", "label", "plate_top_arm_err_pct", "sea_level_arm_err_pct", "mid_plate_approx_err_pct"],

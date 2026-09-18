@@ -88,12 +88,12 @@ def main():
     s0 = float(np.sum(Vs * pulls) / np.sum(Vs**2))                          # proportional (through-origin) slope
     xl = (1.35, Vs.max() * 1.06)                                            # zoom onto the data (h≥20 km); origin not shown
     ax[0].plot([xl[0], xl[1]], [s0 * xl[0], s0 * xl[1]], "-", color="0.55", lw=1.4, zorder=1,
-               label=rf"$\Delta$GPE$^*\approx{s0:.2f}\,V$  (through origin)")
+               label=rf"$\Delta\mathrm{{GPE}}^{{*}}\approx{s0:.2f}\,V$  (through origin)")
     for (mdir, hk, col), d in zip(MODELS, data):
         ax[0].plot(VLOAD[hk], d["pull"], "o", color=col, ms=12, mec="k", mew=1.0, zorder=5, label=f"$h={hk}$ km")
     ax[0].set_xlim(*xl); ax[0].set_ylim(pulls.min() - 0.28, pulls.max() + 0.18)
-    ax[0].set_xlabel(r"applied load  $V$  (end shear force)  [TN m$^{-1}$]")
-    ax[0].set_ylabel(r"trench pull  $\Delta$GPE$^{*}$  [TN m$^{-1}$]")
+    ax[0].set_xlabel(r"applied load  $V$  [TN m$^{-1}$]")
+    ax[0].set_ylabel(r"$\Delta\mathrm{GPE}^{*}$  [TN m$^{-1}$]")
     ax[0].set_title("(a)  pull vs load and thickness  (matched deflection)", fontsize=11)
     ax[0].legend(fontsize=8.5, loc="upper left"); ax[0].grid(alpha=.25)
     axT = ax[0].twiny(); axT.set_xlim(*xl)                                  # thickness on top: ticks at each model (V∝h)

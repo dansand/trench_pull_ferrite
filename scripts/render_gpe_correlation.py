@@ -120,7 +120,7 @@ def main():
         a.scatter(x3, G3, c=C3, marker="s", s=58, ec="k", lw=0.4, zorder=6, label="Suite 3 (in-plane $N_D$)")
         a.plot([xref], [Gref], "s", color=C2, ms=6, zorder=10,
                label="reference (Tresca, $V$=4, $N_D$=0)")
-        a.grid(alpha=0.25); a.set_ylabel(r"$\Delta$GPE$^{*}$  [TN m$^{-1}$]"); a.set_ylim(ylo, yhi)
+        a.grid(alpha=0.25); a.set_ylabel(r"$\Delta\mathrm{GPE}^{*}$  [TN m$^{-1}$]"); a.set_ylim(ylo, yhi)
 
     def inset(a, x2, x3, x1, xwin, title, line=None):                        # the full range, with the zoomed window boxed
         i = a.inset_axes(list(INSET))
@@ -149,7 +149,7 @@ def main():
     iB = inset(ax[1], w2, w3, w1, xB, "full range", line=(xw, slope * xw))
     iB.set_xlim(0, xw[1]); iB.set_ylim(0, yhi)
 
-    fig.suptitle(r"Trench pull  $\Delta$GPE$^{*}$", fontsize=12)
+    fig.suptitle(r"Trench pull  $\Delta\mathrm{GPE}^{*}$", fontsize=12)
 
     fig.canvas.draw(); fig.set_layout_engine("none")                             # freeze layout so label placement is exact
 

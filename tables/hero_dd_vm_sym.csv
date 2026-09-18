@@ -3,6 +3,6 @@ x_trench,0.993557,km
 x_moment_max,85.0334,km
 x_shear_max,170.639,km
 x_outer_rise,262,km
-rhohat_centroid_depth_mean_over_window,29.7196,km
-rhohat_centroid_depth_min_over_window,24.9188,km
-rhohat_centroid_depth_max_over_window,37.8916,km
+rhohat_centroid_depth_mean_over_window,29.78,km
+rhohat_centroid_depth_min_over_window,24.1266,km
+rhohat_centroid_depth_max_over_window,36.7404,km

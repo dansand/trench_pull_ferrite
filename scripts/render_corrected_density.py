@@ -111,7 +111,7 @@ def main():
         ax[2].scatter([x], [d["z_true"] / 1e3], s=st, c="#4292c6", ec="k", lw=0.6, zorder=3)   # TRUE (water) @ w/2
         ax[2].scatter([x], [d["z_ps"] / 1e3], s=sp, c=c, ec="k", lw=0.6, zorder=3)             # equivalent (shear), column colour
         off = (sp / 3.1416) ** 0.5 + 6
-        ax[2].annotate(f"$\\Delta$GPE = {dgpe(xk):.2f}\nTN/m\n(arm {arm:.0f} km)", (x, d["z_ps"] / 1e3),
+        ax[2].annotate(f"$\\Delta\\mathrm{{GPE}}^{{*}} = {dgpe(xk):.2f}$\nTN m$^{{-1}}$\n(arm {arm:.0f} km)", (x, d["z_ps"] / 1e3),
                        xytext=(off, 0), textcoords="offset points", va="center", fontsize=8, color=c)
     # identify the two lobe types, centred in black on the (large) trench dipole circles — replaces a legend
     dt = dipole_lobes(xt)
@@ -122,8 +122,8 @@ def main():
     ax[2].axhline(0, color="0.85", lw=0.7)
     reflines(ax[2]); ax[2].set_xlim(0.45, 2.9)
     ax[2].set_xticks(list(slot.values())); ax[2].set_xticklabels([l for l, _, _ in glyph], fontsize=10)
-    ax[2].set_ylabel("depth  [km]"); ax[2].set_xlabel(r"column   ($\Delta$GPE relative to isostatic)")
-    ax[2].set_title(r"(c)  $\Delta$GPE dipole (vs isostatic column)", fontsize=10.5)
+    ax[2].set_ylabel("depth  [km]"); ax[2].set_xlabel(r"column   ($\Delta\mathrm{GPE}^{*}$ vs the isostatic column)")
+    ax[2].set_title(r"(c)  $\Delta\mathrm{GPE}^{*}$ dipole (vs isostatic column)", fontsize=10.5)
     ax[2].grid(alpha=0.2, axis="y")
 
     dg, _, _ = trench_pull(m)

@@ -214,14 +214,21 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
     # nearly cancel).  This replaces the old reference-grid column-sum ρ̂.sum(depth), which is UNFAITHFUL at a
     # strongly-rotated yielded hinge: on the h=30 plate it flipped sign where the true net resultant is finite
     # and positive, planting spurious zero-crossings that blanked the whole hinge.
-    # The hero track is a CONTINUOUS centroid line over the window, masked column by column; it keeps its own,
-    # looser guard (0.35) so the line runs as far as the dipole is meaningfully signed.  The single-column MARKERS in
-    # the other figures use the shared CENTROID_RATIO_MIN (0.45) from gpe_analysis.  Changing this value moves the
-    # ends of the track in Figs 3 and S6–S8 (checked 2026-09-14) — do not unify without re-approving those figures.
-    RATIO_MIN = 0.35
+    # The hero track is a CONTINUOUS centroid line over the window, masked column by column on x-smoothed column
+    # integrals; it keeps its own guard (RATIO_MIN below) so the line runs as far as the dipole is meaningfully signed.
+    # The single-column MARKERS in the other figures use the shared CENTROID_RATIO_MIN (0.45) from gpe_analysis on
+    # raw columns.  Changing these values moves the ends of the track in Figs 3 and S6–S8 — re-approve those figures.
+    RATIO_MIN = 0.25                                       # was 0.35 on raw columns; 0.25 on the SMOOTHED integrals (below)
+    SMOOTH_KM = 6.0                                        # Gaussian σ along x applied to the column integrals Q, M1, A before
+                                                           # dividing (3 columns): damps the mesh-scale ripple of the deformed-line
+                                                           # extraction so the track runs closer to the isostatic column (gap 30 → 20 km
+                                                           # on the reference plate) and the 30 km hinge masks as one clean gap.  The
+                                                           # pole itself (Q = 0 at x_I) is intrinsic and stays masked.  (2026-09-18)
     wsel_c = m.xkm <= WINDOW_KM
     zc_depth = np.full(m.Nx, np.nan)                       # centroid depth below the deformed top [km]
     yc_warp = np.full(m.Nx, np.nan)                        # centroid warped height [m] (for the map overlay)
+    Qc = np.full(m.Nx, np.nan); M1c = np.full(m.Nx, np.nan); Ac = np.full(m.Nx, np.nan)
+    zline = {}
     for i in np.where(wsel_c)[0]:
         try:
             L, tau = deformed_shear_gradient(m, m.xkm[i])
@@ -232,10 +239,18 @@ def build(model_dir=None, out=None, diff_dir=None, save=True):
             continue                                       # reference x = 0 exits through the rotated edge face part way
                                                            # down (23 of 49 layers) and its "centroid" is that of the
                                                            # truncated column — the false shallowing seen before 2026-09-18
-        Q = np.trapz(tau, z); A = np.trapz(np.abs(tau), z)
+        Qc[i] = np.trapz(tau, z); Ac[i] = np.trapz(np.abs(tau), z); M1c[i] = np.trapz(z * tau, z); zline[i] = L
+    ok = np.isfinite(Qc)
+    if ok.sum() > 3:
+        from scipy.ndimage import gaussian_filter1d
+        sig = SMOOTH_KM / (m.xkm[1] - m.xkm[0])
+        Qc[ok] = gaussian_filter1d(Qc[ok], sig); M1c[ok] = gaussian_filter1d(M1c[ok], sig); Ac[ok] = gaussian_filter1d(Ac[ok], sig)
+    for i in np.where(ok)[0]:
+        Q, A = Qc[i], Ac[i]
         if A <= 0 or abs(Q) < RATIO_MIN * A:              # near-balanced ⇒ signed centroid ill-conditioned ⇒ skip
             continue
-        zc = np.trapz(z * tau, z) / Q                     # absolute deformed depth of the centroid
+        zc = M1c[i] / Q                                    # absolute deformed depth of the centroid
+        L = zline[i]; z = L["z"]
         if not (z[0] < zc < z[-1]):
             continue
         zref_c = np.interp(zc, z, L["z_ref"]); uy_c = zc - zref_c   # map deformed depth → (reference depth, u_y)
