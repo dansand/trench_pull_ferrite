@@ -301,7 +301,8 @@ def reference_lines(mod, edge_skip_km=6.0):
     V, w = mod.V(), mod.topography()
     x_moment = _first_sign_change_from_left(xkm, V, edge_skip_km)             # V = 0  -> max moment
     # FIRST ISOSTATIC COLUMN: the first deflection zero-crossing (w = 0 ⇒ no foundation load ⇒ isostatic).
-    # For a Winkler foundation dV/dx = −Δρg·w, so this is also the first dV/dx = 0 — but taken directly from
+    # For a Winkler foundation dV/dx = +Δρg·w (z down, tension positive: V < 0 at the trench, rising to 0 at x_M), so this
+    # is also the first dV/dx = 0 — but taken directly from
     # w (robust) rather than from grad_x(V) (noisy; it mis-placed the crossing for the membrane case).
     x_shear = _first_sign_change_from_left(xkm, w, edge_skip_km)              # first w = 0 -> first isostatic column
     x_or = xkm[np.argmin(w)]                                                  # forebulge (uplift = min of positive-down w)

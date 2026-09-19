@@ -2,7 +2,7 @@
 
 Reads the per-load-step states written by gen_frames.jl (animation/frames/step_NN/gpe_model.vtu) and
 builds a 2-panel movie of the loading cycle:
-  (top)    the deformed plate (vertical warp), coloured by differential stress sigma_xx - sigma_zz,
+  (top)    the deformed plate (vertical warp), coloured by the normal-stress difference sigma_xx - sigma_zz,
            with the yield front (black contour) growing inward as the elastic core collapses;
   (bottom) the trench deflection w_T and the trench pull dGPE* building up as the end load V ramps.
 
@@ -64,7 +64,7 @@ def main():
     for k, r in enumerate(R):
         m = r["m"]
         ux, uz = m.array("u", 0), m.array("u", 1)
-        Xd = (m.x[:, None] + WARP * ux) / 1e3
+        Xd = (m.x[:, None] + ux) / 1e3                   # horizontal displacement at TRUE scale (as the hero figures); only u_z is exaggerated
         Yd = -(m.z[None, :] + WARP * uz) / 1e3
         C = (m.array("sigma_xx [Pa]") - m.array("sigma_zz [Pa]")) / 1e6
         yld = m.array("yielded")
@@ -83,10 +83,10 @@ def main():
         cb.set_label(r"$\sigma_{xx}-\sigma_{zz}$  [MPa]", fontsize=9)
 
         # bottom: pull (left) and deflection (right) accumulating vs load V
-        axB.plot(Vs[:k + 1], pulls[:k + 1], "-o", color="#c0392b", ms=4, lw=1.8, label=r"pull $\Delta$GPE$^*$")
+        axB.plot(Vs[:k + 1], pulls[:k + 1], "-o", color="#c0392b", ms=4, lw=1.8, label=r"pull $\Delta\mathrm{GPE}^{*}$")
         axB.plot(Vs[k], pulls[k], "o", color="#c0392b", ms=9, mec="k", mew=0.8, zorder=5)
         axB.set_xlim(0, Vs.max() * 1.05); axB.set_ylim(0, np.nanmax(pulls) * 1.12)
-        axB.set_xlabel(r"applied load  $V$  [TN m$^{-1}$]"); axB.set_ylabel(r"$\Delta$GPE$^*$  [TN m$^{-1}$]", color="#c0392b")
+        axB.set_xlabel(r"applied load  $V$  [TN m$^{-1}$]"); axB.set_ylabel(r"$\Delta\mathrm{GPE}^{*}$  [TN m$^{-1}$]", color="#c0392b")
         axB.tick_params(axis="y", labelcolor="#c0392b"); axB.grid(alpha=0.25)
         axR = axB.twinx()
         axR.plot(Vs[:k + 1], ws[:k + 1], "-s", color="#1f3b73", ms=3.5, lw=1.5)

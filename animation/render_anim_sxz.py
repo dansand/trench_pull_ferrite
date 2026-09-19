@@ -55,7 +55,7 @@ def main():
 
     for k, (m, V) in enumerate(zip(ms, Vs)):
         ux, uz = m.array("u", 0), m.array("u", 1)
-        Xd = (m.x[:, None] + WARP * ux) / 1e3
+        Xd = (m.x[:, None] + ux) / 1e3                   # horizontal displacement at TRUE scale (as the hero figures); only u_z is exaggerated
         Yd = -(m.z[None, :] + WARP * uz) / 1e3
         C = m.array("sigma_xz [Pa]") / 1e6
         sel = m.x / 1e3 <= WINDOW_KM
