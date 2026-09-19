@@ -88,7 +88,7 @@ def main():
         axL.pcolormesh(Xu, Yu, Cu, cmap="seismic", norm=norm, shading="gouraud")   # gouraud on the upsampled field: smooth, transitions through white (no grey)
         axL.axhline(0, color="0.5", lw=0.6); axL.set_xlim(0, WINDOW_KM); axL.set_ylim(ylo, 3.0)
         axL.set_xlabel("distance from trench  [km]"); axL.set_ylabel("height  [km]  (deflection ×%g)" % WARP)
-        axL.set_title(rf"equivalent density  $\hat\rho=\sigma_{{xz,x}}/g$  ·  $V={V:.2f}$ TN m$^{{-1}}$", fontsize=11)
+        axL.set_title(rf"equivalent density  $\hat\rho=g^{{-1}}\tau_{{zx,x}}$  ·  $V={V:.2f}$ TN m$^{{-1}}$", fontsize=11)
         cb = fig.colorbar(ScalarMappable(norm, "seismic"), ax=axL, pad=0.01, fraction=0.045)
         cb.set_label(r"$\hat\rho$  [kg m$^{-3}$]  (symlog)", fontsize=9)
 

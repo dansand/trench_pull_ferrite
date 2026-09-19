@@ -70,16 +70,16 @@ def main():
         axL.pcolormesh(Xu, Yu, Cu, cmap="PRGn", norm=norm, shading="gouraud")
         axL.axhline(0, color="0.5", lw=0.6); axL.set_xlim(0, WINDOW_KM); axL.set_ylim(ylo, 3.0)
         axL.set_xlabel("distance from trench  [km]"); axL.set_ylabel("height  [km]  (deflection ×%g)" % WARP)
-        axL.set_title(rf"vertical shear stress  $\sigma_{{xz}}$  ·  $V={V:.2f}$ TN m$^{{-1}}$", fontsize=11)
+        axL.set_title(rf"vertical shear stress  $\tau_{{zx}}$  ·  $V={V:.2f}$ TN m$^{{-1}}$", fontsize=11)
         cb = fig.colorbar(ScalarMappable(norm, "PRGn"), ax=axL, pad=0.01, fraction=0.045)
-        cb.set_label(r"$\sigma_{xz}$  [MPa]", fontsize=9)
+        cb.set_label(r"$\tau_{zx}$  [MPa]", fontsize=9)
 
         for lab, xf, col, lw in COLS:
             L = m.deformed_line(xf(m))
             axR.plot(L["sxz"] / 1e6, (L["z"] - L["z"][0]) / 1e3, color=col, lw=lw, label=lab)
         axR.axhline(Hkm / 2, color="0.35", lw=1.0, ls=(0, (5, 3)), alpha=0.8, label="$h/2$")
         axR.axvline(0, color="0.6", lw=0.7); axR.set_xlim(-smax, smax); axR.set_ylim(Hkm + 2, -2)
-        axR.set_xlabel(r"$\sigma_{xz}$  [MPa]"); axR.set_ylabel("depth below plate surface  [km]")
+        axR.set_xlabel(r"$\tau_{zx}$  [MPa]"); axR.set_ylabel("depth below plate surface  [km]")
         axR.set_title("vertical shear-stress profile", fontsize=11); axR.legend(fontsize=9, loc="lower right"); axR.grid(alpha=0.25)
         axR.annotate(rf"pull $={pull:.2f}$ TN m$^{{-1}}$", (0.04, 0.05), xycoords="axes fraction",
                      fontsize=10, fontweight="bold")

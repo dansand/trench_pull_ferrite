@@ -44,7 +44,7 @@ for (k, f) in enumerate(fracs)
     try
         res = solve_plastic(; L = Lx, h = Hpl, nx = NX, nz = NZ, E = Emod, ν = 0.25, σ₀ = σY, H = 0.0,
             crit = :tresca, springs = spring, bodyforce = x -> Vec{2}((0.0, 0.0)), prestress = x -> ZERO_S0₂,
-            confine_x = x -> 0.0, yield = ramp(σY), tract_z = V / Hpl, moment = 0.0, order = 2,
+            confine_x = x -> 0.0, yield = ramp(σY), tract_z = V / Hpl, order = 2,
             nsteps = NSTEPS, rtol = 1.0e-6, load_face = "left", clamp_face = "right")
         xt, w = topography(res, Hpl; y_surf = 0.0); ny = count(s -> s.k > 0, res.states)
         @printf("   w=%.0f m  yielded %.1f%%\n", maximum(w), 100 * ny / length(res.states))
